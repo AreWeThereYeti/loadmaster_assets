@@ -1,5 +1,4 @@
 function mapCtrl($scope,$element,$attrs) {
-		
 	/* 			Initialize map */
 	$scope.initialize = function(latitude, longitude) {
 		if(!latitude){var latitude=55.724355}
@@ -18,10 +17,8 @@ function mapCtrl($scope,$element,$attrs) {
 		  mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		
-		
 		if($scope.IS_MOBILE){
 			$scope.map = new google.maps.Map(document.getElementById($scope.map_id), $scope.mapOptions);    
-			$scope.startWatchPosition()
 		}else{
 			$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);    
 		}
@@ -29,7 +26,7 @@ function mapCtrl($scope,$element,$attrs) {
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
 		var markerPosition = new google.maps.LatLng(latitude, longitude)
-		if(!$scope.IS_MOBILE){
+		if(!$scope.IS_MOBILE || $scope.savebounds){
 			$scope.bounds.extend(markerPosition)
 		}
 		var marker = new google.maps.Marker({

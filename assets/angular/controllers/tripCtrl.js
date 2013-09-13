@@ -82,4 +82,5 @@ function tripCtrl($scope, $http) {
 			}
 		}
 	});
+
 }             

@@ -333,7 +333,7 @@ function userCtrl($scope) {
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
-		
+		$scope.startlocation=trip.start_location
 		console.log("cargo er " + trip.cargo);
 	 
 		if (!window.openDatabase) {
@@ -351,7 +351,7 @@ function userCtrl($scope) {
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
-	 
+	 	$scope.endlocation=trip.end_location
 		if (!window.openDatabase) {
 			alert('Databases are not supported in this browser.');
 			return;

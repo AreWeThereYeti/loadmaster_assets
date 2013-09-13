@@ -9,6 +9,15 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
+
+	.directive('ngTrip', function() {
+	    return {
+		    controller:tripCtrl,
+		    link:function(scope,element,attrs){
+			}
+		}
+	})
+
 	
 	.directive('ngMapStart', function() {
 	    return {
@@ -24,6 +33,7 @@ angular.module('loadmaster', [])
 							scope.startWatchPosition()
 						}else{
 							scope.initialize();
+							scope.startWatchPosition()
 						}
 						scope.addMarkerToMap(latitude, longitude)
 						scope.$emit(scope.map_set_position, [latitude, longitude]);
@@ -49,12 +59,34 @@ angular.module('loadmaster', [])
 							scope.startWatchPosition()
 						}else{
 							scope.initialize();
+							scope.startWatchPosition()
 						}
 						scope.addMarkerToMap(latitude, longitude)
 						scope.$emit(scope.map_set_position, [latitude, longitude]);
 					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
 				} )
+				$('.gpsnotfound').trigger("create");
+			}
+		};
+	})
+	.directive('ngMapFinish', function() {
+	    return {
+	    replace: true,
+	    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_finish.html',
+	    link:function(scope,element,attrs){
+	    	var geo_el = document.getElementById('geoTemp');
+			$('geoTemp').html('Ready...')
+	    	scope.map_id="map_canvas_finish"
+	    	$('#three').bind( "pageshow", function( event ) {
+	    		if(!!scope.startlocation && !!scope.endlocation){
+		    		scope.initialize();
+		    		scope.savebounds = true;
+		    		scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
+		    		scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);	
+		    		scope.centerOnMarkers();    		
+	    		}
 			$('.gpsnotfound').trigger("create");
-	    }
-	};
-});
+			})
+		}
+	}
+})
