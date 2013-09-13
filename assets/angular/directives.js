@@ -9,6 +9,7 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
+	
 	.directive('ngMapStart', function() {
 	    return {
 		    replace: true,
