@@ -195,7 +195,11 @@ function userCtrl($scope) {
 
 				else if(msg.status == 401){
 					$scope.resetAccessToken()
-				}					
+				}	
+				
+				else if(msg.status == 404){
+					console.log("404 error ")				
+					}						
 			}
 		});
 	};

@@ -11,16 +11,24 @@ angular.module('loadmaster', [])
 	})
 	.directive('ngMapStart', function() {
 	    return {
-	    replace: true,
-	    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_start.html',
-	    controller:mapCtrl,
-	    link:function(scope,element,attrs){
-	    	scope.map_id="map_canvas_start"
-			scope.map_set_position="setstart_location"
-			$('#home').bind( "pageshow", function( event ) { 
-				scope.initialize();
-			} )
-			$('.gpsnotfound').trigger("create");
+		    replace: true,
+		    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_start.html',
+		    controller:mapCtrl,
+		    link:function(scope,element,attrs){
+		    	scope.map_id="map_canvas_start"
+				scope.map_set_position="setstart_location"
+				$('#home').bind( "pageshow", function( event ) {
+					navigator.geolocation.getCurrentPosition(function( latitude, longitude ){
+						if(!!scope.map){
+							scope.startWatchPosition()
+						}else{
+							scope.initialize();
+						}
+						
+					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
+				})
+				$('.gpsnotfound').trigger("create");
+	
 			}
 		}
 	})
@@ -34,7 +42,13 @@ angular.module('loadmaster', [])
 	    	scope.map_id="map_canvas_end"
 	    	scope.map_set_position="setend_location"
 	    	$('#two').bind( "pageshow", function( event ) {
-				scope.initialize()	
+					navigator.geolocation.getCurrentPosition(function( latitude, longitude ){
+						if(!!scope.map){
+							scope.startWatchPosition()
+						}else{
+							scope.initialize();
+						}
+					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
 				} )
 			$('.gpsnotfound').trigger("create");
 	    }
