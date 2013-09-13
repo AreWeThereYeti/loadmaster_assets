@@ -7,7 +7,6 @@ angular.module("loadmaster",[])
 /* User controller with angularjs */
 function userCtrl($scope) {
 
-	$scope.IS_MOBILE=true
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
 	
@@ -196,11 +195,7 @@ function userCtrl($scope) {
 
 				else if(msg.status == 401){
 					$scope.resetAccessToken()
-				}	
-				
-				else if(msg.status == 404){
-					console.log("404 error ")				
-					}						
+				}					
 			}
 		});
 	};

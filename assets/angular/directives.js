@@ -24,7 +24,8 @@ angular.module('loadmaster', [])
 						}else{
 							scope.initialize();
 						}
-						
+						scope.addMarkerToMap(latitude, longitude)
+						scope.$emit(scope.map_set_position, [latitude, longitude]);
 					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
 				})
 				$('.gpsnotfound').trigger("create");
@@ -48,6 +49,8 @@ angular.module('loadmaster', [])
 						}else{
 							scope.initialize();
 						}
+						scope.addMarkerToMap(latitude, longitude)
+						scope.$emit(scope.map_set_position, [latitude, longitude]);
 					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
 				} )
 			$('.gpsnotfound').trigger("create");

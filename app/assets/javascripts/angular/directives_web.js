@@ -42,11 +42,11 @@ angular.module('loadmaster', [])
 				scope.initialize()
 				if(!!scope.start_location){
 					var lat_lon=scope.start_location.split(',')
-					scope.start_marker=scope.addMarkerToMap(lat_lon[0],lat_lon[1])
+					scope.drawMarker(lat_lon[0],lat_lon[1])
 				}
 				if(!!scope.end_location){
 					var lat_lon=scope.end_location.split(',')
-					scope.start_marker=scope.addMarkerToMap(lat_lon[0],lat_lon[1])
+					scope.drawMarker(lat_lon[0],lat_lon[1])
 				}
 				scope.centerOnMarkers()
 	   	}
