@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = LoadmasterAssets::VERSION
   s.authors     = ["Andreas Sprotte","Mikkel Markvardsen"]
   s.email       = ["andreas@sprotte.dk"]
-  s.homepage    = "www.asprotte.com"
+  s.homepage    = "http://www.asprotte.com"
   s.summary     = "assets"
   s.description = "assets for loadmaster logger mobile and web applications"
 
