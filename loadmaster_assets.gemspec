@@ -4,3 +4,4 @@ Gem::Specification.new do |s|
   s.version     = LoadmaterAssest::VERSION
   s.authors     = ["Andreas Sprotte","Mikkel Markvardsen"]
   s.email       = ["andreas@sprotte.dk"]
+end
