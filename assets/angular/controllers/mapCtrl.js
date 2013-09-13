@@ -93,7 +93,6 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.refreshMap = function(){
-		window.the_scope=$scope
 		setTimeout(function(){ 
 			google.maps.event.trigger($scope.map, 'resize'); 
 			$scope.centerOnMarkers()
@@ -104,4 +103,11 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.refreshMap()
 	})
 	
+	$scope.autoCompleteInput = function(input){
+		var autocompleteInput = new google.maps.places.Autocomplete(input);
+		google.maps.event.addListener(autocompleteInput, 'place_changed', function(ev) {
+			ev.preventDefault()
+			ev.stopImmediatePropagation()
+		})
+	}
 }

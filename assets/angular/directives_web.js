@@ -36,7 +36,9 @@ angular.module('loadmaster', [])
 	   	controller:'mapCtrl',
 			scope:{
 				start_location:'=start',
-				end_location:'=end'
+				end_location:'=end',
+				start_input_id:'=startinputid',
+				end_input_id:'=endinputid'
 			},
 	   	link:function(scope,element,attrs){
 				scope.initialize()
@@ -47,6 +49,12 @@ angular.module('loadmaster', [])
 				if(!!scope.end_location){
 					var lat_lon=scope.end_location.split(',')
 					scope.start_marker=scope.addMarkerToMap(lat_lon[0],lat_lon[1])
+				}
+				if(!!scope.start_input_id){
+					scope.autoCompleteInput($('#'+scope.start_input_id)[0])
+				}
+				if(!!scope.end_input_id){
+					scope.autoCompleteInput($('#'+scope.end_input_id)[0])
 				}
 				scope.centerOnMarkers()
 	   	}
