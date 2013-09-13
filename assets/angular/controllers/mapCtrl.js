@@ -26,7 +26,7 @@ function mapCtrl($scope,$element,$attrs) {
 				position: new google.maps.LatLng(latitude,longitude),
 			title: (label || "")
 		});
-		$scope.bounds.extend(markerPosition)
+/* 		$scope.bounds.extend(markerPosition) */
 		return(marker);
 	}
 	

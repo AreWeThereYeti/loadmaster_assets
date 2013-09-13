@@ -12,7 +12,7 @@ angular.module('loadmaster', [])
 	.directive('ngMapStart', function() {
 	    return {
 	    replace: true,
-	    templateUrl: '../www/js/angular/templates/map_start.html',
+	    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_start.html',
 	    controller:mapCtrl,
 	    link:function(scope,element,attrs){
 	    	scope.map_id="map_canvas_start"
@@ -27,7 +27,7 @@ angular.module('loadmaster', [])
 	.directive('ngMapEnd', function() {
 	    return {
 	    replace: true,
-	    templateUrl: '../www/js/angular/templates/map_end.html',
+	    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_end.html',
 	    link:function(scope,element,attrs){
 	    	var geo_el = document.getElementById('geoTemp');
 			$('geoTemp').html('Ready...')
