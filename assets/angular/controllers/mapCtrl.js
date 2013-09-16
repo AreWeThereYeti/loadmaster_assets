@@ -71,7 +71,7 @@ function mapCtrl($scope,$element,$attrs) {
 		}, $scope.errorHandler, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
 		
 		setTimeout(function(){
-			navigator.geolocation.clearWatch( positionTimer );
+			navigator.geolocation.clearWatch( $scope.positionTimer );
 			}, (1000 * 60 * 5)
 		);	
 	}

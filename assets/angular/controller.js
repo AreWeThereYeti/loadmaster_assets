@@ -79,14 +79,12 @@ function userCtrl($scope) {
 	/* check Connection */
 	$scope.checkConnection = function(){
 		console.log("Checking connection");
-		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.WIFI){
+		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.UNKNOWN){
 			console.log('Unknown connection');
-			
-/* 			move this to only trigger if connection is found */
+		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI){
+			console.log("Found connection. Checking if database is empty ")
 			$scope.isDatabaseEmpty();
 
-		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G){
-			console.log("Found connection. Checking if database is empty ")
 		}
 	}
 	
@@ -236,8 +234,6 @@ function userCtrl($scope) {
 		 if(!$scope.db){
 			$scope.db = openDatabase($scope.shortName, $scope.version, $scope.displayName, $scope.maxSize);
 		}	
-			
-		 
 		if (!window.openDatabase) {
 			alert('Databases are not supported in this browser.');
 			return;

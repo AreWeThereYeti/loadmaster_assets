@@ -6,7 +6,7 @@ function tripCtrl($scope, $http) {
 		$scope.AddStartValuesToDB({
 			license_plate	:	$scope.license_plate,
 			cargo			:	$scope.cargo,
-			start_timestamp	:	Math.round(+new Date()/1000),
+			start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 			start_location	:	$scope.start_location,
 			start_address	:	$scope.start_address,
 			start_comments	:	$scope.start_comments
@@ -22,7 +22,7 @@ function tripCtrl($scope, $http) {
 		
 	$scope.submit_end = function($event) {
 		$scope.AddEndValuesToDB({
-			end_timestamp 	:	Math.round(+new Date()/1000),
+			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 			end_location	:	$scope.end_location,
 			end_address		:	$scope.end_address,
 			end_comments	:	$scope.end_comments
