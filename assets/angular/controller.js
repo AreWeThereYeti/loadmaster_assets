@@ -42,7 +42,6 @@ function userCtrl($scope) {
 					}, false);
 				scope.checkConnection();
 			  	})	
-				console.log("firing checkConnection")
 			}, 5000);	
 	}
 	
@@ -56,8 +55,6 @@ function userCtrl($scope) {
 			return;
 		}
 		
-		console.log("is access token in database?")
-		
 		$scope.db.transaction(function (tx){
 			tx.executeSql('SELECT * FROM Auth', [], function (tx, result){  // Fetch records from SQLite
 				var dataset = result.rows; 
@@ -65,12 +62,9 @@ function userCtrl($scope) {
 					$.mobile.changePage("#tokencontainer");
 				}
 				else if(!!dataset.length){
-					console.log("dataset item 1 " + dataset.item(0).imei)
 					$scope.access_token = dataset.item(0).access_token;
 					$scope.imei = dataset.item(0).imei;
-
 					$.mobile.changePage("#home");
-					console.log("access token " + $scope.access_token + "og imei er " + $scope.imei);
 				}
 			});
 		});	
@@ -78,13 +72,12 @@ function userCtrl($scope) {
 		
 	/* check Connection */
 	$scope.checkConnection = function(){
-		console.log("Checking connection");
-		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.UNKNOWN){
-			console.log('Unknown connection');
-		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI){
-			console.log("Found connection. Checking if database is empty ")
-			$scope.isDatabaseEmpty();
-
+		if(!!Connection && Connection.UNKNOWN && !!navigator.connection && !!navigator.type){
+			if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.UNKNOWN){
+			} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI){
+				console.log("Found connection. Checking if database is empty ")
+				$scope.isDatabaseEmpty();
+			}
 		}
 	}
 	
@@ -108,14 +101,10 @@ function userCtrl($scope) {
 		         var dataset = results.rows;
 		         if (dataset.length == 0){
 			        numberOfRows = results.rows.length;
-					console.log("table has "+results.rows.length+" rows. returning "+ numberOfRows);
 		         }else if (dataset.length > 0){
-			        console.log("Dataset is bigger than 0")
 			        var item = dataset.item(0)
 					if (item['_is_finished'] == undefined) {                               
-						console.log("first trip is not done")
 			        } else if(item['_is_finished'] == 1) {
-			        	console.log("first trip is finished. Syncing to database")
 				        $scope.syncToDatabase();
 			        }   
 		         }

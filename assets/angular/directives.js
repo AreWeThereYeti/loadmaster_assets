@@ -20,27 +20,34 @@ angular.module('loadmaster', [])
 
 	
 	.directive('ngMapStart', function() {
-	    return {
-		    replace: true,
-		    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_start.html',
-		    controller:mapCtrl,
-		    link:function(scope,element,attrs){
-		    	scope.map_id="map_canvas_start"
+    return {
+	    replace: true,
+	    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_start.html',
+	    controller:mapCtrl,
+	    link:function(scope,element,attrs){
+	    	scope.map_id="map_canvas_start"
 				scope.map_set_position="setstart_location"
 				$('#home').bind( "pageshow", function( event ) {
-					navigator.geolocation.getCurrentPosition(function( latitude, longitude ){
-						if(!!scope.map){
-							scope.startWatchPosition()
-						}else{
-							scope.initialize();
-							scope.startWatchPosition()
-						}
-						scope.addMarkerToMap(latitude, longitude)
-						scope.$emit(scope.map_set_position, [latitude, longitude]);
-					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
+					navigator.geolocation.getCurrentPosition(function(latitude, longitude){
+							if(!!scope.map){
+								scope.startWatchPosition()
+							}else{
+								scope.initialize();
+								scope.startWatchPosition()
+							}
+							scope.addMarkerToMap(latitude, longitude)
+							scope.$emit(scope.map_set_position, [latitude, longitude]);
+							scope.gps_found=true
+						}, 	function(errCode){
+							scope.gps_found=false
+						}, 
+						{maximumAge: 3000, timeout: 10000, enableHighAccuracy: true}
+					);
 				})
+				setTimeout(function(){ 
+					scope.gps_found=false
+				}, 10000)
 				$('.gpsnotfound').trigger("create");
-	
 			}
 		}
 	})
@@ -63,8 +70,16 @@ angular.module('loadmaster', [])
 						}
 						scope.addMarkerToMap(latitude, longitude)
 						scope.$emit(scope.map_set_position, [latitude, longitude]);
-					}, scope.errorHandler, {maximumAge: 3000, timeout: 10000, enableHighAccuracy: true})
-				} )
+						},	
+						function(errCode){
+							scope.gps_found=false
+						}, 
+						{maximumAge: 3000, timeout: 10000, enableHighAccuracy: true}
+					)
+				})
+				setTimeout(function(){ 
+					scope.gps_found=false
+				}, 10000)
 				$('.gpsnotfound').trigger("create");
 			}
 		};
