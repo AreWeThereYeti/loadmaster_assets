@@ -139,10 +139,15 @@ function userCtrl($scope) {
 			$.mobile.changePage('#two')
 		}else{
 			/* 	Deletes synced rows from trips table */
-			$scope.db.transaction(function(transaction) {
-				transaction.executeSql('DELETE FROM Trip WHERE id = (SELECT MAX(Id) from Trip)');
-				},function error(err){alert('error deleting from database ' + err)}, function success(){}
-			);
+			var confirm=window.confirm('Er du sikker? Din uafsluttede tur vil blive slettet hvis du trykker ok. Tryk cancel for at fortsætte turen')
+			if(confirm){
+				$scope.db.transaction(function(transaction) {
+					transaction.executeSql('DELETE FROM Trip WHERE id = (SELECT MAX(Id) from Trip)');
+					},function error(err){alert('error deleting from database ' + err)}, function success(){}
+				);
+			}else{
+				$.mobile.changePage('#two')
+			}
 		}
 	} 
 	
