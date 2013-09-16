@@ -27,36 +27,56 @@ angular.module('loadmaster', [])
         id:"=tripid"
       },
 	   	link:function(scope,element,attrs){
-				console.log('made trip list item with id: ' + scope.id)
 	   	}
 		}
 	})
-	.directive('ngMap',function(){
+	.directive('ngUiMap',function(){
    	return {
 	   	controller:'mapCtrl',
 			scope:{
-				start_location:'=start',
-				end_location:'=end',
 				start_input_id:'=startinputid',
-				end_input_id:'=endinputid'
+				end_input_id:'=endinputid',
+			},
+	   	link:function(scope,element,attrs){
+				navigator.geolocation.getCurrentPosition(function(position) {
+		      scope.initialize(position.coords.latitude,position.coords.longitude);
+					scope.initUIMap(scope.start_input_id,scope.end_input_id)
+		    }, function() {		//error function
+		      scope.initialize()
+					scope.initUIMap(scope.start_input_id,scope.end_input_id)
+		    });
+
+				if($('#new_trip').is(':visible')){
+					$(document).keydown(function(ev){
+						if(ev.which==13){
+							if(ev.target.id=="trip_start_address" || ev.target.id=="trip_end_address"){
+								ev.preventDefault()
+							}
+						}
+					})
+				}
+	   	}
+		}
+	})
+	.directive('ngStaticMap',function(){
+   	return {
+	   	controller:'mapCtrl',
+			scope:{
+				start_lat:'=startlat',
+				start_lon:'=startlon',
+				end_lat:'=endlat',
+				end_lon:'=endlon',
 			},
 	   	link:function(scope,element,attrs){
 				scope.initialize()
-				if(!!scope.start_location){
-					var lat_lon=scope.start_location.split(',')
-					scope.start_marker=scope.addMarkerToMap(lat_lon[0],lat_lon[1])
+				if(!!scope.start_lat && !!scope.start_lon){
+					scope.start_marker=scope.addMarkerToMap(scope.start_lat,scope.start_lon)
+					scope.centerOnMarkers()
 				}
-				if(!!scope.end_location){
-					var lat_lon=scope.end_location.split(',')
-					scope.start_marker=scope.addMarkerToMap(lat_lon[0],lat_lon[1])
+				if(!!scope.end_lat && !!scope.end_lon){
+					scope.end_marker=scope.addMarkerToMap(scope.end_lat,scope.end_lon)
+					scope.centerOnMarkers()
 				}
-				if(!!scope.start_input_id){
-					scope.autoCompleteInput($('#'+scope.start_input_id)[0])
-				}
-				if(!!scope.end_input_id){
-					scope.autoCompleteInput($('#'+scope.end_input_id)[0])
-				}
-				scope.centerOnMarkers()
 	   	}
 		}
 	})
