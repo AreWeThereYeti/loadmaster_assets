@@ -9,7 +9,6 @@ function mapCtrl($scope,$element,$attrs) {
 		if(!latitude){var latitude=$scope.defaultLat}
 		if(!longitude){var longitude=$scope.defaultLon}
 		$scope.bounds=new google.maps.LatLngBounds()
-		
 		$scope.mapOptions = {
 		  center: new google.maps.LatLng(latitude, longitude), //Får ikke et coordinat til at starte med så viser grå skærm
 		  zoom: 12,
@@ -23,10 +22,8 @@ function mapCtrl($scope,$element,$attrs) {
 		  mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		
-		
 		if($scope.IS_MOBILE){
 			$scope.map = new google.maps.Map(document.getElementById($scope.map_id), $scope.mapOptions);    
-			$scope.startWatchPosition()
 		}else{
 			$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);    
 		}
@@ -50,7 +47,7 @@ function mapCtrl($scope,$element,$attrs) {
 		if(!latitude){var latitude=55.724355}
 		if(!longitude){var longitude=12.268982}
 		var markerPosition = new google.maps.LatLng(latitude, longitude)
-		if(!$scope.IS_MOBILE){
+		if(!$scope.IS_MOBILE || $scope.savebounds){
 			$scope.bounds.extend(markerPosition)
 		}
 		var marker = new google.maps.Marker({
@@ -59,7 +56,6 @@ function mapCtrl($scope,$element,$attrs) {
 			position: markerPosition,
 			title: (label || "")
 		});
-
 		return(marker);
 	}
 	
@@ -94,11 +90,17 @@ function mapCtrl($scope,$element,$attrs) {
 			}
 			$scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
 			$scope.$emit($scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
-		});
+		}, $scope.errorHandler, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
+		
 		setTimeout(function(){
-			navigator.geolocation.clearWatch( positionTimer );
+			navigator.geolocation.clearWatch( $scope.positionTimer );
 			}, (1000 * 60 * 5)
 		);	
+	}
+
+	$scope.errorHandler = function(){
+		$scope.gpsNotFound();
+		console.log("an error occured")
 	}
 
 	$scope.gpsStateUndefined = function(){
