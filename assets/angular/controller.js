@@ -134,9 +134,20 @@ function userCtrl($scope) {
 	}
 	
 	$scope.promptUnfinishedTrip = function(){
-		var confirm=window.confirm('Du har en uafsluttet tur. Vil du afslutte/fortsætte din tur?? Hvis du trykker cancel, vil din uafsluttede tur blive slettet.')
+		var confirm=window.confirm('Du har en uafsluttet tur. Vil du fortsætte din tur?? Hvis du trykker cancel, vil din uafsluttede tur blive slettet.')
 		if(confirm){
 			$.mobile.changePage('#two')
+		}else{
+			/* 	Deletes synced rows from trips table */
+			var confirm=window.confirm('Er du sikker? Din uafsluttede tur vil blive slettet hvis du trykker ok. Tryk cancel for at fortsætte turen')
+			if(confirm){
+				$scope.db.transaction(function(transaction) {
+					transaction.executeSql('DELETE FROM Trip WHERE id = (SELECT MAX(Id) from Trip)');
+					},function error(err){alert('error deleting from database ' + err)}, function success(){}
+				);
+			}else{
+				$.mobile.changePage('#two')
+			}
 		}
 	} 
 	
@@ -263,12 +274,12 @@ function userCtrl($scope) {
 		}	
 		 		 
 		/* 	Deletes synced rows from trips table */
-			$scope.db.transaction(function(transaction) {
-				transaction.executeSql('DELETE FROM Trip WHERE id <> *', [err_ids]);
-				},function error(err){alert('error deleting from database ' + err)}, function success(){}
-			);
-			return false;
-		}	
+		$scope.db.transaction(function(transaction) {
+			transaction.executeSql('DELETE FROM Trip WHERE id <> *', [err_ids]);
+			},function error(err){alert('error deleting from database ' + err)}, function success(){}
+		);
+		return false;
+	}	
 	
 		/* 	Starting new trip*/
 	$scope.submitStartNewTrip = function($event){
