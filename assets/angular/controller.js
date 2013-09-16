@@ -66,15 +66,15 @@ function userCtrl($scope) {
 			});
 		});	
 	}
-		
+	
 	/* check Connection */
 	$scope.checkConnection = function(){
-		if(!!Connection && Connection.UNKNOWN && !!navigator.connection && !!navigator.type){
-			if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.UNKNOWN){
-			} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI){
-				console.log("Found connection. Checking if database is empty ")
-				$scope.isDatabaseEmpty();
-			}
+		console.log("Checking connection");
+		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
+			console.log('Unknown connection');
+		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+			console.log("Found connection. Checking if database is empty ")
+			$scope.isDatabaseEmpty();
 		}
 	}
 	
