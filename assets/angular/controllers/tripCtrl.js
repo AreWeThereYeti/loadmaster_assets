@@ -50,13 +50,17 @@ function tripCtrl($scope, $http) {
 		if($("#home").is(':visible')){
 			if(!!$scope.license_plate && !!$scope.cargo && $scope.license_plate != "0" && $scope.cargo != "0"){
 				if(!!$scope.start_location || (!!$scope.start_address && $scope.start_address !="")){
-					$("#submit_start").button("enable");
-					$("#submit_start").button("refresh");			
+					if($("#submit_start").is(':visible')  && !!$("#submit_start")[0]){
+						$("#submit_start")[0].button("enable");
+						$("#submit_start")[0].button("refresh");			
+					}
 				}
 			}
 			else if($scope.license_plate === "0" || $scope.cargo === "0" || $scope.license_plate == null || $scope.cargo == null || $scope.license_plate == undefined || $scope.cargo == undefined) {
-					$("#submit_start").button("disable");
-					$("#submit_start").button("refresh");		
+				if($("#submit_start").is(':visible') && !!$("#submit_start")[0]){
+					$("#submit_start")[0].button("disable");
+					$("#submit_start")[0].button("refresh");
+				}
 			}
 		}			
 	});
