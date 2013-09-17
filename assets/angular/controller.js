@@ -29,7 +29,6 @@ function userCtrl($scope) {
 		$scope.isAccessTokenInDatabase()
 		$scope.checkLastTripFinished()
 		$scope.checkLengthOfDatabase()
-
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
 		$.mobile.defaultPageTransition   = 'none';
