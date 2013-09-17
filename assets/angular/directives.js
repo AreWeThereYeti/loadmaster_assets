@@ -31,6 +31,7 @@ angular.module('loadmaster', [])
 					scope.initialize();
 					scope.startWatchPosition()
 				})
+				$('.gpsnotfound').trigger("create");
 			}
 		}
 	})
@@ -47,6 +48,7 @@ angular.module('loadmaster', [])
 					scope.initialize();
 					scope.startWatchPosition()
 				})
+				$('.gpsnotfound').trigger("create");
 			}
 		};
 	})
