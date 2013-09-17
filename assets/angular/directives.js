@@ -30,20 +30,9 @@ angular.module('loadmaster', [])
 				$('#home').bind( "pageshow", function( event ) {
 					scope.initialize();
 					scope.startWatchPosition()
-					navigator.geolocation.getCurrentPosition(function(latitude, longitude){
-							scope.addMarkerToMap(latitude, longitude)
-							scope.$emit(scope.map_set_position, [latitude, longitude]);
-							scope.gps_found=true
-						}, 	function(errCode){
-							scope.gps_found=false
-							$('.gpsnotfound').trigger("create");
-						}, 
-						{maximumAge: 3000, timeout: 10000, enableHighAccuracy: true}
-					);
-					// setTimeout(function(){ 
-					// 	scope.gps_found=false
-					// }, 10000)
-					
+					setInterval(function(){
+						scope.drawCurrentPosition()
+					}, 5000);
 				})
 			}
 		}
