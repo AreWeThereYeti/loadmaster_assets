@@ -41,7 +41,7 @@ angular.module('loadmaster', [])
 	    link:function(scope,element,attrs){
 	    	var geo_el = document.getElementById('geoTemp');
 				$('geoTemp').html('Ready...')
-	    	scope.map_id="map_canvas_end"
+	    	scope.map_id="map-container"
 	    	scope.map_set_position="setend_location"
 	    	$('#two').bind( "pageshow", function( event ) {
 					scope.initialize();

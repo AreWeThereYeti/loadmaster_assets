@@ -86,14 +86,12 @@ function mapCtrl($scope,$element,$attrs) {
 					scope.addMarkerToMap(latitude, longitude)
 					scope.$emit(scope.map_set_position, [latitude, longitude]);
 					scope.gps_found=true;
-					scope.gps_not_found=false;
 				})
 			},
 			function(errCode){
 				$scope.$apply(function(scope){
 					alert('failed getting current position from getCurrentPosition')
 					scope.gps_found=false;
-					scope.gps_not_found=true;
 					$('.gpsnotfound').trigger("create");
 				})
 			}, 
@@ -111,7 +109,12 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 		$scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
 		$scope.$emit($scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
-		$scope.gps_not_found=true;
+		window.map_scope=$scope
+		var markerPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+		var bounds=new google.maps.LatLngBounds()
+		bounds.extend(markerPosition)
+		$scope.gps_found=true;
+		$scope.refreshMap(bounds)
 	}
 
 	
@@ -121,7 +124,7 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.gps_found=true;
 		},function(){
 			console.log('failed getting current position from watchPosition')
-			$scope.gps_not_found=true;
+			$scope.gps_found=false;
 		}, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
 	}
 
@@ -134,14 +137,20 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.gpsNotFound = function(){
-		return $scope.gps_not_found;
+		return $scope.gps_found==false;
+	}
+	
+	$scope.refreshMapNoCenter = function(){
+		setTimeout(function(){ 
+			google.maps.event.trigger($scope.map, 'resize'); 
+		}, 20)
 	}
 	
 	$scope.refreshMap = function(){
 		setTimeout(function(){ 
 			google.maps.event.trigger($scope.map, 'resize'); 
 			$scope.centerOnMarkers()
-		}, 20)
+		}, 40)
 	}
 	
 	$scope.$on('resfreshMap',function(){

@@ -1,10 +1,9 @@
 <div id="map_canvas_end">
    <p id="geoTemp"></p>			
-	<div ng-show="gpsStateUndefined()" class="vertical_align">
-		<span class="searching"></span><h2>Søger efter GPS signal</h2>
-	</div>
-	<div ng-show="gpsFound()">
-		GPS fundet
+  <!-- <div ng-show="gpsStateUndefined()" class="vertical_align">
+    <span class="searching"></span><h2>Søger efter GPS signal</h2>
+  </div> -->
+	<div id="map-container" ng-hide="gpsNotFound()">
 	</div>
 	<div ng-show="gpsNotFound()" class="gpsnotfound">
 		<h2 class="vertical_align">Vi kunne ikke finde gps. Indtast adresse manuelt</h2>
