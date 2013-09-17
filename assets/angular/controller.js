@@ -11,6 +11,9 @@ function userCtrl($scope) {
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
 	
+	$scope.numberOfRows;
+	window.nr = $scope.numberOfRows;
+	
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
@@ -85,14 +88,13 @@ function userCtrl($scope) {
 			$scope.createNewDB()
 		}	
 		
-		var numberOfRows;
 
 		query = "SELECT * FROM Trip;";
 		$scope.db.transaction(function(transaction){
 	         transaction.executeSql(query, [], function(tx, results){
 		         var dataset = results.rows;
 		         if (dataset.length == 0){
-			        numberOfRows = results.rows.length;
+			        $scope.numberOfRows = results.rows.length;
 		         }else if (dataset.length > 0){
 			        var item = dataset.item(0)
 					if (item['_is_finished'] == undefined) {                               
@@ -102,7 +104,7 @@ function userCtrl($scope) {
 		         }
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
-		return numberOfRows;
+		$scope.$emit('someEvent', $scope.numberOfRows);
 	}
 	
 	$scope.createNewDB = function(){

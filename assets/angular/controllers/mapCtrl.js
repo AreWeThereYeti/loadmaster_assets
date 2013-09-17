@@ -10,7 +10,7 @@ function mapCtrl($scope,$element,$attrs) {
 		if(!longitude){var longitude=$scope.defaultLon}
 		$scope.bounds=new google.maps.LatLngBounds()
 		$scope.mapOptions = {
-		  center: new google.maps.LatLng(latitude, longitude), //Får ikke et coordinat til at starte med så viser grå skærm
+		  center: new google.maps.LatLng(latitude, longitude),
 		  zoom: 12,
 		  streetViewControl: false,
 		  zoomControl: true,
