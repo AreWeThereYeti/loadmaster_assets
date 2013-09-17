@@ -15,14 +15,10 @@ function userCtrl($scope) {
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
-	$scope.host = 'http://195.231.85.191:5000';
+	//$scope.host = 'http://195.231.85.191:5000';
+	$scope.host = 'http://localhost:3000';
 
 	$scope.init = function(){
-/* 		debugging function */
-
-/* 		$scope.dropTables(); */
-
-/* 		End of debugging functions */
 		$scope.initializeDB()
 		$scope.isAccessTokenInDatabase()
 		$scope.checkLastTripFinished()
