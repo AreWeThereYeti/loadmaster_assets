@@ -112,7 +112,7 @@ function mapCtrl($scope,$element,$attrs) {
 						"Initial Position"
 					);
 				}
-				scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
+				scope.updateMarker(scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
 				scope.$emit(scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
 			})
 		},function(){
