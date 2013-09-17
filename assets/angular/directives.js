@@ -30,9 +30,9 @@ angular.module('loadmaster', [])
 				$('#home').bind( "pageshow", function( event ) {
 					scope.initialize();
 					scope.startWatchPosition()
-					setInterval(function(){
-						scope.drawCurrentPosition()
-					}, 5000);
+					// setInterval(function(){
+					// 	scope.drawCurrentPosition()
+					// }, 5000);
 				})
 			}
 		}
