@@ -11,6 +11,8 @@ function userCtrl($scope) {
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
 	
+	$scope.numberOfRows;
+	
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
@@ -22,6 +24,8 @@ function userCtrl($scope) {
 		$scope.initializeDB()
 		$scope.isAccessTokenInDatabase()
 		$scope.checkLastTripFinished()
+		$scope.checkLengthOfDatabase()
+
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
 		$.mobile.defaultPageTransition   = 'none';
@@ -81,14 +85,14 @@ function userCtrl($scope) {
 			$scope.createNewDB()
 		}	
 		
-		var numberOfRows;
-
 		query = "SELECT * FROM Trip;";
 		$scope.db.transaction(function(transaction){
 	         transaction.executeSql(query, [], function(tx, results){
 		         var dataset = results.rows;
 		         if (dataset.length == 0){
-			        numberOfRows = results.rows.length;
+			        $scope.numberOfRows = results.rows.length;
+	        		console.log($scope.numberOfRows)
+
 		         }else if (dataset.length > 0){
 			        var item = dataset.item(0)
 					if (item['_is_finished'] == undefined) {                               
@@ -98,7 +102,8 @@ function userCtrl($scope) {
 		         }
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
-		return numberOfRows;
+		console.log($scope.numberOfRows)
+		$scope.$emit('rows', $scope.numberOfRows);
 	}
 	
 	$scope.createNewDB = function(){
@@ -353,6 +358,34 @@ function userCtrl($scope) {
 		);
 		return false;
 	}
+	
+	
+	$scope.checkLengthOfDatabase = function() {
+		if(!$scope.db){
+			$scope.createNewDB()
+		}	
+		
+		query = "SELECT * FROM Trip;";
+		$scope.db.transaction(function(transaction){
+	         transaction.executeSql(query, [], function(tx, results){
+		        $scope.numberOfRows = results.rows.length;
+        		console.log($scope.numberOfRows) 
+	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
+		});
+	}
+	
+	
+	
+	$scope.$watch("numberOfRows", function () {
+		console.log($scope.numberOfRows)
+		if($scope.numberOfRows == undefined)
+		{
+			return false
+		}
+		else if($scope.numberOfRows > 0){
+			$("div.database").html( "<span>Antal ture i databasen : </spam>" + $scope.numberOfRows );
+		}
+	})
 	
 	
 /* DEBUGGING functions */
