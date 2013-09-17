@@ -51,6 +51,7 @@ function tripCtrl($scope, $http) {
 			if(!!$scope.license_plate && !!$scope.cargo && $scope.license_plate != "0" && $scope.cargo != "0"){
 				if(!!$scope.start_location || (!!$scope.start_address && $scope.start_address !="")){
 					if($("#submit_start").is(':visible')  && !!$("#submit_start")[0]){
+						console.log("Kører ikke")
 						$("#submit_start")[0].button("enable");
 						$("#submit_start")[0].button("refresh");			
 					}
