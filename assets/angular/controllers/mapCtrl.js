@@ -10,7 +10,7 @@ function mapCtrl($scope,$element,$attrs) {
 		if(!longitude){var longitude=$scope.defaultLon}
 		$scope.bounds=new google.maps.LatLngBounds()
 		$scope.mapOptions = {
-		  center: new google.maps.LatLng(latitude, longitude),
+		  center: new google.maps.LatLng(latitude, longitude), //Får ikke et coordinat til at starte med så viser grå skærm
 		  zoom: 12,
 		  streetViewControl: false,
 		  zoomControl: true,
@@ -79,49 +79,28 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 	}
 	
-	$scope.drawCurrentPosition =function(){
-		navigator.geolocation.getCurrentPosition(
-			function(latitude, longitude){
-				$scope.$apply(function(scope){
-					alert('getting current position from getCurrentPosition')
-					scope.addMarkerToMap(latitude, longitude)
-					scope.$emit(scope.map_set_position, [latitude, longitude]);
-					scope.gps_found=true
-				})
-			},
-			function(errCode){
-				$scope.$apply(function(scope){
-					alert('failed getting current position from getCurrentPosition')
-					scope.gps_found=false
-					$('.gpsnotfound').trigger("create");
-				})
-			}, 
-			{timeout: 5000}
-		);
-	}
-
-	
 	$scope.startWatchPosition = function(){
 		$scope.positionTimer = navigator.geolocation.watchPosition(function( position ){
-			alert('getting current position from watchPosition')
-			$scope.$apply(function(scope){
-				if(!scope.locationMarker){
-					scope.locationMarker = scope.addMarkerToMap(
-						position.coords.latitude,
-						position.coords.longitude,
-						"Initial Position"
-					);
-				}
-				scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
-				scope.$emit(scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
-			})
-		},function(){
-			alert('failed getting current position from watchPosition')
-			$scope.$apply(function(scope){
-				scope.gps_found=false;
-			})
-			console.log("an error occured")
-		}, { maximumAge: 3000, timeout: 5000});
+			if(!$scope.locationMarker){
+				$scope.locationMarker = $scope.addMarkerToMap(
+					position.coords.latitude,
+					position.coords.longitude,
+					"Initial Position"
+				);
+			}
+			$scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
+			$scope.$emit($scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
+		}, $scope.errorHandler, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
+		
+		setTimeout(function(){
+			navigator.geolocation.clearWatch( $scope.positionTimer );
+			}, (1000 * 60 * 5)
+		);	
+	}
+
+	$scope.errorHandler = function(){
+		$scope.gpsNotFound();
+		console.log("an error occured")
 	}
 
 	$scope.gpsStateUndefined = function(){
