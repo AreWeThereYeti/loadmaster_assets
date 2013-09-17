@@ -109,12 +109,12 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 		$scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
 		$scope.$emit($scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
-		window.map_scope=$scope
-		var markerPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
-		var bounds=new google.maps.LatLngBounds()
-		bounds.extend(markerPosition)
-		$scope.gps_found=true;
-		$scope.refreshMap(bounds)
+		// window.map_scope=$scope
+		// var markerPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+		// var bounds=new google.maps.LatLngBounds()
+		// bounds.extend(markerPosition)
+		// $scope.gps_found=true;
+		// $scope.refreshMap(bounds)
 	}
 
 	
