@@ -42,7 +42,7 @@ angular.module('loadmaster', [])
 	    link:function(scope,element,attrs){
 	    	var geo_el = document.getElementById('geoTemp');
 				$('geoTemp').html('Ready...')
-	    	scope.map_id="map-container"
+	    	scope.map_id="map-container-end"
 	    	scope.map_set_position="setend_location"
 	    	$('#two').bind( "pageshow", function( event ) {
 					scope.initialize();
@@ -58,8 +58,8 @@ angular.module('loadmaster', [])
 	    templateUrl: '../www/loadmaster_assets/assets/angular/templates/map_finish.html',
 	    link:function(scope,element,attrs){
 	    	var geo_el = document.getElementById('geoTemp');
-			$('geoTemp').html('Ready...')
-	    	scope.map_id="map_canvas_finish"
+				$('geoTemp').html('Ready...')
+	    	scope.map_id="map-container-finish"
 	    	$('#three').bind( "pageshow", function( event ) {
 	    		if(!!scope.startlocation && !!scope.endlocation){
 		    		scope.initialize();
@@ -68,8 +68,8 @@ angular.module('loadmaster', [])
 		    		scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);	
 		    		scope.centerOnMarkers();    		
 	    		}
-			$('.gpsnotfound').trigger("create");
-			})
+					$('.gpsnotfound').trigger("create");
+				})
+			}
 		}
-	}
-})
+	})
