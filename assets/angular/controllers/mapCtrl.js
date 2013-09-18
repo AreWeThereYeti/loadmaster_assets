@@ -108,24 +108,27 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 
 	
-	// $scope.startWatchPosition = function(){
-	// 	$scope.positionTimer = navigator.geolocation.watchPosition(function( position ){
-	// 		$scope.updatePosition(position.coords.latitude, position.coords.longitude)
-	// 		$scope.gps_found=true;
-	// 	},function(){
-	// 		console.log('failed getting current position from watchPosition')
-	// 		$scope.gps_found=false;
-	// 	}, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
-	// }
-	
 	$scope.startWatchPosition = function(){
-		$scope.drawCurrentPosition()
-		$scope.watchPositionTimer=setInterval(function(){
+		$scope.positionTimer = navigator.geolocation.watchPosition(function( position ){
 			$scope.$apply(function(){
-				$scope.drawCurrentPosition()
+				$scope.updatePosition(position.coords.latitude, position.coords.longitude)
+				$scope.gps_found=true;
 			})
-		}, 5000);
+		},function(){
+			$scope.$apply(function(){
+				$scope.gps_found=false;
+			})
+		}, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
 	}
+	
+	// $scope.startWatchPosition = function(){
+	// 	$scope.drawCurrentPosition()
+	// 	$scope.watchPositionTimer=setInterval(function(){
+	// 		$scope.$apply(function(){
+	// 			$scope.drawCurrentPosition()
+	// 		})
+	// 	}, 5000);
+	// }
 
 	$scope.$watch('gps_found',function(){
 		if(!$scope.gps_found){
