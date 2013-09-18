@@ -3,6 +3,7 @@ function tripCtrl($scope, $http) {
 
 	/* 	Submit buttons */
 	$scope.submit = function($event) {
+		$event.preventDefault();
 		$scope.AddStartValuesToDB({
 			license_plate	:	$scope.license_plate,
 			cargo			:	$scope.cargo,
@@ -13,24 +14,25 @@ function tripCtrl($scope, $http) {
 		});
 		$scope.license_plate 	= null;
 		$scope.cargo 			= null;
+		$scope.start_location=[null,null];
 		$('#comments_start').val('');
 		$("select").prop("selectedIndex",0);
 		$('select').selectmenu('refresh', true);
-		$event.preventDefault();
 		$.mobile.changePage("#two");
 	};
 		
 	$scope.submit_end = function($event) {
+		$event.preventDefault();
 		$scope.AddEndValuesToDB({
 			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 			end_location	:	$scope.end_location,
 			end_address		:	$scope.end_address,
 			end_comments	:	$scope.end_comments
 		});
+		$scope.end_location=[null,null]
 		$('#comments_end').val(''); 
-		$event.preventDefault();
 		$.mobile.changePage("#three");
-	  $("#submit_end").button("disable");
+		$("#submit_end").button("disable");
 		$("#submit_end").button("refresh");
 		$("#submit_start").button("disable");
 		$("#submit_start").button("refresh");

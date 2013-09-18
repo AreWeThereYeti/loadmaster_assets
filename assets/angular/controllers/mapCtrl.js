@@ -5,6 +5,7 @@ function mapCtrl($scope,$element,$attrs) {
 		
 	/* 			Initialize map */
 	$scope.initialize = function(latitude, longitude,onCurrentLocation) {
+		$scope.gps_found=undefined
 		if(!$scope.map){
 			if(!latitude){var latitude=$scope.defaultLat}
 			if(!longitude){var longitude=$scope.defaultLon}
@@ -194,4 +195,8 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnMarkers(bounds);
 		})
 	}
+	
+	$scope.$on('setGpsFoundFalse',function(){
+		$scope.gps_found=undefined
+	})
 }

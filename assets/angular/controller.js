@@ -283,7 +283,6 @@ function userCtrl($scope) {
 	
 		/* 	Starting new trip*/
 	$scope.submitStartNewTrip = function($event){
-
 		$event.preventDefault();
 		$.mobile.changePage("#home");
 	}
