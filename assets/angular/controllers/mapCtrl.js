@@ -5,27 +5,29 @@ function mapCtrl($scope,$element,$attrs) {
 		
 	/* 			Initialize map */
 	$scope.initialize = function(latitude, longitude,onCurrentLocation) {
+		if(!$scope.map){
+			if(!latitude){var latitude=$scope.defaultLat}
+			if(!longitude){var longitude=$scope.defaultLon}
+			$scope.bounds=new google.maps.LatLngBounds()
+			$scope.mapOptions = {
+			  center: new google.maps.LatLng(latitude, longitude), //Får ikke et coordinat til at starte med så viser grå skærm
+			  zoom: 12,
+			  streetViewControl: false,
+			  zoomControl: true,
+			  zoomControlOptions: {
+			  	style: google.maps.ZoomControlStyle.LARGE
+			  },
+			  maptypecontrol :false,
+			  disableDefaultUI: true,
+			  mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
 		
-		if(!latitude){var latitude=$scope.defaultLat}
-		if(!longitude){var longitude=$scope.defaultLon}
-		$scope.bounds=new google.maps.LatLngBounds()
-		$scope.mapOptions = {
-		  center: new google.maps.LatLng(latitude, longitude), //Får ikke et coordinat til at starte med så viser grå skærm
-		  zoom: 12,
-		  streetViewControl: false,
-		  zoomControl: true,
-		  zoomControlOptions: {
-		  	style: google.maps.ZoomControlStyle.LARGE
-		  },
-		  maptypecontrol :false,
-		  disableDefaultUI: true,
-		  mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
-		
-		if($scope.IS_MOBILE){
-			$scope.map = new google.maps.Map(document.getElementById($scope.map_id), $scope.mapOptions);    
-		}else{
-			$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);    
+			if($scope.IS_MOBILE){
+				$scope.map = new google.maps.Map(document.getElementById($scope.map_id), $scope.mapOptions); 
+				$scope.refreshMapNoCenter()   
+			}else{
+				$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);    
+			}
 		}
 	}
 	
@@ -79,28 +81,49 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 	}
 	
-	$scope.startWatchPosition = function(){
-		$scope.positionTimer = navigator.geolocation.watchPosition(function( position ){
-			if(!$scope.locationMarker){
-				$scope.locationMarker = $scope.addMarkerToMap(
-					position.coords.latitude,
-					position.coords.longitude,
-					"Initial Position"
-				);
-			}
-			$scope.updateMarker($scope.locationMarker, position.coords.latitude, position.coords.longitude, "Updated / Accurate Position");
-			$scope.$emit($scope.map_set_position, [position.coords.latitude, position.coords.longitude]);
-		}, $scope.errorHandler, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
-		
-		setTimeout(function(){
-			navigator.geolocation.clearWatch( $scope.positionTimer );
-			}, (1000 * 60 * 5)
-		);	
+	$scope.drawCurrentPosition =function(){
+		navigator.geolocation.getCurrentPosition(
+			function(position){
+				$scope.$apply(function(){
+					$scope.updatePosition(position.coords.latitude, position.coords.longitude)
+					$scope.gps_found=true;
+				})
+			},
+			function(errCode){
+				$scope.$apply(function(){
+					$scope.gps_found=false;
+				})
+			}, 
+			{timeout: 5000}
+		);
+	}
+	
+	$scope.updatePosition = function(latitude, longitude){
+		if(!$scope.locationMarker){
+			$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
+		}
+		$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+		$scope.$emit($scope.map_set_position, [latitude, longitude]);
 	}
 
-	$scope.errorHandler = function(){
-		$scope.gpsNotFound();
-		console.log("an error occured")
+	
+	// $scope.startWatchPosition = function(){
+	// 	$scope.positionTimer = navigator.geolocation.watchPosition(function( position ){
+	// 		$scope.updatePosition(position.coords.latitude, position.coords.longitude)
+	// 		$scope.gps_found=true;
+	// 	},function(){
+	// 		console.log('failed getting current position from watchPosition')
+	// 		$scope.gps_found=false;
+	// 	}, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
+	// }
+	
+	$scope.startWatchPosition = function(){
+		$scope.drawCurrentPosition()
+		$scope.watchPositionTimer=setInterval(function(){
+			$scope.$apply(function(){
+				$scope.drawCurrentPosition()
+			})
+		}, 5000);
 	}
 
 	$scope.gpsStateUndefined = function(){
@@ -113,6 +136,12 @@ function mapCtrl($scope,$element,$attrs) {
 	
 	$scope.gpsNotFound = function(){
 		return $scope.gps_found==false;
+	}
+	
+	$scope.refreshMapNoCenter = function(){
+		setTimeout(function(){ 
+			google.maps.event.trigger($scope.map, 'resize'); 
+		}, 20)
 	}
 	
 	$scope.refreshMap = function(){
@@ -156,9 +185,7 @@ function mapCtrl($scope,$element,$attrs) {
 					var bounds=new google.maps.LatLngBounds(end_bound)
 				}
 			}
-			
 			$scope.centerOnMarkers(bounds);
-
 		})
 	}
 }
