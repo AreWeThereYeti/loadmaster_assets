@@ -126,6 +126,12 @@ function mapCtrl($scope,$element,$attrs) {
 		}, 5000);
 	}
 
+	$scope.$watch('gps_found',function(){
+		if(!$scope.gps_found){
+			$scope.$emit($scope.map_set_position, [null, null]);
+		}
+	})
+
 	$scope.gpsStateUndefined = function(){
 		return $scope.gps_found==null;
 	}
