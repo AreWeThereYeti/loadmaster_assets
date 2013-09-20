@@ -4,13 +4,14 @@ function tripCtrl($scope, $http) {
 	/* 	Submit buttons */
 	$scope.submit = function($event) {
 		$scope.AddStartValuesToDB({
+			license_plate	:	$scope.license_plate,
 			cargo			:	$scope.cargo,
-			start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
+			start_timestamp	:	Math.round(+new Date()/1000),
 			start_location	:	$scope.start_location,
 			start_address	:	$scope.start_address,
 			start_comments	:	$scope.start_comments
 		});
-		$scope.$emit("setcargo", $scope.cargo)
+		$scope.license_plate 	= null;
 		$scope.cargo 			= null;
 		$('#comments_start').val('');
 		$("select").prop("selectedIndex",0);
@@ -21,7 +22,7 @@ function tripCtrl($scope, $http) {
 		
 	$scope.submit_end = function($event) {
 		$scope.AddEndValuesToDB({
-			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
+			end_timestamp 	:	Math.round(+new Date()/1000),
 			end_location	:	$scope.end_location,
 			end_address		:	$scope.end_address,
 			end_comments	:	$scope.end_comments
@@ -29,7 +30,7 @@ function tripCtrl($scope, $http) {
 		$('#comments_end').val(''); 
 		$event.preventDefault();
 		$.mobile.changePage("#three");
-	  $("#submit_end").button("disable");
+	    $("#submit_end").button("disable");
 		$("#submit_end").button("refresh");
 		$("#submit_start").button("disable");
 		$("#submit_start").button("refresh");
@@ -44,21 +45,18 @@ function tripCtrl($scope, $http) {
 		$scope.end_location=end_location;
 	})
 	
-	$scope.$watch('cargo + start_location + start_address', function () {
+	$scope.$watch('license_plate + cargo + start_location + start_address', function () {
+	console.log("cargo og licenseplate : " + $scope.cargo + $scope.license_plate)
 		if($("#home").is(':visible')){
-			if(!!$scope.cargo && $scope.cargo != "0"){
+			if(!!$scope.license_plate && !!$scope.cargo && $scope.license_plate != "0" && $scope.cargo != "0"){
 				if(!!$scope.start_location || (!!$scope.start_address && $scope.start_address !="")){
-					if(!!$("#submit_start")){
-						$("#submit_start").button("enable");
-						$("#submit_start").button("refresh");			
-					}
+					$("#submit_start").button("enable");
+					$("#submit_start").button("refresh");			
 				}
 			}
-			else if($scope.cargo === "0" || $scope.cargo == null || $scope.cargo == undefined) {
-				if(!!$("#submit_start")){
+			else if($scope.license_plate === "0" || $scope.cargo === "0" || $scope.license_plate == null || $scope.cargo == null || $scope.license_plate == undefined || $scope.cargo == undefined) {
 					$("#submit_start").button("disable");
-					$("#submit_start").button("refresh");
-				}
+					$("#submit_start").button("refresh");		
 			}
 		}			
 	});
@@ -78,11 +76,10 @@ function tripCtrl($scope, $http) {
 	
 	$scope.$watch('end_location + end_address', function () {
 		if($("#two").is(':visible')){
-			if(!!$scope.end_location || (!!$scope.end_address && $scope.end_address !="") && !!$("#submit_end")){
-			  $("#submit_end").button("enable");
+			if(!!$scope.end_location || (!!$scope.end_address && $scope.end_address !="")){
+			    $("#submit_end").button("enable");
 				$("#submit_end").button("refresh");
 			}
 		}
 	});
-
 }             

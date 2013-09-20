@@ -5,7 +5,6 @@ function mapCtrl($scope,$element,$attrs) {
 		
 	/* 			Initialize map */
 	$scope.initialize = function(latitude, longitude,onCurrentLocation) {
-		$scope.gps_found=undefined
 		if(!$scope.map){
 			if(!latitude){var latitude=$scope.defaultLat}
 			if(!longitude){var longitude=$scope.defaultLon}
@@ -130,12 +129,6 @@ function mapCtrl($scope,$element,$attrs) {
 	// 	}, 5000);
 	// }
 
-	$scope.$watch('gps_found',function(){
-		if(!$scope.gps_found){
-			$scope.$emit($scope.map_set_position, [null, null]);
-		}
-	})
-
 	$scope.gpsStateUndefined = function(){
 		return $scope.gps_found==null;
 	}
@@ -198,8 +191,4 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnMarkers(bounds);
 		})
 	}
-	
-	$scope.$on('setGpsFoundFalse',function(){
-		$scope.gps_found=undefined
-	})
 }
