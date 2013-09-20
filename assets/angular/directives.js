@@ -61,14 +61,21 @@ angular.module('loadmaster', [])
 				$('geoTemp').html('Ready...')
 	    	scope.map_id="map-container-finish"
 	    	$('#three').bind( "pageshow", function( event ) {
+	    		scope.showmap = false;
 	    		if(!!scope.startlocation && !!scope.endlocation){
+	    			scope.showmap = true;
+	    			console.log("showmap er : " + scope.showmap)
 		    		scope.initialize();
 		    		scope.savebounds = true;
 		    		scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
 		    		scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);	
 		    		scope.centerOnMarkers();    		
+	    		} else if (!!scope.startadress || !!scope.endadress){
+		    		console.log("showmap er : " + scope.showmap)
 	    		}
-					$('.gpsnotfound').trigger("create");
+    			console.log("showmap er : " + scope.showmap)
+    			console.log(scope.startadress + scope.endadress)
+				$('.gpsnotfound').trigger("create");
 				})
 			}
 		}

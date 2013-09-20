@@ -192,22 +192,24 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnMarkers(bounds);
 		})
 	}
+/*
 	
-	scope.$watch('start_adress', function() {
+	$scope.$watch('start_adress', function() {
 		$scope.start_location = null;
 	}); 
 	
-	scope.$watch('start_location', function() {
+	$scope.$watch('start_location', function() {
 		$scope.start_adress = null;
 	}); 
 	
-	scope.$watch('end_adress', function() {
+	$scope.$watch('end_adress', function() {
 		$scope.end_location = null;
 	}); 
 	
-	scope.$watch('end_location', function() {
+	$scope.$watch('end_location', function() {
 		$scope.end_adress = null;
 	}); 
+*/
 
 
 
