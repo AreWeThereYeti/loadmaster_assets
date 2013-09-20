@@ -80,10 +80,11 @@ function userCtrl($scope) {
 		console.log("Checking connection");
 		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
 			console.log('Unknown connection');
-			$scope.isDatabaseEmpty();
 
 		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 			console.log("Found connection. Checking if database is empty ")
+			$scope.isDatabaseEmpty();
+
 		}
 	}
 	
@@ -378,7 +379,7 @@ function userCtrl($scope) {
 		$scope.db.transaction(function(transaction){
 	         transaction.executeSql(query, [], function(tx, results){
 		        $scope.numberOfRows = results.rows.length;
-        		console.log($scope.numberOfRows) 
+        		console.log("antal ture i databasen : " + $scope.numberOfRows) 
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
 	}

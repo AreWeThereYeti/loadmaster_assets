@@ -2,6 +2,14 @@
   <div id="map-container-finish">
   </div>
 	<div ng-show="gpsNotFound()" class="gpsnotfound">
-		<p>Vi fandt ikke gps koordinater. Men adresserne du har indtastet er blevet sendt.</p>
+			<div class="ui-grid-a centered">
+				<p>Vi fandt ikke gps koordinater. Men adresserne du har indtastet er blevet sendt.</p>
+				<div class="ui-block-a">
+			    	<span class="weight"></span><h2 class="inlineblock centered vertical-centered margintop30" >{{start_adress}}</h2>
+				</div>
+			<div class="ui-block-b">
+			    <span class="licenseplate"></span><h2 class="inlineblock centered vertical-centered margintop30" >{{end_adress}}</h2>
+			</div>
+		</div>
 	</div>
 </div>

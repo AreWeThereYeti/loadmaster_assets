@@ -158,6 +158,7 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.refreshMap()
 	})
 	
+	
 	$scope.autoCompleteInput = function(input,marker){
 		var autocompleteInput = new google.maps.places.Autocomplete(input);
 		google.maps.event.addListener(autocompleteInput, 'place_changed', function(ev) {
@@ -191,4 +192,23 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnMarkers(bounds);
 		})
 	}
+	
+	scope.$watch('start_adress', function() {
+		$scope.start_location = null;
+	}); 
+	
+	scope.$watch('start_location', function() {
+		$scope.start_adress = null;
+	}); 
+	
+	scope.$watch('end_adress', function() {
+		$scope.end_location = null;
+	}); 
+	
+	scope.$watch('end_location', function() {
+		$scope.end_adress = null;
+	}); 
+
+
+
 }
