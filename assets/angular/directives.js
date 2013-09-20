@@ -29,9 +29,9 @@ angular.module('loadmaster', [])
 				scope.map_set_position="setstart_location"
 				$('#home').bind( "pageshow", function( event ) {
 					scope.initialize();
-					scope.startWatchPosition();
+					scope.startWatchPosition()
 				})
-				$('.gpsnotfound').find('textarea').trigger("create");
+				$('.gpsnotfound').trigger("create");
 			}
 		}
 	})
@@ -48,7 +48,7 @@ angular.module('loadmaster', [])
 					scope.initialize();
 					scope.startWatchPosition()
 				})
-				$('.gpsnotfound').find('textarea').trigger("create");
+				$('.gpsnotfound').trigger("create");
 			}
 		};
 	})
