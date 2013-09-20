@@ -32,6 +32,7 @@ function userCtrl($scope) {
 		$scope.initializeDB()
 		$scope.isAccessTokenInDatabase()
 		$scope.checkLastTripFinished()
+		$scope.checkLengthOfDatabase()
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
 		$.mobile.defaultPageTransition   = 'none';
@@ -368,8 +369,33 @@ function userCtrl($scope) {
 		return false;
 	}
 	
-
+		$scope.checkLengthOfDatabase = function() {
+		if(!$scope.db){
+			$scope.createNewDB()
+		}	
+		
+		query = "SELECT * FROM Trip;";
+		$scope.db.transaction(function(transaction){
+	         transaction.executeSql(query, [], function(tx, results){
+		        $scope.numberOfRows = results.rows.length;
+        		console.log($scope.numberOfRows) 
+	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
+		});
+	}
 	
+	
+	
+	$scope.$watch("numberOfRows", function () {
+		console.log($scope.numberOfRows)
+		if($scope.numberOfRows == undefined)
+		{
+			return false
+		}
+		else if($scope.numberOfRows > 0){
+			$("div.database").html( "<span>Antal ture i databasen : </spam>" + $scope.numberOfRows );
+		}
+	})
+
 /* DEBUGGING functions */
 
 $scope.dropTables = function(){
