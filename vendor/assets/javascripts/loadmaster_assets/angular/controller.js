@@ -80,10 +80,11 @@ function userCtrl($scope) {
 		console.log("Checking connection");
 		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
 			console.log('Unknown connection');
-			$scope.isDatabaseEmpty();
 
 		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 			console.log("Found connection. Checking if database is empty ")
+			$scope.isDatabaseEmpty();
+
 		}
 	}
 	
@@ -249,7 +250,7 @@ function userCtrl($scope) {
 		 
 		/* 	Deletes synced rows from trips table */
 		$scope.db.transaction(function(transaction) {
-			transaction.executeSql('DELETE FROM Auth', [/* Insert array of IDs of synced rows. See below */]);
+			transaction.executeSql('DELETE FROM Auth', []);
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
 		console.log("access token er " + $scope.access_token)
@@ -345,6 +346,7 @@ function userCtrl($scope) {
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
 		$scope.startlocation=trip.start_location
+	 	$scope.startaddress=trip.start_address;
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 	 
 		// this is the section that actually inserts the values into the User table
@@ -358,6 +360,9 @@ function userCtrl($scope) {
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
 	 	$scope.endlocation=trip.end_location
+	 	$scope.endaddress=trip.end_address;
+	 	console.log("trip end location" + trip.end_location)
+	 	console.log("trip end adress" + trip.end_address)
 		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 
 
@@ -378,13 +383,11 @@ function userCtrl($scope) {
 		$scope.db.transaction(function(transaction){
 	         transaction.executeSql(query, [], function(tx, results){
 		        $scope.numberOfRows = results.rows.length;
-        		console.log($scope.numberOfRows) 
+        		console.log("antal ture i databasen : " + $scope.numberOfRows) 
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
 	}
-	
-	
-	
+		
 	$scope.$watch("numberOfRows", function () {
 		console.log($scope.numberOfRows)
 		if($scope.numberOfRows == undefined)

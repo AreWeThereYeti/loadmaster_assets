@@ -17,6 +17,32 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
+	
+	.directive('ngCargoAutocomplete', function(){
+		return{
+			link:function(scope,element,attrs){
+				$("#home").bind("pageshow", function(e) {
+	
+					var data = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
+		
+					element.find('input').autocomplete({
+						target: element.find('ul'),
+						source: data,
+						callback: function(e) {
+							var val = $(e.currentTarget).text();
+							element.find('input').val(val);
+							element.find('input').autocomplete('clear');
+							scope.$apply(function(){
+								scope.cargo=val
+							})
+						},
+						link: 'target.html?term=',
+						minLength: 1
+					});
+				});
+			}
+		}
+	})
 
 	
 	.directive('ngMapStart', function() {
@@ -61,14 +87,21 @@ angular.module('loadmaster', [])
 				$('geoTemp').html('Ready...')
 	    	scope.map_id="map-container-finish"
 	    	$('#three').bind( "pageshow", function( event ) {
+	    		scope.showmap = false;
 	    		if(!!scope.startlocation && !!scope.endlocation){
+	    			scope.showmap = true;
+	    			console.log("showmap er : " + scope.showmap)
 		    		scope.initialize();
 		    		scope.savebounds = true;
 		    		scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
 		    		scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);	
 		    		scope.centerOnMarkers();    		
+	    		} else if (!!scope.startadress || !!scope.endadress){
+		    		console.log("showmap er : " + scope.showmap)
 	    		}
-					$('.gpsnotfound').trigger("create");
+    			console.log("showmap er : " + scope.showmap)
+    			console.log(scope.startadress + scope.endadress)
+				$('.gpsnotfound').trigger("create");
 				})
 			}
 		}

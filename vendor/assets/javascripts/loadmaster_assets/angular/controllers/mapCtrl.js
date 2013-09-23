@@ -10,7 +10,7 @@ function mapCtrl($scope,$element,$attrs) {
 			if(!longitude){var longitude=$scope.defaultLon}
 			$scope.bounds=new google.maps.LatLngBounds()
 			$scope.mapOptions = {
-			  center: new google.maps.LatLng(latitude, longitude), //Får ikke et coordinat til at starte med så viser grå skærm
+			  center: new google.maps.LatLng(latitude, longitude), 
 			  zoom: 12,
 			  streetViewControl: false,
 			  zoomControl: true,
@@ -158,6 +158,7 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.refreshMap()
 	})
 	
+	
 	$scope.autoCompleteInput = function(input,marker){
 		var autocompleteInput = new google.maps.places.Autocomplete(input);
 		google.maps.event.addListener(autocompleteInput, 'place_changed', function(ev) {
@@ -189,4 +190,25 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnMarkers(bounds);
 		})
 	}
+/*
+	
+	$scope.$watch('start_adress', function() {
+		$scope.start_location = null;
+	}); 
+	
+	$scope.$watch('start_location', function() {
+		$scope.start_adress = null;
+	}); 
+	
+	$scope.$watch('end_adress', function() {
+		$scope.end_location = null;
+	}); 
+	
+	$scope.$watch('end_location', function() {
+		$scope.end_adress = null;
+	}); 
+*/
+
+
+
 }

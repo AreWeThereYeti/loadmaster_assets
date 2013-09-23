@@ -1,7 +1,19 @@
 <div id="map_canvas_finish">
-  <div id="map-container-finish">
+  <div id="map-container-finish" ng-show="showmap">
   </div>
-	<div ng-show="gpsNotFound()" class="gpsnotfound">
-		<p>Vi fandt ikke gps koordinater. Men adresserne du har indtastet er blevet sendt.</p>
+  
+  <div ng-show="gpsNotFound()" class="gpsnotfound">
+  </div>
+  
+  <div class="centered padding_top" ng-hide="showmap">
+		<h2>Vi fandt ikke gps koordinater. </br>Men adresserne du har indtastet er blevet sendt.</h2>
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+		    	<span class="startadress"></span><span class="fontsize inlineblock centered vertical-centered margintop30">Start adresse :</br>{{startaddress}}</span>
+			</div>
+			<div class="ui-block-b">
+			    <span class="endadress"></span><span class="fontsize inlineblock centered vertical-centered margintop30">Slut adresse :</br>{{endaddress}}</span>
+			</div>
+		</div>
 	</div>
 </div>
