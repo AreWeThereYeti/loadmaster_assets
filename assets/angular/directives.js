@@ -17,6 +17,32 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
+	
+	.directive('ngCargoAutocomplete', function(){
+		return{
+			link:function(scope,element,attrs){
+				$("#home").bind("pageshow", function(e) {
+	
+					var data = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
+		
+					element.find('input').autocomplete({
+						target: element.find('ul'),
+						source: data,
+						callback: function(e) {
+							var val = $(e.currentTarget).text();
+							element.find('input').val(val);
+							element.find('input').autocomplete('clear');
+							scope.$apply(function(){
+								scope.cargo=val
+							})
+						},
+						link: 'target.html?term=',
+						minLength: 1
+					});
+				});
+			}
+		}
+	})
 
 	
 	.directive('ngMapStart', function() {

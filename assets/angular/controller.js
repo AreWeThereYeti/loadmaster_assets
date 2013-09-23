@@ -387,9 +387,7 @@ function userCtrl($scope) {
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
 	}
-	
-	
-	
+		
 	$scope.$watch("numberOfRows", function () {
 		console.log($scope.numberOfRows)
 		if($scope.numberOfRows == undefined)
