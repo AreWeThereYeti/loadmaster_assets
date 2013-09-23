@@ -167,27 +167,25 @@ function mapCtrl($scope,$element,$attrs) {
 			}else if(input.id=="trip_end_address"){
 				lat_input="#trip_end_lat"
 				lon_input="#trip_end_lon"
-			}
-			$(lat_input).val(Number(autocompleteInput.getPlace().geometry.location.pb))
-			$(lon_input).val(Number(autocompleteInput.getPlace().geometry.location.qb))
+			} 
+			
+			var lat=autocompleteInput.getPlace().geometry.location[Object.keys(autocompleteInput.getPlace().geometry.location)[0]]
+			var lon=autocompleteInput.getPlace().geometry.location[Object.keys(autocompleteInput.getPlace().geometry.location)[1]]
+			
+			$(lat_input).val(Number(lat))
+			$(lon_input).val(Number(lon))
 			
 			var place=autocompleteInput.getPlace()
-	
 			marker.setPosition(place.geometry.location);
 			marker.setVisible(true)
 			
-			if(!!$scope.start_marker.position){		
-				var start_bound=new google.maps.LatLng($scope.start_marker.position.pb,$scope.start_marker.position.qb)	
-				var bounds=new google.maps.LatLngBounds(start_bound)
-			}
-			if(!!$scope.end_marker.position){		
-				var end_bound=new google.maps.LatLng($scope.end_marker.position.pb,$scope.end_marker.position.qb)	
-				if(!!bounds){
-					bounds.extend(end_bound)
-				}else{
-					var bounds=new google.maps.LatLngBounds(end_bound)
-				}
-			}
+			var bound=new google.maps.LatLng(lat,lon)	
+		 	input.id=="trip_start_address" ? $scope.start_bound=bound : $scope.end_bound=bound
+			
+			var bounds=new google.maps.LatLngBounds()
+			if(!!$scope.start_bound){	bounds.extend($scope.start_bound) }
+			if(!!$scope.end_bound){		bounds.extend($scope.end_bound) }
+		
 			$scope.centerOnMarkers(bounds);
 		})
 	}
