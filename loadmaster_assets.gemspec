@@ -7,16 +7,20 @@ require "loadmaster_assets/version"
 Gem::Specification.new do |s|
   s.name        = "loadmaster_assets"
   s.version     = LoadmasterAssets::VERSION
-  s.authors     = ["Andreas Sprotte","Mikkel Markvardsen"]
+  s.authors     = ["Andreas Sprotte"]
   s.email       = ["andreas@sprotte.dk"]
-  s.homepage    = "http://www.asprotte.com"
-  s.summary     = "assets"
-  s.description = "assets for loadmaster logger mobile and web applications"
+  s.homepage    = "https://github.com/AreWeThereYeti/loadmaster_assets"
+  s.summary     = "LoadmasterAssets"
+  s.description = "Description of LoadmasterAssets."
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
+  
+  s.require_paths = ["lib"]
 
   s.add_dependency "rails", "~> 4.0.0"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency 'minitest' # <------- here
+  s.add_development_dependency 'capybara' # <------- and here
 end
