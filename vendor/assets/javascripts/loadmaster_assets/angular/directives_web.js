@@ -80,5 +80,15 @@ angular.module('loadmaster', [])
 	   	}
 		}
 	})
+	.directive('ngInvoice',function(){
+		return{
+			controller:'invoiceCtrl',
+			link:function(scope,element,attrs){
+				scope.init()
+			}
+		}
+	})
+	
+	
 	
 	
