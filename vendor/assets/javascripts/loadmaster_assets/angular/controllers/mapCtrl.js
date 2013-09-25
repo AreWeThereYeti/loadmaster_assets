@@ -193,7 +193,7 @@ function mapCtrl($scope,$element,$attrs) {
 		})
 	}
 	
-	$scope.getAddressFromLatLon(lat,lon) = function(){
+	$scope.getAddressFromLatLon = function(lat,lon){
 		var geocoder= new google.maps.Geocoder();
 		var latlng = new google.maps.LatLng(lat,lon);
 		console.log('getting address in map ctrl')

@@ -96,9 +96,9 @@ angular.module('loadmaster', [])
 				lon:'=lon'
 			},
 			link:function(scope,element,attrs){
-				if(!!lat && !!lon){
+				if(!!scope.lat && !!scope.lon){
 					console.log('calling getAddressFromLatLon')
-					$scope.getAddressFromLatLon(lat,lon)
+					scope.getAddressFromLatLon(scope.lat,scope.lon)
 				}
 			}
 		}
