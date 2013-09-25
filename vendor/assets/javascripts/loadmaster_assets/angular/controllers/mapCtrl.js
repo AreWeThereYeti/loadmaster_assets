@@ -1,7 +1,7 @@
 function mapCtrl($scope,$element,$attrs) {
 	
-	$scope.defaultLat=55.693745
-	$scope.defaultLon=12.433777
+	$scope.defaultLat=55.693745;
+	$scope.defaultLon=12.433777;
 		
 	/* 			Initialize map */
 	$scope.initialize = function(latitude, longitude,onCurrentLocation) {
@@ -70,12 +70,10 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
 	}
 	
-/*
 	$scope.removeMarker = function(marker){
 		marker.setMap(null);
 		marker=null;
 	}
-*/
 	
 	$scope.centerOnMarkers = function(bounds){
 		if(!bounds){	var bounds=$scope.bounds }

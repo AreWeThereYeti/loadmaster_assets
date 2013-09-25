@@ -93,8 +93,13 @@ angular.module('loadmaster', [])
 	    			console.log("showmap er : " + scope.showmap)
 		    		scope.initialize();
 		    		scope.savebounds = true;
-		    		scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
-		    		scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);	
+		    		if(!!scope.startmarker && !!scope.endmarker){
+			    		scope.removeMarker(scope.startmarker);
+			    		scope.removeMarker(scope.endmarker);
+		    		}
+		    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
+		    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
+		    			
 		    		scope.centerOnMarkers();    		
 	    		} else if (!!scope.startadress || !!scope.endadress){
 		    		console.log("showmap er : " + scope.showmap)
