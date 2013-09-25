@@ -33,8 +33,30 @@ function invoiceCtrl($scope,$element,$attrs) {
 		$scope.total_price_with_taxes=Math.round(($scope.total_price+$scope.taxes)*100)/100
 	},true)  //true means deep watch
 	
-	$scope.submit = function(){
-		console.log(submitting)
+	$scope.submit = function(ev){
+		ev.preventDefault()
+		var url=$('#invoice-form-page').find('form').attr('action')
+		var raw_data=$('#invoice-form-page').find('form').serializeArray()
+		var data={}
+		for(var i=0;i<raw_data.length;i++){
+			data[raw_data[i].name]=raw_data[i].value
+		}
+		data['trips']=$scope.items
+		data['netto_price']=$scope.total_price
+		data['brutto_price']=$scope.total_price_with_taxes
+		data['taxes']=$scope.taxes
+		
+		$.ajax({
+			type:'POST',
+		  url: url,
+		  data:data,
+			success:function(data){
+				window.location.href=data.redirect_url
+			},
+			error:function(err){
+				console.log(err)
+			}
+		});
 	}
 	 
 }
