@@ -14,6 +14,7 @@ function mapCtrl($scope,$element,$attrs) {
 			  zoom: 12,
 			  streetViewControl: false,
 			  zoomControl: true,
+			  draggable:true,
 			  zoomControlOptions: {
 			  	style: google.maps.ZoomControlStyle.LARGE
 			  },
@@ -69,9 +70,12 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
 	}
 	
+/*
 	$scope.removeMarker = function(marker){
 		marker.setMap(null);
+		marker=null;
 	}
+*/
 	
 	$scope.centerOnMarkers = function(bounds){
 		if(!bounds){	var bounds=$scope.bounds }
@@ -190,7 +194,6 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnMarkers(bounds);
 		})
 	}
-/*
 	
 	$scope.$watch('start_adress', function() {
 		$scope.start_location = null;
@@ -207,7 +210,6 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.$watch('end_location', function() {
 		$scope.end_adress = null;
 	}); 
-*/
 
 
 
