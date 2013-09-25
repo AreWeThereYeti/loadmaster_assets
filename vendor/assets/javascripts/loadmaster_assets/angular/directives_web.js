@@ -88,6 +88,22 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
+	.directive('ngGetAddress',function(){
+		return{
+			controller:'mapCtrl',
+			scope:{
+				lat:'=lat',
+				lon:'=lon'
+			},
+			link:function(scope,element,attrs){
+				if(!!lat && !!lon){
+					console.log('calling getAddressFromLatLon')
+					$scope.getAddressFromLatLon(lat,lon)
+				}
+			}
+		}
+	})
+	
 	
 	
 	

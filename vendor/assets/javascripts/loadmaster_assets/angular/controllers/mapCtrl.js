@@ -193,6 +193,24 @@ function mapCtrl($scope,$element,$attrs) {
 		})
 	}
 	
+	$scope.getAddressFromLatLon(lat,lon) = function(){
+		var geocoder= new google.maps.Geocoder();
+		var latlng = new google.maps.LatLng(lat,lon);
+		console.log('getting address in map ctrl')
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[1]) {
+					console.log('succesfully geocoded address...')
+          $scope.$apply(function(){
+						$scope.formatted_address=results[1].formatted_address
+					});
+        }
+      } else {
+        console.log("Geocoder failed due to: " + status);
+      }
+    });
+	}
+	
 	$scope.$watch('start_adress', function() {
 		$scope.start_location = null;
 	}); 
