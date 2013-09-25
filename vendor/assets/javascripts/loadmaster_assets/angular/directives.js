@@ -80,33 +80,27 @@ angular.module('loadmaster', [])
 	})
 	.directive('ngMapFinish', function() {
 	    return {
-	    replace: true,
-	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_finish.html',
-	    link:function(scope,element,attrs){
-	    	var geo_el = document.getElementById('geoTemp');
+		    replace: true,
+		    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_finish.html',
+		    link:function(scope,element,attrs){
+		    	var geo_el = document.getElementById('geoTemp');
 				$('geoTemp').html('Ready...')
-	    	scope.map_id="map-container-finish"
-	    	$('#three').bind( "pageshow", function( event ) {
-	    		scope.showmap = false;
-	    		if(!!scope.startlocation && !!scope.endlocation){
-	    			scope.showmap = true;
-	    			console.log("showmap er : " + scope.showmap)
-		    		scope.initialize();
-		    		scope.savebounds = true;
-		    		if(!!scope.startmarker && !!scope.endmarker){
-			    		scope.removeMarker(scope.startmarker);
-			    		scope.removeMarker(scope.endmarker);
+		    	scope.map_id="map-container-finish"
+		    	$('#three').bind( "pageshow", function( event ) {
+		    		scope.showmap = false;
+		    		if(!!scope.startmarker){ scope.removeMarker(scope.startmarker);}
+		    		if(!!scope.endmarker){	scope.removeMarker(scope.endmarker); }
+		    		if(!!scope.startlocation && !!scope.endlocation){
+		    			scope.showmap = true;
+			    		scope.initialize();
+			    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
+			    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
+			    		scope.centerOnTwoMarkers(scope.startmarker,scope.endmarker);	
+		    		} else if (!!scope.startadress || !!scope.endadress){
+			    		console.log("showmap er : " + scope.showmap)
 		    		}
-		    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
-		    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
-		    			
-		    		scope.centerOnMarkers();    		
-	    		} else if (!!scope.startadress || !!scope.endadress){
-		    		console.log("showmap er : " + scope.showmap)
-	    		}
-    			console.log("showmap er : " + scope.showmap)
-    			console.log(scope.startadress + scope.endadress)
-				$('.gpsnotfound').trigger("create");
+					$('.gpsnotfound').trigger("create");		
+	
 				})
 			}
 		}

@@ -193,20 +193,40 @@ function mapCtrl($scope,$element,$attrs) {
 		})
 	}
 	
-	$scope.$watch('start_adress', function() {
+	$scope.centerOnTwoMarkers = function(marker_one,marker_two){
+		console.log('center on two markers')
+		
+		var bounds=new google.maps.LatLngBounds()
+		
+		var lat=marker_one.position[Object.keys(marker_one.position)[0]]
+		var lon=marker_one.position[Object.keys(marker_one.position)[1]]
+		
+		var bound=new google.maps.LatLng(lat,lon)
+		bounds.extend(bound)
+		
+		var lat=marker_two.position[Object.keys(marker_two.position)[0]]
+		var lon=marker_two.position[Object.keys(marker_two.position)[1]]	
+		
+		var bound=new google.maps.LatLng(lat,lon)
+		bounds.extend(bound)
+		$scope.centerOnMarkers(bounds)
+		
+	}
+	
+	$scope.$watch('start_address', function() {
 		$scope.start_location = null;
 	}); 
 	
 	$scope.$watch('start_location', function() {
-		$scope.start_adress = null;
+		$scope.start_address = null;
 	}); 
 	
-	$scope.$watch('end_adress', function() {
+	$scope.$watch('end_address', function() {
 		$scope.end_location = null;
 	}); 
 	
 	$scope.$watch('end_location', function() {
-		$scope.end_adress = null;
+		$scope.end_address = null;
 	}); 
 
 

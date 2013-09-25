@@ -15,7 +15,7 @@ function userCtrl($scope) {
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
-	$scope.host = 'http://195.231.85.191:5000';
+	$scope.host = 'https://195.231.85.191:5000';
 	
 	$scope.$on("setcargo", function(evt, cargo){
 		$scope.cargo = cargo;
