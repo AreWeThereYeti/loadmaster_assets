@@ -16,10 +16,13 @@ function tripCtrl($scope, $http) {
 		$("select").prop("selectedIndex",0);
 		$('select').selectmenu('refresh', true);
 		$event.preventDefault();
+		$scope.acquire()
+
 		$.mobile.changePage("#two");
 	};
 		
 	$scope.submit_end = function($event) {
+		$scope.release();
 		$scope.AddEndValuesToDB({
 			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 			end_location	:	$scope.end_location,
@@ -34,6 +37,20 @@ function tripCtrl($scope, $http) {
 		$("#submit_start").button("disable");
 		$("#submit_start").button("refresh");
 	};
+	
+	$scope.acquire = function() {
+		cordova.require('cordova/plugin/powermanagement').acquire(
+			function() { console.log( 'successfully acquired full wake lock' ); },
+			function() { console.log( 'error acquiring full wake lock' ); }
+		);
+	};
+	
+	$scope.release = function() {
+		cordova.require('cordova/plugin/powermanagement').release(
+			function() { console.log( 'successfully released full wake lock' ); },
+			function() { console.log( 'error releasing full wake lock' ); }
+		);
+	};	
 	
 			/* 	Set positions */
 	$scope.$on('setstart_location',function(ev,start_location){
