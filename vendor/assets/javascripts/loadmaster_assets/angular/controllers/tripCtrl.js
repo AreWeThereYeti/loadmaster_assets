@@ -19,13 +19,12 @@ function tripCtrl($scope, $http) {
 		$("select").prop("selectedIndex",0);
 		$('select').selectmenu('refresh', true);
 		$event.preventDefault();
-		$scope.startWakeLock()
-
 		$.mobile.changePage("#two");
+		//$scope.startWakeLock()
 	};
 		
 	$scope.submit_end = function($event) {
-		$scope.releaseWakeLock();
+		//$scope.releaseWakeLock();
 		$scope.AddEndValuesToDB({
 			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 			end_location	:	$scope.end_location,

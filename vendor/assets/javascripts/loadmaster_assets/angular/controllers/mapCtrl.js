@@ -114,6 +114,7 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 		$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
 		$scope.$emit($scope.map_set_position, [latitude, longitude]);
+		$scope.refreshMap()
 	}
 	
 	$scope.startWatchPosition = function(){
@@ -209,18 +210,15 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.checkForGPSNeverFound = function(){
-		console.log('checkForGPSNeverFound ran')
 		var sec=0
 		var was_found=false
 		var interval=setInterval(function(){
-			console.log('checking for gps never found')
 			if($scope.gps_found){ 
 				was_found=true 
 				clearInterval(interval)
 		 	}
 			if(sec>=10 && !was_found){
 				$scope.$apply(function(){
-					console.log('gps never found!!!')
 					$scope.gps_found=false
 					clearInterval(interval)
 				})
