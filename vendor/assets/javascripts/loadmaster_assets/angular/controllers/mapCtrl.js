@@ -2,13 +2,15 @@ function mapCtrl($scope,$element,$attrs) {
 	
 	$scope.defaultLat=55.693745;
 	$scope.defaultLon=12.433777;
+	$scope.bounds=new google.maps.LatLngBounds()
+	$scope.markersArray = [];
 		
 	/* 			Initialize map */
-	$scope.initialize = function(latitude, longitude,onCurrentLocation) {
+	$scope.initialize = function(latitude, longitude) {
+		$scope.gps_found=null;
 		if(!$scope.map){
 			if(!latitude){var latitude=$scope.defaultLat}
 			if(!longitude){var longitude=$scope.defaultLon}
-			$scope.bounds=new google.maps.LatLngBounds()
 			$scope.mapOptions = {
 			  center: new google.maps.LatLng(latitude, longitude), 
 			  zoom: 12,
@@ -22,13 +24,7 @@ function mapCtrl($scope,$element,$attrs) {
 			  disableDefaultUI: true,
 			  mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
-		
-			if($scope.IS_MOBILE){
-				$scope.map = new google.maps.Map(document.getElementById($scope.map_id), $scope.mapOptions); 
-				$scope.refreshMapNoCenter()   
-			}else{
-				$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);    
-			}
+			$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);    
 		}
 	}
 	
@@ -59,7 +55,8 @@ function mapCtrl($scope,$element,$attrs) {
 			position: markerPosition,
 			title: (label || "")
 		});
-		return(marker);
+		$scope.markersArray.push(marker)
+		return marker;
 	}
 	
 	$scope.updateMarker = function(marker, latitude, longitude, label ){
@@ -68,6 +65,14 @@ function mapCtrl($scope,$element,$attrs) {
 			marker.setTitle( label );
 		}
 		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
+	}
+	
+	$scope.removeAllMarkers = function(){
+		for (var i = 0; i<$scope.markersArray.length; i++ ) {
+	    $scope.removeMarker($scope.markersArray[i])
+	  }
+		$scope.markersArray=[]
+		$scope.locationMarker=null
 	}
 	
 	$scope.removeMarker = function(marker){
@@ -84,19 +89,22 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.drawCurrentPosition =function(){
+		//console.log('looking for position')
 		navigator.geolocation.getCurrentPosition(
 			function(position){
 				$scope.$apply(function(){
+					//console.log('found position and is updating')
 					$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 					$scope.gps_found=true;
 				})
 			},
 			function(errCode){
+				console.log('could not find position')
 				$scope.$apply(function(){
 					$scope.gps_found=false;
 				})
 			}, 
-			{timeout: 5000}
+			{ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true}
 		);
 	}
 	
@@ -107,49 +115,23 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
 		$scope.$emit($scope.map_set_position, [latitude, longitude]);
 	}
-
 	
 	$scope.startWatchPosition = function(){
-		$scope.positionTimer = navigator.geolocation.watchPosition(function( position ){
+		$scope.drawCurrentPosition()
+		$scope.watchPositionTimer=setInterval(function(){
 			$scope.$apply(function(){
-				$scope.updatePosition(position.coords.latitude, position.coords.longitude)
-				$scope.gps_found=true;
+				$scope.drawCurrentPosition()
 			})
-		},function(){
-			$scope.$apply(function(){
-				$scope.gps_found=false;
-			})
-		}, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
+		}, 5000);
 	}
 	
-	// $scope.startWatchPosition = function(){
-	// 	$scope.drawCurrentPosition()
-	// 	$scope.watchPositionTimer=setInterval(function(){
-	// 		$scope.$apply(function(){
-	// 			$scope.drawCurrentPosition()
-	// 		})
-	// 	}, 5000);
-	// }
-
-	$scope.gpsStateUndefined = function(){
-		return $scope.gps_found==null;
-	}
-	
-	$scope.gpsFound = function(){
-		return $scope.gps_found==true
-	}
-	
-	$scope.gpsNotFound = function(){
-		return $scope.gps_found==false;
-	}
-	
-	$scope.refreshMapNoCenter = function(){
+	$scope.refreshMap = function(){
 		setTimeout(function(){ 
 			google.maps.event.trigger($scope.map, 'resize'); 
 		}, 20)
 	}
 	
-	$scope.refreshMap = function(){
+	$scope.refreshMapAndCenter = function(){
 		setTimeout(function(){ 
 			google.maps.event.trigger($scope.map, 'resize'); 
 			$scope.centerOnMarkers()
@@ -157,7 +139,7 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.$on('resfreshMap',function(){
-		$scope.refreshMap()
+		$scope.refreshMapAndCenter()
 	})
 	
 	
@@ -196,11 +178,9 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.getAddressFromLatLon = function(lat,lon){
 		var geocoder= new google.maps.Geocoder();
 		var latlng = new google.maps.LatLng(lat,lon);
-		console.log('getting address in map ctrl')
     geocoder.geocode({'latLng': latlng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[1]) {
-					console.log('succesfully geocoded address...')
           $scope.$apply(function(){
 						$scope.formatted_address=results[1].formatted_address
 					});
@@ -211,21 +191,77 @@ function mapCtrl($scope,$element,$attrs) {
     });
 	}
 	
-	$scope.$watch('start_adress', function() {
+	$scope.centerOnTwoMarkers = function(mark_1,mark_2){
+		
+		var lat=mark_1.position[Object.keys(mark_1.position)[0]]
+		var lon=mark_1.position[Object.keys(mark_1.position)[1]]
+		var bound=new google.maps.LatLng(lat,lon)
+		var bounds=new google.maps.LatLngBounds(bound)
+		
+		var lat=mark_2.position[Object.keys(mark_2.position)[0]]
+		var lon=mark_2.position[Object.keys(mark_2.position)[1]]	
+		var bound=new google.maps.LatLng(lat,lon)
+		bounds.extend(bound)
+		
+		setTimeout(function(){ 
+			$scope.centerOnMarkers(bounds)
+		}, 20)
+	}
+	
+	$scope.checkForGPSNeverFound = function(){
+		console.log('checkForGPSNeverFound ran')
+		var sec=0
+		var was_found=false
+		var interval=setInterval(function(){
+			console.log('checking for gps never found')
+			if($scope.gps_found){ 
+				was_found=true 
+				clearInterval(interval)
+		 	}
+			if(sec>=10 && !was_found){
+				$scope.$apply(function(){
+					console.log('gps never found!!!')
+					$scope.gps_found=false
+					clearInterval(interval)
+				})
+			}
+			sec+=1
+		},1000);
+	}
+	
+	$scope.$watch('start_address', function() {
 		$scope.start_location = null;
 	}); 
 	
 	$scope.$watch('start_location', function() {
-		$scope.start_adress = null;
+		$scope.start_address = null;
 	}); 
 	
-	$scope.$watch('end_adress', function() {
+	$scope.$watch('end_address', function() {
 		$scope.end_location = null;
 	}); 
 	
 	$scope.$watch('end_location', function() {
-		$scope.end_adress = null;
+		$scope.end_address = null;
 	}); 
+	
+	$scope.$watch('gps_found', function() {
+		console.log('gps_found is: ' + $scope.gps_found)
+	});
+	
+	$scope.gpsStateUndefined = function(){
+		if($scope.gps_found==null || $scope.gps_found==false){
+			return true;
+		}else{ return false; }
+	}
+	
+	$scope.gpsFound = function(){
+		return $scope.gps_found==true
+	}
+	
+	$scope.gpsNotFound = function(){
+		return $scope.gps_found==false;
+	}
 
 
 
