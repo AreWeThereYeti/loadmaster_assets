@@ -57,9 +57,12 @@ function mapCtrl($scope,$element,$attrs) {
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
 			position: markerPosition,
-			title: (label || "")
+			title: (label || ""),
+			labelContent: "second",
+			labelClass: "labels" // the CSS class for the label
 		});
-		return(marker);
+
+  		return(marker);
 	}
 	
 	$scope.updateMarker = function(marker, latitude, longitude, label ){
