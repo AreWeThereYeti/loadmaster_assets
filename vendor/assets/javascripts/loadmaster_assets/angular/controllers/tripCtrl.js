@@ -36,10 +36,8 @@ function tripCtrl($scope, $http) {
 		$('#comments_end').val(''); 
 		$event.preventDefault();
 		$.mobile.changePage("#three");
-		$("#submit_end").button("disable");
-		$("#submit_end").button("refresh");
-		$("#submit_start").button("disable");
-		$("#submit_start").button("refresh");
+		$scope.buttonDisable("#submit_end")
+		$scope.buttonDisable("#submit_start")
 	};
 	
 	$scope.startWakeLock = function() {
