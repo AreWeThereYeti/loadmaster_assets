@@ -77,14 +77,10 @@ function userCtrl($scope) {
 	
 	/* check Connection */
 	$scope.checkConnection = function(){
-		console.log("Checking connection");
-		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
-			console.log('Unknown connection');
-
+		if(!navigator.connection || !Connection || navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
+			//console.log('Unknown connection');
 		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-			console.log("Found connection. Checking if database is empty ")
 			$scope.isDatabaseEmpty();
-
 		}
 	}
 	
@@ -400,26 +396,29 @@ function userCtrl($scope) {
 
 /* DEBUGGING functions */
 
-$scope.dropTables = function(){
+	$scope.dropTables = function(){
 
-	shortName = 'WebSqlDB';
-	version = '1.0';
-	displayName = 'WebSqlDB';
-	maxSize = 65535;
+		shortName = 'WebSqlDB';
+		version = '1.0';
+		displayName = 'WebSqlDB';
+		maxSize = 65535;
 	
-	db = openDatabase(shortName, version, displayName, maxSize);
+		db = openDatabase(shortName, version, displayName, maxSize);
 
 
-	db.transaction(function(tx){
+		db.transaction(function(tx){
 
-		// IMPORTANT FOR DEBUGGING!!!!
-		// you can uncomment these next twp lines if you want the table Trip and the table Auth to be empty each time the application runs
-		tx.executeSql( 'DROP TABLE Trip');
-		tx.executeSql( 'DROP TABLE Auth');
+			// IMPORTANT FOR DEBUGGING!!!!
+			// you can uncomment these next twp lines if you want the table Trip and the table Auth to be empty each time the application runs
+			tx.executeSql( 'DROP TABLE Trip');
+			tx.executeSql( 'DROP TABLE Auth');
 
-	})
-}
+		})
+	}
 	
+	$scope.is_mobile_app = function(){
+		return navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)
+	}
 } 
 
 

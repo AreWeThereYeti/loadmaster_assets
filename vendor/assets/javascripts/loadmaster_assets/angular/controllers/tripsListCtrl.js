@@ -30,7 +30,7 @@ function tripsListCtrl($scope,$element,$attrs) {
 	}
 
 	$scope.deleteSelectedTrips = function(){
-		var delete_trips=confirm('Er du sikker på du vil slette alle turene? Dine ture vil blive slettet helt fra Loadmaster Logger og du vil ikke kunne genskabe dem!!')
+		var delete_trips=confirm('Er du sikker på du vil slette alle turene? Dine ture vil blive slettet helt fra LoadMaster Logger og du vil ikke kunne genskabe dem!!')
 		if(delete_trips){
 			$.ajax({
 			  type: "DELETE",
@@ -43,7 +43,7 @@ function tripsListCtrl($scope,$element,$attrs) {
 					window.location.reload(false); 
 			  },  
 				error: function(msg) {
-					alert('UPS der skete en fejl, de valgte ture kunne desværre ikke slettes. Kontakt venligst Loadmaster hvis denne fejl bliver ved med at ske')
+					alert('UPS der skete en fejl, de valgte ture kunne desværre ikke slettes. Kontakt venligst LoadMaster hvis denne fejl bliver ved med at ske')
 				}
 			});
 		}

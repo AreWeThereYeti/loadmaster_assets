@@ -1,6 +1,9 @@
 /* trip controller with angularjs */
 function tripCtrl($scope, $http) {
 
+	
+	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
+
 	/* 	Submit buttons */
 	$scope.submit = function($event) {
 		$scope.AddStartValuesToDB({
@@ -16,13 +19,12 @@ function tripCtrl($scope, $http) {
 		$("select").prop("selectedIndex",0);
 		$('select').selectmenu('refresh', true);
 		$event.preventDefault();
-		$scope.acquire()
-
 		$.mobile.changePage("#two");
+		//$scope.startWakeLock()
 	};
 		
 	$scope.submit_end = function($event) {
-		$scope.release();
+		//$scope.releaseWakeLock();
 		$scope.AddEndValuesToDB({
 			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 			end_location	:	$scope.end_location,
@@ -38,18 +40,22 @@ function tripCtrl($scope, $http) {
 		$("#submit_start").button("refresh");
 	};
 	
-	$scope.acquire = function() {
-		cordova.require('cordova/plugin/powermanagement').acquire(
-			function() { console.log( 'successfully acquired full wake lock' ); },
-			function() { console.log( 'error acquiring full wake lock' ); }
-		);
+	$scope.startWakeLock = function() {
+		if($scope.is_mobile_app()){
+			cordova.require('cordova/plugin/powermanagement').acquire(
+				function() { console.log( 'successfully acquired full wake lock' ); },
+				function() { console.log( 'error acquiring full wake lock' ); }
+			);
+		}
 	};
 	
-	$scope.release = function() {
-		cordova.require('cordova/plugin/powermanagement').release(
-			function() { console.log( 'successfully released full wake lock' ); },
-			function() { console.log( 'error releasing full wake lock' ); }
-		);
+	$scope.releaseWakeLock = function() {
+		if($scope.is_mobile_app()){
+			cordova.require('cordova/plugin/powermanagement').release(
+				function() { console.log( 'successfully released full wake lock' ); },
+				function() { console.log( 'error releasing full wake lock' ); }
+			);
+		}
 	};	
 	
 			/* 	Set positions */

@@ -91,6 +91,22 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
+	.directive('ngGetAddress',function(){
+		return{
+			controller:'mapCtrl',
+			scope:{
+				lat:'=lat',
+				lon:'=lon'
+			},
+			link:function(scope,element,attrs){
+				if(!!scope.lat && !!scope.lon){
+					console.log('calling getAddressFromLatLon')
+					scope.getAddressFromLatLon(scope.lat,scope.lon)
+				}
+			}
+		}
+	})
+	
 	
 	
 	
