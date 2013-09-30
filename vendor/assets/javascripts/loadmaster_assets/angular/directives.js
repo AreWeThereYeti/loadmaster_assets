@@ -5,11 +5,10 @@ angular.module('loadmaster', [])
 	    return {
 	    controller:userCtrl,
 	    link:function(scope,element,attrs){
-			scope.init();
+				scope.init();
 			}
 		}
 	})
-
 	.directive('ngTrip', function() {
 	    return {
 		    controller:tripCtrl,
@@ -17,7 +16,34 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
-	
+	.directive('ngMobileAccessPage', function() {
+	    return {
+				templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
+		    link:function(scope,element,attrs){
+			}
+		}
+	})
+	.directive('ngMobileTripStart', function() {
+	    return {
+			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
+		    link:function(scope,element,attrs){
+			}
+		}
+	})
+	.directive('ngMobileTripEnd', function() {
+	    return {
+			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
+		    link:function(scope,element,attrs){
+			}
+		}
+	})
+	.directive('ngMobileTripEnded', function() {
+	    return {
+			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
+		    link:function(scope,element,attrs){
+			}
+		}
+	})
 	.directive('ngCargoAutocomplete', function(){
 		return{
 			link:function(scope,element,attrs){
@@ -40,21 +66,17 @@ angular.module('loadmaster', [])
 			}
 		}
 	})
-
-	
 	.directive('ngMapStart', function() {
     return {
 	    replace: true,
-	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_start.html',
-	    controller:mapCtrl,
+	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_map.html',
+	    controller:'mapCtrl',
+			scope:{},
 	    link:function(scope,element,attrs){
-				scope.map_set_position="setstart_location"
 				$('#home').bind( "pageshow", function( event ) {
-					scope.initialize()
-					scope.removeAllMarkers()
-					scope.refreshMap()
-					scope.startWatchPosition()
-					scope.checkForGPSNeverFound()
+					scope.map_set_position="setstart_location"
+					scope.set_address_event="set_start_address"
+					scope.initMobileMap(true)
 				})
 				$('.gpsnotfound').trigger("create");
 			}
@@ -63,15 +85,15 @@ angular.module('loadmaster', [])
 	.directive('ngMapEnd', function() {
 	    return {
 	    replace: true,
-	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_end.html',
+			controller:'mapCtrl',
+			scope:{},
+	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_map.html',
 	    link:function(scope,element,attrs){
-	    	scope.map_set_position="setend_location"
 	    	$('#two').bind( "pageshow", function( event ) {
-					scope.initialize();
-					scope.removeAllMarkers()
-					scope.refreshMap()
-					scope.startWatchPosition()
-					scope.checkForGPSNeverFound()
+					scope.map_set_position="setend_location"
+					scope.set_address_event="set_end_address"
+					scope.keep_updating_position=true
+					scope.initMobileMap(true)
 				})
 				$('.gpsnotfound').trigger("create");
 			}
@@ -81,9 +103,16 @@ angular.module('loadmaster', [])
 	    return {
 		    replace: true,
 		    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_finish.html',
+				controller:'mapCtrl',
+				scope:{
+				},
 		    link:function(scope,element,attrs){
 		    	$('#three').bind( "pageshow", function( event ) {
-		    		scope.showmap = false;
+						scope.showNoCoords = false;
+						scope.showmap = false;
+						scope.has_position=true;
+						scope.startlocation=scope.$parent.startlocation
+						scope.endlocation=scope.$parent.endlocation
 		    		if(!!scope.startmarker){ 
 							scope.removeMarker(scope.startmarker);
 							scope.startmarker=null
@@ -93,13 +122,14 @@ angular.module('loadmaster', [])
 							scope.endmarker=null 
 						}
 		    		if(!!scope.startlocation && !!scope.endlocation){
-		    			scope.showmap = true;
-			    		scope.initialize();
-							scope.refreshMap()
+			    		scope.initMobileMap(false);
 			    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
 			    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
-			    		scope.centerOnTwoMarkers(scope.startmarker,scope.endmarker);	
-		    		}
+							scope.showmap = true;
+							scope.refreshMap();
+		    		}else{
+					    scope.showNoCoords = true;
+						}
 					$('.gpsnotfound').trigger("create");		
 				})
 			}

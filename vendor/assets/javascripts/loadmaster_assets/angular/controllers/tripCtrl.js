@@ -6,6 +6,7 @@ function tripCtrl($scope, $http) {
 
 	/* 	Submit buttons */
 	$scope.submit = function($event) {
+		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.AddStartValuesToDB({
 			cargo			:	$scope.cargo,
 			start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
@@ -24,6 +25,7 @@ function tripCtrl($scope, $http) {
 	};
 		
 	$scope.submit_end = function($event) {
+		$($event.target).parent().addClass('ui-btn-pressed')
 		//$scope.releaseWakeLock();
 		$scope.AddEndValuesToDB({
 			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
@@ -67,21 +69,20 @@ function tripCtrl($scope, $http) {
 		$scope.end_location=end_location;
 	})
 	
+	$scope.$on('set_start_address',function(ev,address){
+		$scope.start_address=address
+	})
+	
+	$scope.$on('set_end_address',function(ev,address){
+		$scope.end_address=address
+	})
+	
 	$scope.$watch('cargo + start_location + start_address', function () {
 		if($("#home").is(':visible')){
-			if(!!$scope.cargo && $scope.cargo != "0"){
-				if(!!$scope.start_location || (!!$scope.start_address && $scope.start_address !="")){
-					if(!!$("#submit_start")){
-						$("#submit_start").button("enable");
-						$("#submit_start").button("refresh");			
-					}
-				}
-			}
-			else if($scope.cargo === "0" || $scope.cargo == null || $scope.cargo == undefined) {
-				if(!!$("#submit_start")){
-					$("#submit_start").button("disable");
-					$("#submit_start").button("refresh");
-				}
+			if(!!$scope.cargo && $scope.cargo != "0" && (!!$scope.start_location || $scope.start_address.length>0)){
+				$scope.buttonEnable("#submit_start")
+			} else {
+				$scope.buttonDisable("#submit_start")
 			}
 		}			
 	});
@@ -89,23 +90,36 @@ function tripCtrl($scope, $http) {
 	$scope.$watch('access_token', function () {
 		if($("#tokencontainer").is(':visible')){
 			if(!!$scope.access_token && !!$scope.imei){
-					$("#submit_accesstoken").button("enable");
-					$("#submit_accesstoken").button("refresh");			
+					$scope.buttonEnable("#submit_accesstoken")
 				}
 			else if($scope.access_token == "" || $scope.imei == "" || $scope.access_token == null || $scope.imei == null || $scope.access_token == undefined || $scope.imei == undefined){
-					$("#submit_accesstoken").button("disable");
-					$("#submit_accesstoken").button("refresh");			
+					$scope.buttonDisable("#submit_accesstoken")
 				}			
 			}			
 	});
 	
 	$scope.$watch('end_location + end_address', function () {
 		if($("#two").is(':visible')){
-			if(!!$scope.end_location || (!!$scope.end_address && $scope.end_address !="") && !!$("#submit_end")){
-			  $("#submit_end").button("enable");
-				$("#submit_end").button("refresh");
+			if(!!$scope.end_location || $scope.end_address.length>0){
+				$scope.buttonEnable("#submit_end")
+			}else{
+				$scope.buttonDisable("#submit_end")
 			}
 		}
 	});
+	
+	$scope.buttonEnable = function(id){
+		if(!!$(id)){
+			$(id).button("enable");
+			$(id).button("refresh");
+		}
+	}
+	
+	$scope.buttonDisable = function(id){
+		if(!!$(id)){
+			$(id).button("disable");
+			$(id).button("refresh");
+		}
+	}
 
 }             

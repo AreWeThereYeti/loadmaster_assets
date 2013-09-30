@@ -38,11 +38,12 @@ angular.module('loadmaster', [])
 				end_input_id:'=endinputid',
 			},
 	   	link:function(scope,element,attrs){
+				scope.map_el=element.find('.map-container')[0]
 				navigator.geolocation.getCurrentPosition(function(position) {
 		      scope.initialize(position.coords.latitude,position.coords.longitude);
 					scope.initUIMap(scope.start_input_id,scope.end_input_id)
 		    }, function() {		//error function
-		      scope.initialize()
+		      scope.initializeMap()
 					scope.initUIMap(scope.start_input_id,scope.end_input_id)
 		    });
 
@@ -68,7 +69,8 @@ angular.module('loadmaster', [])
 				end_lon:'=endlon',
 			},
 	   	link:function(scope,element,attrs){
-				scope.initialize()
+				scope.map_el=element.find('.map-container')[0]
+				scope.initializeMap()
 				if(!!scope.start_lat && !!scope.start_lon){
 					scope.start_marker=scope.addMarkerToMap(scope.start_lat,scope.start_lon)
 					scope.centerOnMarkers()
@@ -96,6 +98,7 @@ angular.module('loadmaster', [])
 				lon:'=lon'
 			},
 			link:function(scope,element,attrs){
+				scope.map_el=element.find('.map-container')[0]
 				if(!!scope.lat && !!scope.lon){
 					console.log('calling getAddressFromLatLon')
 					scope.getAddressFromLatLon(scope.lat,scope.lon)

@@ -1,0 +1,31 @@
+<!-- Start på pålæsning  -->
+<div>
+	<div data-role="header">
+		<h1>Pålæsning</h1>
+	</div>
+	<div data-role="content">
+	    <form name="myForm">
+	    	<div class="margin_bottom_top">
+				<h1>{{licence_plate}}</h1>
+	    	</div>
+	    	<div class="margin_bottom_top">
+					<div ng-map-start></div>
+	    	</div>
+	    	<div class="margin_bottom_top">
+		    	<div ng-cargo-autocomplete class="margin_bottom_top">
+					<input type="text" ng-cargo-autocomplete ng-model="cargo" class="ng_cargo" placeholder="Indtast din last her">
+					<ul id="suggestions" data-role="listview" data-inset="true"></ul>
+		    	</div>	
+	    	</div>
+	    	<div class="margin_bottom_top">
+				<label for="kommentarer" class="ui-hidden-accessible">Kommentarer</label>
+				<input type="text" name="start_comments" ng-model="start_comments"  id="comments_start" value="" placeholder="Skriv dine kommentarer her"/>	</div>
+			<input type="submit" ng-click="submit($event)" class="biggerbtn" data-icon="arrow-r" id="submit_start" disabled="disabled" value="Start Tur" data-role="button" data-theme="b">
+	    </form>
+	</div>
+	<div class="database"></div>
+	<div data-role="footer">
+		<h1>LoadMaster Logger FMS</h1>
+	</div>
+</div>
+<!-- slut af pålæsning -->

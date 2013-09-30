@@ -35,7 +35,7 @@ function userCtrl($scope) {
 		$scope.checkLengthOfDatabase()
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
-		$.mobile.defaultPageTransition   = 'none';
+		$.mobile.defaultPageTransition   = 'slide';
 	    $.mobile.defaultDialogTransition = 'none';
 		
 		if($scope.access_token != ""){
@@ -289,6 +289,7 @@ function userCtrl($scope) {
 	
 		/* 	Starting new trip*/
 	$scope.submitStartNewTrip = function($event){
+		$($event.target).parent().addClass('ui-btn-pressed')
 		$event.preventDefault();
 		$.mobile.changePage("#home");
 	}
