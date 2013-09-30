@@ -35,7 +35,7 @@ function userCtrl($scope) {
 		$scope.checkLengthOfDatabase()
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
-		$.mobile.defaultPageTransition   = 'none';
+		$.mobile.defaultPageTransition   = 'slide';
 	    $.mobile.defaultDialogTransition = 'none';
 		
 		if($scope.access_token != ""){
