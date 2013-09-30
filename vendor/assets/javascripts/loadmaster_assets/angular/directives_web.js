@@ -62,21 +62,24 @@ angular.module('loadmaster', [])
 	.directive('ngStaticMap',function(){
    	return {
 	   	controller:'mapCtrl',
-			scope:{
-				start_lat:'=startlat',
-				start_lon:'=startlon',
-				end_lat:'=endlat',
-				end_lon:'=endlon',
-			},
+		scope:{
+			start_lat:'=startlat',
+			start_lon:'=startlon',
+			end_lat:'=endlat',
+			end_lon:'=endlon',
+			startlabel:'=startlabel',
+			endlabel:'=endlabel'
+
+		},
 	   	link:function(scope,element,attrs){
 				scope.map_el=element.find('.map-container')[0]
 				scope.initializeMap()
 				if(!!scope.start_lat && !!scope.start_lon){
-					scope.start_marker=scope.addMarkerToMap(scope.start_lat,scope.start_lon)
+					scope.start_marker=scope.addMarkerToMap(scope.start_lat,scope.start_lon, scope.startlabel)
 					scope.centerOnMarkers()
 				}
 				if(!!scope.end_lat && !!scope.end_lon){
-					scope.end_marker=scope.addMarkerToMap(scope.end_lat,scope.end_lon)
+					scope.end_marker=scope.addMarkerToMap(scope.end_lat,scope.end_lon, scope.endlabel)
 					scope.centerOnMarkers()
 				}
 	   	}

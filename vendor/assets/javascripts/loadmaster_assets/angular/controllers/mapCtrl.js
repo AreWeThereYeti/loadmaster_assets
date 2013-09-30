@@ -53,6 +53,14 @@ function mapCtrl($scope,$element,$attrs) {
 		});
 		$scope.autoCompleteInput($('#'+end_input_id)[0],$scope.end_marker)
 	}
+	
+	$scope.markerImage = new google.maps.MarkerImage(
+		'http://plebeosaur.us/etc/map/bluedot_retina.png',
+		null, // size
+		null, // origin
+		new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
+		new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
+	);
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
 		if(!latitude){var latitude=55.724355}
@@ -63,9 +71,11 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 		var marker = new google.maps.Marker({
 			map: $scope.map,
-			animation: google.maps.Animation.DROP,
+			icon: $scope.markerImage,
 			position: markerPosition,
-			title: (label || "")
+			title: "pos",
+			labelContent: "second",
+			labelClass: "labels" // the CSS class for the label
 		});
 		$scope.markersArray.push(marker)
 		return marker;

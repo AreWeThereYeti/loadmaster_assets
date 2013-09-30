@@ -27,7 +27,10 @@ function invoiceCtrl($scope,$element,$attrs) {
 	$scope.$watch('items',function(newVal){
 		$scope.total_price=0
 		for(var i=0;i<$scope.items.length;i++){
-			$scope.total_price+=Math.round(Number($scope.items[i].total_price)*100)/100 
+			$scope.total_price+=Math.round(Number($scope.items[i].total_price)*100)/100
+			if($scope.items[i].$$hashKey=newVal[0].$$hashKey){
+				$scope.items[i].total_price=$scope.items[i].units*$scope.items[i].unit_price
+			}
 		}
 		$scope.taxes=Math.round($scope.total_price*$scope.tax*100)/100
 		$scope.total_price_with_taxes=Math.round(($scope.total_price+$scope.taxes)*100)/100
