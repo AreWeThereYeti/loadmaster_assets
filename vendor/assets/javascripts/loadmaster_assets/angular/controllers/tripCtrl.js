@@ -89,12 +89,10 @@ function tripCtrl($scope, $http) {
 	
 	$scope.$watch('access_token', function () {
 		if($("#tokencontainer").is(':visible')){
-			if(!!$scope.access_token && !!$scope.imei){
-					$scope.buttonEnable("#submit_accesstoken")
-				}
-			else if($scope.access_token == "" || $scope.imei == "" || $scope.access_token == null || $scope.imei == null || $scope.access_token == undefined || $scope.imei == undefined){
-					$scope.buttonDisable("#submit_accesstoken")
-				}			
+			if($scope.access_token.length>0 && $scope.imei.length>0){
+				$scope.buttonEnable("#submit_accesstoken")
+			}else{
+				$scope.buttonDisable("#submit_accesstoken")
 			}			
 	});
 	
