@@ -51,10 +51,12 @@ function invoiceCtrl($scope,$element,$attrs) {
 		  url: url,
 		  data:data,
 			success:function(data){
-				window.location.href=data.redirect_url
+				console.log('sucess!!')
+ 				window.location.href=data.redirect_url
 			},
 			error:function(err){
 				console.log(err)
+				alert('Du har ikke udfyldt alle felter korrekt. Prøv igen')
 			}
 		});
 	}
