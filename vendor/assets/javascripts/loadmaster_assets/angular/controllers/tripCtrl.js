@@ -87,7 +87,7 @@ function tripCtrl($scope, $http) {
 	
 	$scope.$watch('access_token', function () {
 		if($("#tokencontainer").is(':visible')){
-			if($scope.access_token.length>0 && $scope.imei.length>0){
+			if(!!$scope.access_token && $scope.access_token.length>0 && !!$scope.imei && $scope.imei.length>0){
 				$scope.buttonEnable("#submit_accesstoken")
 			}else{
 				$scope.buttonDisable("#submit_accesstoken")
@@ -106,17 +106,13 @@ function tripCtrl($scope, $http) {
 	});
 	
 	$scope.buttonEnable = function(id){
-		if(!!$(id)){
-			$(id).button("enable");
-			$(id).button("refresh");
-		}
+		$(id).button("enable");
+		$(id).button("refresh");
 	}
 	
 	$scope.buttonDisable = function(id){
-		if(!!$(id)){
-			$(id).button("disable");
-			$(id).button("refresh");
-		}
+		$(id).button("disable");
+		$(id).button("refresh");
 	}
 
 }             
