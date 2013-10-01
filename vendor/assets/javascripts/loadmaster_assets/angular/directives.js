@@ -18,22 +18,32 @@ angular.module('loadmaster', [])
 	})
 	.directive('ngMobileAccessPage', function() {
 	    return {
-				templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
+			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
 		    link:function(scope,element,attrs){
+		    	$("#tokencontainer").bind("pageshow", function(e) {
+					$('#tokencontainer').trigger('create')
+				})
 			}
 		}
 	})
 	.directive('ngMobileTripStart', function() {
 	    return {
-			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
+			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
 		    link:function(scope,element,attrs){
+		    	$("#home").bind("pageshow", function(e) {
+		    		$('#home').trigger('create')
+		    	})
+		    	
 			}
 		}
 	})
 	.directive('ngMobileTripEnd', function() {
 	    return {
-			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
+			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 		    link:function(scope,element,attrs){
+		    	$("#two").bind("pageshow", function(e) {
+		    		$('#two').trigger('create')
+		    	})
 			}
 		}
 	})
@@ -41,6 +51,9 @@ angular.module('loadmaster', [])
 	    return {
 			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 		    link:function(scope,element,attrs){
+		    	$("#three").bind("pageshow", function(e) {
+		    		$('#three').trigger('create')
+		    	})
 			}
 		}
 	})
@@ -78,6 +91,9 @@ angular.module('loadmaster', [])
 					scope.set_address_event="set_start_address"
 					scope.initMobileMap(true)
 				})
+				$('#home').bind( "pagehide", function( event ) {
+					scope.resetMap()
+				})
 				$('.gpsnotfound').trigger("create");
 			}
 		}
@@ -95,6 +111,9 @@ angular.module('loadmaster', [])
 					scope.keep_updating_position=true
 					scope.initMobileMap(true)
 				})
+			$('#two').bind( "pagehide", function( event ) {
+				scope.resetMap()
+			})
 				$('.gpsnotfound').trigger("create");
 			}
 		};
@@ -103,16 +122,19 @@ angular.module('loadmaster', [])
 	    return {
 		    replace: true,
 		    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_finish.html',
-				controller:'mapCtrl',
-				scope:{
-				},
+			controller:'mapCtrl',
+			scope:{
+			},
 		    link:function(scope,element,attrs){
 		    	$('#three').bind( "pageshow", function( event ) {
 						scope.showNoCoords = false;
 						scope.showmap = false;
 						scope.has_position=true;
 						scope.startlocation=scope.$parent.startlocation
+						scope.startaddress=scope.$parent.start_address
 						scope.endlocation=scope.$parent.endlocation
+						scope.endaddress=scope.$parent.end_address
+						
 		    		if(!!scope.startmarker){ 
 							scope.removeMarker(scope.startmarker);
 							scope.startmarker=null

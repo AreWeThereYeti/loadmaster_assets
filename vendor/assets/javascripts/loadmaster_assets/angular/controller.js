@@ -18,7 +18,7 @@ function userCtrl($scope) {
 	$scope.host = 'https://portal.loadmasterloggerfms.dk';
 	
 	$scope.$on("setcargo", function(evt, cargo){
-		$scope.cargo = cargo;
+		$scope.top_cargo = cargo;
 		$('.weight').trigger("create");
 	})
 	
@@ -341,13 +341,13 @@ function userCtrl($scope) {
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
-		$scope.startlocation=trip.start_location
-	 	$scope.startaddress=trip.start_address;
+		$scope.top_startlocation=trip.start_location
+	 	$scope.top_startaddress=trip.start_address;
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 	 
 		// this is the section that actually inserts the values into the User table
 		$scope.db.transaction(function(transaction) {
-			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + $scope.cargo);
+			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
 			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
 		},function error(err){alert('error on save to local db ' + err)}, function success(){});
 		return false;
@@ -355,8 +355,8 @@ function userCtrl($scope) {
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
-	 	$scope.endlocation=trip.end_location
-	 	$scope.endaddress=trip.end_address;
+	 	$scope.top_endlocation=trip.end_location
+	 	$scope.top_endaddress=trip.end_address;
 	 	console.log("trip end location" + trip.end_location)
 	 	console.log("trip end adress" + trip.end_address)
 		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")

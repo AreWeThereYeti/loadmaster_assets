@@ -77,7 +77,7 @@ function tripCtrl($scope, $http) {
 	
 	$scope.$watch('cargo + start_location + start_address', function () {
 		if($("#home").is(':visible')){
-			if(!!$scope.cargo && $scope.cargo != "0" && (!!$scope.start_location || $scope.start_address.length>0)){
+			if(!!$scope.cargo && $scope.cargo.length>0 && (!!$scope.start_location || (!!$scope.start_address && $scope.start_address.length>0))){
 				$scope.buttonEnable("#submit_start")
 			} else {
 				$scope.buttonDisable("#submit_start")

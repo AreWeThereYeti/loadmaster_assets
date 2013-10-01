@@ -54,6 +54,13 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.autoCompleteInput($('#'+end_input_id)[0],$scope.end_marker)
 	}
 	
+	$scope.resetMap = function(){
+		if(!!$scope.locationMarker){
+			$scope.removeMarker($scope.locationMarker)
+		}
+		clearInterval($scope.watchPositionTimer)
+	} 
+	
 	$scope.markerImage = new google.maps.MarkerImage(
 		'http://plebeosaur.us/etc/map/bluedot_retina.png',
 		null, // size
@@ -110,7 +117,6 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		//console.log('looking for position')
 		navigator.geolocation.getCurrentPosition(
 			function(position){
 				$scope.$apply(function(){
@@ -132,15 +138,22 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.updatePosition = function(latitude, longitude){
 		if(!$scope.locationMarker){
 			$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-			$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
+			$scope.centerOnPosition(latitude,longitude)
 		}else{
 			$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
 			if($scope.keep_updating_position){
-				$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
+				$scope.centerOnPosition(latitude,longitude)
 			}
 		}
 		$scope.location=[latitude, longitude]
 		$scope.refreshMap()
+	}
+	
+	$scope.centerOnPosition = function(latitude,longitude){
+		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
+		if($scope.map.getZoom()>15){
+			$scope.map.setZoom(14)
+		}
 	}
 	
 	$scope.startWatchPosition = function(){
@@ -213,17 +226,17 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.getAddressFromLatLon = function(lat,lon){
 		var geocoder= new google.maps.Geocoder();
 		var latlng = new google.maps.LatLng(lat,lon);
-    geocoder.geocode({'latLng': latlng}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        if (results[1]) {
-          $scope.$apply(function(){
-						$scope.formatted_address=results[1].formatted_address
-					});
-        }
-      } else {
-        console.log("Geocoder failed due to: " + status);
-      }
-    });
+	    geocoder.geocode({'latLng': latlng}, function(results, status) {
+	      if (status == google.maps.GeocoderStatus.OK) {
+	        if (results[1]) {
+	          $scope.$apply(function(){
+							$scope.formatted_address=results[1].formatted_address
+						});
+	        }
+	      } else {
+	        console.log("Geocoder failed due to: " + status);
+	      }
+	    });
 	}
 	
 	$scope.centerOnTwoMarkers = function(mark_1,mark_2){
