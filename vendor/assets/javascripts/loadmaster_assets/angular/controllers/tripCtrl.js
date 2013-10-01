@@ -91,7 +91,8 @@ function tripCtrl($scope, $http) {
 				$scope.buttonEnable("#submit_accesstoken")
 			}else{
 				$scope.buttonDisable("#submit_accesstoken")
-			}			
+			}
+		}			
 	});
 	
 	$scope.$watch('end_location + end_address', function () {
