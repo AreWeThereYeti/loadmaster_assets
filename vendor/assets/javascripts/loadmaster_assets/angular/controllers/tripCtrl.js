@@ -97,7 +97,7 @@ function tripCtrl($scope, $http) {
 	
 	$scope.$watch('end_location + end_address', function () {
 		if($("#two").is(':visible')){
-			if(!!$scope.end_location || $scope.end_address.length>0){
+			if(!!$scope.end_location || !!$scope.end_address){
 				$scope.buttonEnable("#submit_end")
 			}else{
 				$scope.buttonDisable("#submit_end")

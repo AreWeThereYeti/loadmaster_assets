@@ -20,9 +20,7 @@ angular.module('loadmaster', [])
 	    return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
 		    link:function(scope,element,attrs){
-		    	$("#tokencontainer").bind("pageshow", function(e) {
-					$('#tokencontainer').trigger('create')
-				})
+				$('#tokencontainer').trigger('create')
 			}
 		}
 	})

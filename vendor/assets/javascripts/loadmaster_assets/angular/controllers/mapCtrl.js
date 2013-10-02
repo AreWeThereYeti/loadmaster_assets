@@ -62,7 +62,7 @@ function mapCtrl($scope,$element,$attrs) {
 	} 
 	
 	$scope.markerImage = new google.maps.MarkerImage(
-		'http://plebeosaur.us/etc/map/bluedot_retina.png',
+		'src/img/bluedot_retina.png',
 		null, // size
 		null, // origin
 		new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
@@ -117,9 +117,10 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		navigator.geolocation.getCurrentPosition(
+		navigator.geolocation.watchPosition(
 			function(position){
 				$scope.$apply(function(){
+					console.log("position found")
 					$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 					$scope.gps_found=true;
 					$scope.has_position=true;
@@ -131,7 +132,7 @@ function mapCtrl($scope,$element,$attrs) {
 					$scope.gps_found=false;
 				})
 			}, 
-			{ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true}
+			{ maximumAge: 20000, timeout: 20000, enableHighAccuracy: true}
 		);
 	}
 	
@@ -155,6 +156,7 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.map.setZoom(14)
 		}
 	}
+	
 	
 	$scope.startWatchPosition = function(){
 		$scope.drawCurrentPosition()
