@@ -3,14 +3,14 @@
     <h1>Setup</h1>
   </div>  
   <h1>SETUP DEVICE</h1>
-  <h1 class="margin_bottom_top" >Indtast Device id og generer access token. </br> Access token skal indtastes i boksen herunder</h1>
+  <h1 class="margin_bottom" >Indtast Device id og generer access token. </br> Access token skal indtastes i boksen herunder</h1>
 
   <div id="inline">
      <form id="loginForm">
           <label for="license_plate">Nummerplade</label>
-          <input type="text" class="requiredInput margin_bottom_top" name="license_plate" ng-model="license_plate" placeholder="indtast nummerplade" id="select_license_plate" type="text" required />
+          <input type="text" class="requiredInput margin_bottom" name="license_plate" ng-model="license_plate" placeholder="indtast nummerplade" id="select_license_plate" type="text" required />
           <label for="device_id">Device Id</label>
-          <input type="text" name="IMEI" class="margin_bottom_top" ng-model="imei" id="imei" ng-minlength="4" value="" placeholder="indtast imei" required />
+          <input type="text" name="IMEI" class="margin_bottom" ng-model="imei" id="imei" ng-minlength="4" value="" placeholder="indtast imei" required />
           <label for="accesstoken">Access Token. Genereres ved indtastning af imei i administrator interface</label>
           <input type="text" name="accesstoken" ng-model="access_token" id="accesstoken" ng-minlength="8" value="" placeholder="indtast accesstoken" required />
           <input id="submit_accesstoken" ng-click="submitToken($event)" type="submit" value="submit access token" disabled="disabled" data-role="button" data-inline="true" data-theme="b"  />

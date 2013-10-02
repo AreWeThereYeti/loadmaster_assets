@@ -1,18 +1,18 @@
 <!-- Start of the History page -->
 <div>
   <div data-role="header">
-  <h1 class="margin_bottom_top">Tur Færdig</h1>
+  <h1 class="margin_bottom">Tur Færdig</h1>
 </div>
   
-<div class="margin_bottom_top">
+<div class="margin_bottom">
       <h1>Turen er nu afsluttet og din tur er gemt</h1>
   </div>
-<div class="margin_bottom_top">
+<div class="margin_bottom">
    <div class="map_container">
 		<div ng-map-finish ng-controller="mapCtrl"></div>
    </div>
 </div>
-<div class="ui-grid-a margin_bottom_top centered">
+<div class="ui-grid-a margin_bottom centered">
 	<div class="ui-block-a fontsize"><span>Start tid : </span>{{start_timestamp}}</div>
 	<div class="ui-block-b fontsize"><span>Slut tid : </span>{{end_timestamp}}</div>
 </div>
@@ -24,7 +24,7 @@
 	    <span class="licenseplate"></span><h2 class="inlineblock centered vertical-centered margintop30" >{{license_plate}}</h2>
 	</div>
 </div>
-  <input type="submit" data-icon="arrow-r" id="submitStartNewTrip" ng-click="submitStartNewTrip($event)" value="Ny tur" data-role="button">
+  <input type="submit" data-icon="check" id="submitStartNewTrip" ng-click="submitStartNewTrip($event)" value="Ny tur" data-role="button">
 
 <div data-role="footer">
 	<h1>LoadMaster Logger FMS</h1>
