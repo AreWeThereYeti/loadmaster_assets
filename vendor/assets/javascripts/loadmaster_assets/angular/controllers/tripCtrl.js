@@ -68,6 +68,7 @@ function tripCtrl($scope, $http) {
 	})
 	
 	$scope.$on('set_start_address',function(ev,address){
+		console.log('setting start_address ')
 		$scope.start_address=address
 	})
 	
@@ -76,10 +77,13 @@ function tripCtrl($scope, $http) {
 	})
 	
 	$scope.$watch('cargo + start_location + start_address', function () {
+		console.log('checker om du kan submitte')
 		if($("#home").is(':visible')){
 			if(!!$scope.cargo && $scope.cargo.length>0 && (!!$scope.start_location || (!!$scope.start_address && $scope.start_address.length>0))){
+				console.log('det kan du!')
 				$scope.buttonEnable("#submit_start")
 			} else {
+				console.log('det kan du ikke!')
 				$scope.buttonDisable("#submit_start")
 			}
 		}			
