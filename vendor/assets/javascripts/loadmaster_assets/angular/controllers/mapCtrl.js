@@ -117,7 +117,7 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		navigator.geolocation.watchPosition(
+		navigator.geolocation.getCurrentPosition(
 			function(position){
 				$scope.$apply(function(){
 					console.log("position found")
@@ -164,7 +164,7 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.$apply(function(){
 				$scope.drawCurrentPosition()
 			})
-		}, 5000);
+		}, 2000);
 	}
 	
 	$scope.refreshMap = function(){
@@ -273,7 +273,7 @@ function mapCtrl($scope,$element,$attrs) {
 				})
 			}
 			sec+=1
-		},1000);
+		}, 10000);
 	}
 	
 	$scope.$watch('address', function() {
