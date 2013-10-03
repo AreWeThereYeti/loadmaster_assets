@@ -35,6 +35,7 @@ function mapCtrl($scope,$element,$attrs) {
 		$scope.removeAllMarkers()
 		$scope.refreshMap()
 		if(watchPosition){
+			console.log("start watching position")
 			$scope.startWatchPosition()
 			$scope.checkForGPSNeverFound()
 		}
@@ -128,11 +129,15 @@ function mapCtrl($scope,$element,$attrs) {
 			},
 			function(errCode){
 				console.log('could not find position')
-				$scope.$apply(function(){
+				console.log('code: '    + errCode.code +
+                  '. message: ' + errCode.message)
+
+/* 				$scope.$apply(function(){ */
 					$scope.gps_found=false;
-				})
+					console.log('scope.gps_found er : ' + $scope.gps_found)
+/* 				}) */
 			}, 
-			{ maximumAge: 20000, timeout: 20000, enableHighAccuracy: true}
+			{ maximumAge: 50000, timeout: 50000, enableHighAccuracy: true}
 		);
 	}
 	
@@ -142,9 +147,9 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.centerOnPosition(latitude,longitude)
 		}else{
 			$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-			if($scope.keep_updating_position){
+/* 			if($scope.keep_updating_position == true){ */
 				$scope.centerOnPosition(latitude,longitude)
-			}
+/* 			} */
 		}
 		$scope.location=[latitude, longitude]
 		$scope.refreshMap()
@@ -152,6 +157,7 @@ function mapCtrl($scope,$element,$attrs) {
 	
 	$scope.centerOnPosition = function(latitude,longitude){
 		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
+		console.log("centering on position")
 		if($scope.map.getZoom()>15){
 			$scope.map.setZoom(14)
 		}
@@ -164,7 +170,7 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.$apply(function(){
 				$scope.drawCurrentPosition()
 			})
-		}, 2000);
+		}, 20000);
 	}
 	
 	$scope.refreshMap = function(){
@@ -273,7 +279,7 @@ function mapCtrl($scope,$element,$attrs) {
 				})
 			}
 			sec+=1
-		}, 10000);
+		}, 1000);
 	}
 	
 	$scope.$watch('address', function() {
