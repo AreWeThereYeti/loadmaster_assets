@@ -4,6 +4,9 @@
   </div>
 	<div class="map-container" ng-hide="gpsNotFound()">
 	</div>
+	<div class="no-internet-container" ng-show="gpsFoundNoInternet()">
+	  <h2>Vi har fundet og gemt din position. Vi kunne desværre ikke visse den på kortet da du ikke har forbindelse til internettet</h2>
+	</div>
 	<div ng-show="gpsNotFound()" class="gpsnotfound">
 		<h2 class="vertical_align">Vi kunne ikke finde gps. Indtast adresse manuelt</h2>
 		<label for="textarea-a">Indtast Adresse</label>

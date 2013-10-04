@@ -2,42 +2,46 @@ function mapCtrl($scope,$element,$attrs) {
 	
 	$scope.defaultLat=55.693745;
 	$scope.defaultLon=12.433777;
-	$scope.bounds=new google.maps.LatLngBounds()
 	$scope.markersArray = [];
 		
 	/* 			Initialize map */
 	$scope.initializeMap = function(latitude, longitude,div) {
-		$scope.gps_found=null;
-		$scope.has_position=false;
-		if(!$scope.map){
-			if(!latitude){var latitude=$scope.defaultLat}
-			if(!longitude){var longitude=$scope.defaultLon}
-			$scope.mapOptions = {
-			  center: new google.maps.LatLng(latitude, longitude), 
-			  zoom: 12,
-			  streetViewControl: false,
-			  zoomControl: true,
-			  draggable:true,
-			  zoomControlOptions: {
-			  	style: google.maps.ZoomControlStyle.LARGE
-			  },
-			  maptypecontrol :false,
-			  disableDefaultUI: true,
-			  mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
-			$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);  
+		if(!!window.google){
+			$scope.bounds=new google.maps.LatLngBounds()
+			$scope.gps_found=null;
+			$scope.has_position=false;
+			if(!$scope.map){
+				if(!latitude){var latitude=$scope.defaultLat}
+				if(!longitude){var longitude=$scope.defaultLon}
+				$scope.mapOptions = {
+				  center: new google.maps.LatLng(latitude, longitude), 
+				  zoom: 12,
+				  streetViewControl: false,
+				  zoomControl: true,
+				  draggable:true,
+				  zoomControlOptions: {
+				  	style: google.maps.ZoomControlStyle.LARGE
+				  },
+				  maptypecontrol :false,
+				  disableDefaultUI: true,
+				  mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);  
+			}
 		}
 	}
 	
 	$scope.initMobileMap = function(watchPosition){
-		$('.ui-btn-pressed').removeClass('ui-btn-pressed')
-		$scope.initializeMap()
-		$scope.removeAllMarkers()
-		$scope.refreshMap()
-		if(watchPosition){
-			console.log("start watching position")
-			$scope.startWatchPosition()
-			$scope.checkForGPSNeverFound()
+		if(!!window.google){
+			$('.ui-btn-pressed').removeClass('ui-btn-pressed')
+			$scope.initializeMap()
+			$scope.removeAllMarkers()
+			$scope.refreshMap()
+			if(watchPosition){
+				console.log("start watching position")
+				$scope.startWatchPosition()
+				$scope.checkForGPSNeverFound()
+			}
 		}
 	}
 
@@ -61,14 +65,6 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 		clearInterval($scope.watchPositionTimer)
 	} 
-	
-	$scope.markerImage = new google.maps.MarkerImage(
-		'src/img/bluedot_retina.png',
-		null, // size
-		null, // origin
-		new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
-		new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
-	);
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
 		if(!latitude){var latitude=55.724355}
@@ -134,7 +130,6 @@ function mapCtrl($scope,$element,$attrs) {
 
 /* 				$scope.$apply(function(){ */
 					$scope.gps_found=false;
-					console.log('scope.gps_found er : ' + $scope.gps_found)
 /* 				}) */
 			}, 
 			{ maximumAge: 50000, timeout: 50000, enableHighAccuracy: true}
@@ -283,6 +278,7 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.$watch('address', function() {
+		console.log('address changed!')
 		$scope.location = null;
 		$scope.$emit($scope.set_address_event,$scope.address)
 		$scope.$emit($scope.map_set_position, null);
@@ -315,13 +311,35 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.gpsFound = function(){
-		return $scope.gps_found==true
+		if($scope.gps_found && $scope.hasInternet()){
+			return true
+		}else{
+			return false
+		}
 	}
 	
 	$scope.gpsNotFound = function(){
 		return $scope.gps_found==false;
 	}
+	
+	$scope.gpsFoundNoInternet = function(){
+		if($scope.gps_found && !$scope.hasInternet()){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
+	$scope.hasInternet = function(){
+		if(!navigator.connection || !Connection){		//is browser
+			return true
+		}
+		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
+			return false
+		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+			return true
+		}
+	}
 
 
 }
