@@ -16,7 +16,7 @@ function userCtrl($scope) {
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
 	$scope.host = 'https://portal.loadmasterloggerfms.dk';
-	//$scope.host = 'http://192.168.0.3:3000'
+/* 	$scope.host = 'http://192.168.0.3:3000' */
 	
 	$scope.$on("setcargo", function(evt, cargo){
 		$scope.top_cargo = cargo;
@@ -79,8 +79,9 @@ function userCtrl($scope) {
 	/* check Connection */
 	$scope.checkConnection = function(){
 		if(!navigator.connection || !Connection || navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
-			//console.log('Unknown connection');
+			console.log('Connectiontype is  : ' + navigator.connection.type);
 		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+			console.log('connectiontype is : ' + navigator.connection.type);
 			$scope.isDatabaseEmpty();
 		}
 	}
@@ -199,6 +200,7 @@ function userCtrl($scope) {
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
+		console.log("InsertRecordOnServerFunction")
 		$.ajax({
 			type: "POST",
 			url: $scope.host + "/api/v1/trips",

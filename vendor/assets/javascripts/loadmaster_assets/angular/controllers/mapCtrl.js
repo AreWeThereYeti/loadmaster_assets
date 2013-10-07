@@ -4,8 +4,14 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.defaultLon=12.433777;
 	$scope.markersArray = [];
 	
-	if(!!window.google){
-		
+	if(window.google){
+		$scope.markerImage = new google.maps.MarkerImage(
+			'src/img/bluedot_retina.png',
+			null, // size
+			null, // origin
+			new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
+			new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
+		);
 	}
 		
 	/* 			Initialize map */
@@ -48,6 +54,8 @@ function mapCtrl($scope,$element,$attrs) {
 			}
 		}
 	}
+	
+	
 
 	$scope.initUIMap = function(start_input_id,end_input_id){
 		$scope.start_marker = new google.maps.Marker({  
@@ -79,11 +87,14 @@ function mapCtrl($scope,$element,$attrs) {
 		if(!$scope.IS_MOBILE || $scope.savebounds){
 			$scope.bounds.extend(markerPosition)
 		}
+		
 		var marker = new google.maps.Marker({
 			map: $scope.map,
+			flat: true,
+			optimized: false,
 			icon: $scope.markerImage,
 			position: markerPosition,
-			title: "pos",
+			title: "marker",
 			labelContent: "second",
 			labelClass: "labels" // the CSS class for the label
 		});
