@@ -1,18 +1,30 @@
 <div id="map_canvas_finish">
-  <div class="map-container" ng-show="showmap">
+  
+  <div ng-hide="hasStartAndEndCoords()" class="vertical_align">
+    <div class="overlay">
+      <h2 class="centered">
+        <span class="searching" ng-hide="noStartAndEndCoords()">
+        </span>
+      </h2>
+    </div>
   </div>
   
-  <div ng-show="gpsNotFound()" class="gpsnotfound">
+  <div class="no-internet-container" ng-show="hasStartAndEndCoordsNoInternet()">
+    <h2 class="centered">Vi har gemt din tur!</h2> 
+    <h3 class="centered">Da du ikke har forbindelse til internettet, kunne vi desværre ikke visse din rute på kortet</h3>
   </div>
   
-  <div class="centered padding_top" ng-show="showNoCoords ">
-		<h2>Vi fandt ikke gps koordinater. </br>Men adresserne du har indtastet er blevet sendt.</h2>
+  <div class="map-container" ng-show="hasStartAndEndCoords()">
+  </div>
+  
+  <div class="padding_top no-internet-but-coords" ng-show="noStartAndEndCoords()">
+		<h2 class="centered">Vi fandt desværre ikke dine gps koordinater. </br>Men adresserne du har indtastet er blevet sendt.</h2>
 		<div class="ui-grid-a">
 			<div class="ui-block-a">
-		    	<span class="startadress"></span><span class="fontsize inlineblock centered vertical-centered margintop30">Start adresse :</br>{{startaddress}}</span>
+		    <span class="address fontsize inlineblock centered vertical-centered margintop30">Start adresse :</br>{{startaddress}}</span>
 			</div>
 			<div class="ui-block-b">
-			    <span class="endadress"></span><span class="fontsize inlineblock centered vertical-centered margintop30">Slut adresse :</br>{{endaddress}}</span>
+			  <span class="address end fontsize inlineblock centered vertical-centered margintop30">Slut adresse :</br>{{endaddress}}</span>
 			</div>
 		</div>
 	</div>

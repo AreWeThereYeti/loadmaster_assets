@@ -177,9 +177,9 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.centerOnPosition = function(latitude,longitude){
 		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
 		console.log("centering on position")
-		if($scope.map.getZoom()>15){
-			$scope.map.setZoom(14)
-		}
+		// if($scope.map.getZoom()>15){
+		// 	$scope.map.setZoom(14)
+		// }
 	}
 	
 	
@@ -330,7 +330,7 @@ function mapCtrl($scope,$element,$attrs) {
 	});
 	
 	$scope.gpsStateUndefined = function(){
-		return $scope.gps_found==null || $scope.gps_found==false ? true : false
+		return $scope.gps_found==null || $scope.gps_found==false || $scope.gpsFoundNoInternet() ? true : false
 	}
 	
 	$scope.showMap = function(){
@@ -350,7 +350,15 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.hasStartAndEndCoords = function(){
-		return !!$scope.startmarker && !!$scope.endmarker ? true : false
+		return !!$scope.startmarker && !!$scope.endmarker && $scope.hasInternet() ? true : false
+	}
+	
+	$scope.noStartAndEndCoords = function(){
+		return $scope.startmarker==undefined || $scope.endmarker==undefined ? true : false
+	}
+	
+	$scope.hasStartAndEndCoordsNoInternet = function(){
+		return !!$scope.startmarker && !!$scope.endmarker && !$scope.hasInternet() ? true : false
 	}
 
 	$scope.hasInternet = function(){
