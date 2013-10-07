@@ -128,7 +128,7 @@ angular.module('loadmaster', [])
 				'src/img/marker.png',
 				null, // size
 				null, // origin
-				new google.maps.Point( 11, 16 ), // anchor (move to center of marker)
+				new google.maps.Point( 0, 16 ),
 				new google.maps.Size( 22, 32 ) // scaled size (required for Retina display icon)
 			);
 		    	$('#three').bind( "pageshow", function( event ) {
