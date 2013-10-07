@@ -125,11 +125,11 @@ angular.module('loadmaster', [])
 			},
 		    link:function(scope,element,attrs){
 		    scope.markerImage = new google.maps.MarkerImage(
-				'src/img/marker.png',
+				'src/img/start_marker.png',
 				null, // size
 				null, // origin
-				new google.maps.Point( 0, 16 ),
-				new google.maps.Size( 22, 32 ) // scaled size (required for Retina display icon)
+				new google.maps.Point( 0, 25 ),
+				new google.maps.Size( 50, 50 ) // scaled size (required for Retina display icon)
 			);
 		    	$('#three').bind( "pageshow", function( event ) {
 						scope.showNoCoords = false;
@@ -151,12 +151,14 @@ angular.module('loadmaster', [])
 		    		if(!!scope.startlocation && !!scope.endlocation){
 			    		scope.initMobileMap(false);
 			    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
+			    		scope.startmarker.setIcon('src/img/start_marker.png')
 			    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
-							scope.showmap = true;
-							scope.refreshMap();
+			    		scope.endmarker.setIcon('src/img/end_marker.png')
+						scope.showmap = true;
+						scope.refreshMap();
 		    		}else{
 					    scope.showNoCoords = true;
-						}
+					}
 					$('.gpsnotfound').trigger("create");		
 				})
 			}
