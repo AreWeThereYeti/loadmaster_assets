@@ -120,17 +120,19 @@ angular.module('loadmaster', [])
 	    return {
 		    replace: true,
 		    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/map_finish.html',
-			controller:'mapCtrl',
-			scope:{
-			},
+				controller:'mapCtrl',
+				scope:{
+				},
 		    link:function(scope,element,attrs){
-		    scope.markerImage = new google.maps.MarkerImage(
-				'src/img/start_marker.png',
-				null, // size
-				null, // origin
-				new google.maps.Point( 0, 25 ),
-				new google.maps.Size( 50, 50 ) // scaled size (required for Retina display icon)
-			);
+					if(!!window.google){
+				    scope.markerImage = new google.maps.MarkerImage(
+							'src/img/start_marker.png',
+							null, // size
+							null, // origin
+							new google.maps.Point( 0, 25 ),
+							new google.maps.Size( 50, 50 ) // scaled size (required for Retina display icon)
+						);
+					}
 		    	$('#three').bind( "pageshow", function( event ) {
 						scope.showNoCoords = false;
 						scope.showmap = false;
@@ -139,7 +141,7 @@ angular.module('loadmaster', [])
 						scope.startaddress=scope.$parent.start_address
 						scope.endlocation=scope.$parent.end_location
 						scope.endaddress=scope.$parent.end_address
-						
+					
 		    		if(!!scope.startmarker){ 
 							scope.removeMarker(scope.startmarker);
 							scope.startmarker=null
@@ -154,12 +156,12 @@ angular.module('loadmaster', [])
 			    		scope.startmarker.setIcon('src/img/start_marker.png')
 			    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
 			    		scope.endmarker.setIcon('src/img/end_marker.png')
-						scope.showmap = true;
-						scope.refreshMap();
+							scope.showmap = true;
+							scope.refreshMap();
 		    		}else{
 					    scope.showNoCoords = true;
-					}
-					$('.gpsnotfound').trigger("create");		
+						}
+						$('.gpsnotfound').trigger("create");		
 				})
 			}
 		}

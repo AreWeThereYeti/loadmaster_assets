@@ -10,6 +10,7 @@ function userCtrl($scope) {
 	$scope.IS_MOBILE=true
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
+	$scope.isAllowedToSync = true;
 	
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
@@ -82,12 +83,30 @@ function userCtrl($scope) {
 		try{
 			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 				console.log('connectiontype is : ' + navigator.connection.type);
+				if(!window.google && $scope.hasInternet()){
+					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>');
+				}
 				$scope.isDatabaseEmpty();
 			}
 		}catch(err){
 			//console.log('cant get connection type')
 		}
 
+	}
+	
+	$scope.hasInternet = function(){
+		var has_internet=false
+		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+		if(app){
+			if(typeof navigator === 'undefined' || typeof navigator.connection === 'undefined' || typeof navigator.connection.type === 'undefined' | typeof Connection === 'undefined'){
+			}
+			else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+				has_internet=true
+			}
+		}
+		console.log('hasInternet returns: ')
+		console.log(has_internet)
+		return has_internet;
 	}
 	
 	
