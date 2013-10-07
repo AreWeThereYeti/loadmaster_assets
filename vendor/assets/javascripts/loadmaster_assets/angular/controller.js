@@ -15,8 +15,8 @@ function userCtrl($scope) {
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
-	//$scope.host = 'https://portal.loadmasterloggerfms.dk';
-	$scope.host = '192.168.0.3:3000'
+	$scope.host = 'https://portal.loadmasterloggerfms.dk';
+	//$scope.host = 'http://192.168.0.3:3000'
 	
 	$scope.$on("setcargo", function(evt, cargo){
 		$scope.top_cargo = cargo;
@@ -27,7 +27,7 @@ function userCtrl($scope) {
 	$scope.init = function(){
 /* 		debugging function */
 
-/* 		$scope.dropTables(); */
+ 		// $scope.dropTables(); 
 
 /* 		End of debugging functions */
 		$scope.initializeDB()
@@ -165,37 +165,37 @@ function userCtrl($scope) {
 			$scope.createNewDB()
 		}	
 			
-			$scope.db.transaction(function (tx)	 
-				{
-					tx.executeSql('SELECT * FROM Trip', [], function (tx, result)  // Fetch records from SQLite		 
-					{	 
-						var dataset = result.rows; 
-						var trips = new Array();
-						for (var i = 0, item = null; i < dataset.length; i++) {
-							item = dataset.item(i);
-							var trip = {
-								trip_id			: item['Id'],
-								cargo			: item['_cargo'],
-								license_plate 	: $scope.license_plate,
-								start_location 	: item['_start_location'],
-								start_address 	: item['_start_address'],
-								end_location 	: item['_end_location'],
-								end_address	 	: item['_end_address'],
-								start_timestamp : item['_start_timestamp'],
-								end_timestamp 	: item['_end_timestamp'],
-								start_comments 	: item['_start_comments'],
-								end_comments 	: item['_end_comments']
-							};
-							
-							if(!!item['_is_finished']){
-								console.log(trip)
-								trips.push(trip);	
-							}
-						}
-						$scope.InsertRecordOnServerFunction(trips);      // Call Function for insert Record into SQl Server
-					});
-				});
-			}
+		$scope.db.transaction(function (tx){
+			tx.executeSql('SELECT * FROM Trip', [], function (tx, result){	 
+				var dataset = result.rows; 
+				var trips = new Array();
+				for (var i = 0, item = null; i < dataset.length; i++) {
+					item = dataset.item(i);
+					var trip = {
+						trip_id			: item['Id'],
+						cargo			: item['_cargo'],
+						license_plate 	: $scope.license_plate,
+						start_location 	: item['_start_location'],
+						start_address 	: item['_start_address'],
+						end_location 	: item['_end_location'],
+						end_address	 	: item['_end_address'],
+						start_timestamp : item['_start_timestamp'],
+						end_timestamp 	: item['_end_timestamp'],
+						start_comments 	: item['_start_comments'],
+						end_comments 	: item['_end_comments']
+					};
+					
+					if(!!item['_is_finished']){
+						trips.push(trip);	
+					}
+				}
+				$scope.InsertRecordOnServerFunction(trips);      // Call Function for insert Record into SQl Server
+			});
+		},function error(err){
+			console.log('push to db failed with error:')
+			console.log(err)
+		});
+	}
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
@@ -207,8 +207,6 @@ function userCtrl($scope) {
 			     trips			: trips,
 			     device_id		: $scope.imei
 			 },
-						
-			processdata: true,
 			success: function (msg)
 			{
 				console.log('succes!!!!')
@@ -225,14 +223,15 @@ function userCtrl($scope) {
 						$scope.dropRowsSynced(JSON.parse(msg.responseText).err_ids)
 					}
 				}
-
+				
 				else if(msg.status == 401){
+					console.log('resetting access token')
 					$scope.resetAccessToken()
 				}	
 				
 				else if(msg.status == 404){
 					console.log("404 error ")				
-					}						
+				}						
 			}
 		});
 	};

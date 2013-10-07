@@ -2,7 +2,7 @@
   <div ng-show="gpsStateUndefined()" class="vertical_align">
     <div class="overlay blink"><h2 class="centered"><span class="searching"></span>Søger efter GPS signal</h2></div>
   </div>
-	<div class="map-container" ng-hide="gpsNotFound()">
+	<div class="map-container" ng-show="showMap()">
 	</div>
 	<div class="no-internet-container" ng-show="gpsFoundNoInternet()">
 	  <h2>Vi har fundet og gemt din position. Vi kunne desværre ikke visse den på kortet da du ikke har forbindelse til internettet</h2>

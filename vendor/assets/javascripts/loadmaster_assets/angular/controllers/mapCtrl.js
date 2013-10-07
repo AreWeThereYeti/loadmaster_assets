@@ -3,6 +3,10 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.defaultLat=55.693745;
 	$scope.defaultLon=12.433777;
 	$scope.markersArray = [];
+	
+	if(!!window.google){
+		
+	}
 		
 	/* 			Initialize map */
 	$scope.initializeMap = function(latitude, longitude,div) {
@@ -63,7 +67,9 @@ function mapCtrl($scope,$element,$attrs) {
 		if(!!$scope.locationMarker){
 			$scope.removeMarker($scope.locationMarker)
 		}
+		console.log('clearing position watcher on map: ' + $scope.map_set_position)
 		clearInterval($scope.watchPositionTimer)
+		$scope.watchPositionTimer=null
 	} 
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
@@ -114,9 +120,11 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.drawCurrentPosition =function(){
+		console.log('trying to find position again')
 		navigator.geolocation.getCurrentPosition(
 			function(position){
 				$scope.$apply(function(){
+					//alert("position found")
 					console.log("position found")
 					$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 					$scope.gps_found=true;
@@ -124,6 +132,7 @@ function mapCtrl($scope,$element,$attrs) {
 				})
 			},
 			function(errCode){
+				//alert('could not find position')
 				console.log('could not find position')
 				console.log('code: '    + errCode.code +
                   '. message: ' + errCode.message)
@@ -132,7 +141,7 @@ function mapCtrl($scope,$element,$attrs) {
 					$scope.gps_found=false;
 /* 				}) */
 			}, 
-			{ maximumAge: 50000, timeout: 50000, enableHighAccuracy: true}
+			{ maximumAge: 5000, timeout: 5000, enableHighAccuracy: true}
 		);
 	}
 	
@@ -303,19 +312,16 @@ function mapCtrl($scope,$element,$attrs) {
 		}
 	});
 	
-	
 	$scope.gpsStateUndefined = function(){
-		if($scope.gps_found==null || $scope.gps_found==false){
-			return true;
-		}else{ return false; }
+		return $scope.gps_found==null || $scope.gps_found==false ? true : false
+	}
+	
+	$scope.showMap = function(){
+		return $scope.gps_found && $scope.hasInternet() ? true : false
 	}
 	
 	$scope.gpsFound = function(){
-		if($scope.gps_found && $scope.hasInternet()){
-			return true
-		}else{
-			return false
-		}
+		return $scope.gps_found==true
 	}
 	
 	$scope.gpsNotFound = function(){
@@ -323,11 +329,11 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.gpsFoundNoInternet = function(){
-		if($scope.gps_found && !$scope.hasInternet()){
-			return true;
-		}else{
-			return false;
-		}
+		return $scope.gps_found && !$scope.hasInternet() ? true : false
+	}
+	
+	$scope.hasStartAndEndCoords = function(){
+		return !!$scope.startmarker && !!$scope.endmarker ? true : false
 	}
 
 	$scope.hasInternet = function(){

@@ -6,7 +6,7 @@
       </h2>
     </div>
   </div>
-	<div class="map-container" ng-hide="gpsNotFound()">
+	<div class="map-container" ng-show="hasStartAndEndCoords()">
 	</div>
 	<div ng-show="gpsNotFound()" class="gpsnotfound">
 		<p>Vi kunne ikke finde gps. Indtast adresse manuelt</p>

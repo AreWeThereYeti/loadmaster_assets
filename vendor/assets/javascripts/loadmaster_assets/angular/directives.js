@@ -128,7 +128,6 @@ angular.module('loadmaster', [])
 						scope.showNoCoords = false;
 						scope.showmap = false;
 						scope.has_position=true;
-						console.log("running map_finished")
 						scope.startlocation=scope.$parent.start_location
 						scope.startaddress=scope.$parent.start_address
 						scope.endlocation=scope.$parent.end_location
