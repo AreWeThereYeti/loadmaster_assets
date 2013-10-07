@@ -44,15 +44,16 @@ function userCtrl($scope) {
 		}
 	}
 	
-	$scope.checkInterval = function(){
-		$scope.intervalID = setInterval(function(){
+		$scope.checkInterval = function(){
+			$scope.intervalID = setInterval(function(){
 				$scope.$apply(function(scope){
 					document.addEventListener("deviceready", function(){
 					}, false);
 				scope.checkConnection();
 			  	})	
 			}, 5000);	
-	}
+		}
+	
 	
 	$scope.isAccessTokenInDatabase = function(){
 			// initial variables
@@ -201,41 +202,49 @@ function userCtrl($scope) {
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
 		console.log("InsertRecordOnServerFunction")
-		$.ajax({
-			type: "POST",
-			url: $scope.host + "/api/v1/trips",
-			data :  {
-			     access_token	: $scope.access_token, // Skal kun sættes en gang ind i databasen
-			     trips			: trips,
-			     device_id		: $scope.imei
-			 },
-			success: function (msg)
-			{
-				console.log('succes!!!!')
-				console.log()
-				//On Successfull service call
-				$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server 
-			},
-			error: function (msg) {
-				window.msg = msg;
-				console.log(msg);
-				console.log(msg.status);
-				if(!!msg.responseText && !!msg.responseText.err_ids){				
-					if(JSON.parse(msg.responseText).err_ids != 0){	
-						$scope.dropRowsSynced(JSON.parse(msg.responseText).err_ids)
+		console.log("isAllowedToSync er : " + $scope.isAllowedToSync);
+
+		if($scope.isAllowedToSync == true){	
+			$scope.isAllowedToSync = false;
+			$.ajax({
+				type: "POST",
+				url: $scope.host + "/api/v1/trips",
+				data :  {
+				     access_token	: $scope.access_token, // Skal kun sættes en gang ind i databasen
+				     trips			: trips,
+				     device_id		: $scope.imei
+				 },
+							
+				processdata: true,
+				success: function (msg)
+				{
+					console.log('succes!!!!')
+					console.log()
+					//On Successfull service call
+					$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server
+					$scope.isAllowedToSync = true; 
+				},
+				error: function (msg) {
+					window.msg = msg;
+					console.log(msg);
+					console.log(msg.status);
+					if(!!msg.responseText && !!msg.responseText.err_ids){				
+						if(JSON.parse(msg.responseText).err_ids != 0){	
+							$scope.dropRowsSynced(JSON.parse(msg.responseText).err_ids)
+						}
 					}
+	
+					else if(msg.status == 401){
+						$scope.resetAccessToken()
+					}	
+					
+					else if(msg.status == 404){
+						console.log("404 error ")				
+					}
+					$scope.isAllowedToSync = true;						
 				}
-				
-				else if(msg.status == 401){
-					console.log('resetting access token')
-					$scope.resetAccessToken()
-				}	
-				
-				else if(msg.status == 404){
-					console.log("404 error ")				
-				}						
-			}
-		});
+			});
+		}
 	};
 	
 /* 	Reset access token if incorrect */
