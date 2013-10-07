@@ -152,19 +152,23 @@ function mapCtrl($scope,$element,$attrs) {
 					$scope.gps_found=false;
 /* 				}) */
 			}, 
-			{ maximumAge: 5000, timeout: 5000, enableHighAccuracy: true}
+			{ maximumAge: 5000, timeout: 4000, enableHighAccuracy: true}
 		);
 	}
 	
 	$scope.updatePosition = function(latitude, longitude){
 		if(!$scope.locationMarker){
 			$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-			$scope.centerOnPosition(latitude,longitude)
+			setTimeout(function(){
+				$scope.$apply(function(){
+					$scope.centerOnPosition(latitude,longitude)
+				})
+			},100);		//need delay as map is not created properly before this is executed
 		}else{
 			$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-/* 			if($scope.keep_updating_position == true){ */
+			if($scope.keep_updating_position){
 				$scope.centerOnPosition(latitude,longitude)
-/* 			} */
+ 			} 
 		}
 		$scope.location=[latitude, longitude]
 		$scope.refreshMap()
@@ -185,7 +189,7 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.$apply(function(){
 				$scope.drawCurrentPosition()
 			})
-		}, 20000);
+		}, 3000);
 	}
 	
 	$scope.refreshMap = function(){
@@ -311,7 +315,9 @@ function mapCtrl($scope,$element,$attrs) {
 	}); 
 	
 	$scope.$watch('gps_found', function() {
-		console.log('gps_found is: ' + $scope.gps_found)
+		if(!$scope.gps_found){			//if GPS is no longer available, set gps koordinates to null
+			$scope.$emit($scope.map_set_position, null);
+		}
 	});
 	
 	$scope.$watch('showmap', function() {

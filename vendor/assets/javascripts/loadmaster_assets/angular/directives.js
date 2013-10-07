@@ -103,15 +103,15 @@ angular.module('loadmaster', [])
 			scope:{},
 	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_map.html',
 	    link:function(scope,element,attrs){
+				scope.keep_updating_position=true
 	    	$('#two').bind( "pageshow", function( event ) {
 					scope.map_set_position="setend_location"
 					scope.set_address_event="set_end_address"
-					scope.keep_updating_position=true
 					scope.initMobileMap(true)
 				})
-			$('#two').bind( "pagehide", function( event ) {
-				scope.resetMap()
-			})
+				$('#two').bind( "pagehide", function( event ) {
+					scope.resetMap()
+				})
 				$('.gpsnotfound').trigger("create");
 			}
 		};
