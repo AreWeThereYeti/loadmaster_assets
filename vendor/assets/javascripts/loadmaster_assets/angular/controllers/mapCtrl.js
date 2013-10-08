@@ -4,7 +4,7 @@ function mapCtrl($scope,$element,$attrs) {
 	$scope.defaultLon=12.433777;
 	$scope.markersArray = [];
 	
-	if(window.google){
+	if(!!window.google){
 		$scope.markerImage = new google.maps.MarkerImage(
 			'src/img/bluedot_retina.png',
 			null, // size
@@ -48,7 +48,6 @@ function mapCtrl($scope,$element,$attrs) {
 			$scope.removeAllMarkers()
 			$scope.refreshMap()
 			if(watchPosition){
-				console.log("start watching position")
 				$scope.startWatchPosition()
 				$scope.checkForGPSNeverFound()
 			}
@@ -81,31 +80,35 @@ function mapCtrl($scope,$element,$attrs) {
 	} 
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
-		if(!latitude){var latitude=55.724355}
-		if(!longitude){var longitude=12.268982}
-		var markerPosition = new google.maps.LatLng(latitude, longitude)
-		if(!$scope.IS_MOBILE || $scope.savebounds){
-			$scope.bounds.extend(markerPosition)
-		}
+		if(!!window.google){
+			if(!latitude){var latitude=55.724355}
+			if(!longitude){var longitude=12.268982}
+			var markerPosition = new google.maps.LatLng(latitude, longitude)
+			if(!$scope.IS_MOBILE || $scope.savebounds){
+				$scope.bounds.extend(markerPosition)
+			}
 		
-		var marker = new google.maps.Marker({
-			map: $scope.map,
-			flat: true,
-			optimized: false,
-			icon: $scope.markerImage,
-			position: markerPosition,
-			title: "marker",
-			labelContent: "second",
-			labelClass: "labels" // the CSS class for the label
-		});
-		$scope.markersArray.push(marker)
-		return marker;
+			var marker = new google.maps.Marker({
+				map: $scope.map,
+				flat: true,
+				optimized: false,
+				icon: $scope.markerImage,
+				position: markerPosition,
+				title: "marker",
+				labelContent: "second",
+				labelClass: "labels" // the CSS class for the label
+			});
+			$scope.markersArray.push(marker)
+			return marker;
+		}
 	}
 	
 	$scope.updateMarker = function(marker, latitude, longitude, label ){
-		marker.setPosition(new google.maps.LatLng(latitude, longitude));
-		if (label){
-			marker.setTitle( label );
+		if(!!window.google){
+			marker.setPosition(new google.maps.LatLng(latitude, longitude));
+			if (label){
+				marker.setTitle( label );
+			}
 		}
 	}
 	
@@ -118,15 +121,17 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.removeMarker = function(marker){
-		marker.setMap(null);
+		if(!!window.google){	marker.setMap(null); }
 		marker=null;
 	}
 	
 	$scope.centerOnMarkers = function(bounds){
-		if(!bounds){	var bounds=$scope.bounds }
-		$scope.map.fitBounds(bounds);
-		if($scope.map.getZoom()>15){
-			$scope.map.setZoom(14)
+		if(!!window.google){
+			if(!bounds){	var bounds=$scope.bounds }
+			$scope.map.fitBounds(bounds);
+			if($scope.map.getZoom()>15){
+				$scope.map.setZoom(14)
+			}
 		}
 	}
 	
@@ -157,26 +162,29 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.updatePosition = function(latitude, longitude){
-		if(!$scope.locationMarker){
-			$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-			setTimeout(function(){
-				$scope.$apply(function(){
+		if(!!window.google){
+			if(!$scope.locationMarker){
+				$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
+				setTimeout(function(){
+					$scope.$apply(function(){
+						$scope.centerOnPosition(latitude,longitude)
+					})
+				},100);		//need delay as map is not created properly before this is executed
+			}else{
+				$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+				if($scope.keep_updating_position){
 					$scope.centerOnPosition(latitude,longitude)
-				})
-			},100);		//need delay as map is not created properly before this is executed
-		}else{
-			$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-			if($scope.keep_updating_position){
-				$scope.centerOnPosition(latitude,longitude)
- 			} 
+	 			} 
+			}
 		}
 		$scope.location=[latitude, longitude]
 		$scope.refreshMap()
 	}
 	
 	$scope.centerOnPosition = function(latitude,longitude){
-		$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
-		console.log("centering on position")
+		if(!!window.google){
+			$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
+		}
 		// if($scope.map.getZoom()>15){
 		// 	$scope.map.setZoom(14)
 		// }
@@ -200,11 +208,13 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.refreshMapAndCenter = function(){
-		setTimeout(function(){ 
-			google.maps.event.trigger($scope.map, 'resize'); 
-			$scope.centerOnMarkers()
-		}, 20)
-		$scope.preventLinksToGoogle()
+		if(!!window.google){
+			setTimeout(function(){ 
+				google.maps.event.trigger($scope.map, 'resize'); 
+				$scope.centerOnMarkers()
+			}, 20)
+			$scope.preventLinksToGoogle()
+		}
 	}
 	
 	$scope.preventLinksToGoogle = function(){
@@ -267,20 +277,21 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.centerOnTwoMarkers = function(mark_1,mark_2){
+		if(!!window.google){
+			var lat=mark_1.position[Object.keys(mark_1.position)[0]]
+			var lon=mark_1.position[Object.keys(mark_1.position)[1]]
+			var bound=new google.maps.LatLng(lat,lon)
+			var bounds=new google.maps.LatLngBounds(bound)
 		
-		var lat=mark_1.position[Object.keys(mark_1.position)[0]]
-		var lon=mark_1.position[Object.keys(mark_1.position)[1]]
-		var bound=new google.maps.LatLng(lat,lon)
-		var bounds=new google.maps.LatLngBounds(bound)
+			var lat=mark_2.position[Object.keys(mark_2.position)[0]]
+			var lon=mark_2.position[Object.keys(mark_2.position)[1]]	
+			var bound=new google.maps.LatLng(lat,lon)
+			bounds.extend(bound)
 		
-		var lat=mark_2.position[Object.keys(mark_2.position)[0]]
-		var lon=mark_2.position[Object.keys(mark_2.position)[1]]	
-		var bound=new google.maps.LatLng(lat,lon)
-		bounds.extend(bound)
-		
-		setTimeout(function(){ 
-			$scope.centerOnMarkers(bounds)
-		}, 20)
+			setTimeout(function(){ 
+				$scope.centerOnMarkers(bounds)
+			}, 20)
+		}
 	}
 	
 	$scope.checkForGPSNeverFound = function(){
@@ -302,7 +313,6 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.$watch('address', function() {
-		console.log('address changed!')
 		$scope.location = null;
 		$scope.$emit($scope.set_address_event,$scope.address)
 		$scope.$emit($scope.map_set_position, null);
@@ -321,7 +331,7 @@ function mapCtrl($scope,$element,$attrs) {
 	});
 	
 	$scope.$watch('showmap', function() {
-		if($scope.showmap){
+		if($scope.showmap && !!window.google){
 			$scope.refreshMap()
 			if(!!$scope.startmarker && !!$scope.endmarker){
 				$scope.centerOnTwoMarkers($scope.startmarker,$scope.endmarker);
@@ -342,11 +352,11 @@ function mapCtrl($scope,$element,$attrs) {
 	}
 	
 	$scope.gpsNotFound = function(){
-		return $scope.gps_found==false;
+		return $scope.gps_found==false ? true : false;
 	}
 	
 	$scope.gpsFoundNoInternet = function(){
-		return $scope.gps_found && !$scope.hasInternet() ? true : false
+		return $scope.gps_found==true && !$scope.hasInternet() ? true : false
 	}
 	
 	$scope.hasStartAndEndCoords = function(){
@@ -355,21 +365,26 @@ function mapCtrl($scope,$element,$attrs) {
 	
 	$scope.noStartAndEndCoords = function(){
 		return $scope.startmarker==undefined || $scope.endmarker==undefined ? true : false
-	}
+	}	
 	
 	$scope.hasStartAndEndCoordsNoInternet = function(){
 		return !!$scope.startmarker && !!$scope.endmarker && !$scope.hasInternet() ? true : false
 	}
 
 	$scope.hasInternet = function(){
-		if(!navigator.connection || !Connection){		//is browser
-			return true
+		var has_internet=false
+		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+		if(app){
+			if(typeof navigator === 'undefined' || typeof navigator.connection === 'undefined' || typeof navigator.connection.type === 'undefined' | typeof Connection === 'undefined'){
+				console.log('no internet!!')
+			}
+			else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+				has_internet=true
+			}
+		}else{
+			has_internet=true
 		}
-		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
-			return false
-		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-			return true
-		}
+		return has_internet;
 	}
 
 
