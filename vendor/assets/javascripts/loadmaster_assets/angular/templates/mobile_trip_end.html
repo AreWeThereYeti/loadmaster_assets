@@ -1,0 +1,32 @@
+<!-- Start på aflæsning -->
+<div>
+	<div data-role="header">
+		<h1>Aflæsning</h1>
+	</div>
+	<div data-role="content">	
+			<div class="margin_bottom fixedheight">
+				<div class="markeranimation" ng-map-end ng-controller="mapCtrl"></div>
+			</div>
+		<div class="opsummering centered margin_bottom">
+			<div class="ui-grid-a">
+				<div class="ui-block-a">
+				    <span class="weight"></span><h2 class="inlineblock centered vertical-centered margintop30" >{{top_cargo}}</h2>
+				</div>
+				<div class="ui-block-b">
+				    <span class="licenseplate"></span><h2 class="inlineblock centered vertical-centered margintop30" >{{license_plate}}</h2>
+				</div>
+			</div>
+
+		</div>
+		<div class="margin_bottom">
+			<label for="kommentarer" class="ui-hidden-accessible">Kommentarer</label>
+			<input type="text" name="username" ng-model="end_comments" id="comments_end" value="" placeholder="Kommentar til aflæsning"/>
+		</div>
+		<input type="submit" data-icon="loadmaster-arrow" class="biggerbtn" id="submit_end" ng-click="submit_end($event)" disabled="disabled" value="Afslut Tur" data-role="button" data-theme="b">
+	</div>
+	<h1 class="margin_bottom"> Du er nu igang med en tur.</h1>
+	<div class="driving "></div>
+	<div data-role="footer">
+		<h1>LoadMaster Logger FMS</h1>
+	</div>
+</div><!-- /page -->

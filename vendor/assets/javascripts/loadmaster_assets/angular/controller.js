@@ -1,24 +1,26 @@
 /* Is this needed? */
-angular.module("loadmaster",[])
+var LoadmasterApp = angular.module("loadmaster",[])
   .config(function($httpProvider){
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-});
-
+	})
+	
 /* User controller with angularjs */
 function userCtrl($scope) {
 
 	$scope.IS_MOBILE=true
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
+	$scope.isAllowedToSync = true;
 	
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
-	$scope.host = 'http://195.231.85.191:5000';
+	$scope.host = 'https://portal.loadmasterloggerfms.dk';
+/* 	$scope.host = 'http://192.168.0.3:3000' */
 	
 	$scope.$on("setcargo", function(evt, cargo){
-		$scope.cargo = cargo;
+		$scope.top_cargo = cargo;
 		$('.weight').trigger("create");
 	})
 	
@@ -26,7 +28,7 @@ function userCtrl($scope) {
 	$scope.init = function(){
 /* 		debugging function */
 
-/* 		$scope.dropTables(); */
+ 		// $scope.dropTables(); 
 
 /* 		End of debugging functions */
 		$scope.initializeDB()
@@ -35,7 +37,7 @@ function userCtrl($scope) {
 		$scope.checkLengthOfDatabase()
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
-		$.mobile.defaultPageTransition   = 'none';
+		$.mobile.defaultPageTransition   = 'slide';
 	    $.mobile.defaultDialogTransition = 'none';
 		
 		if($scope.access_token != ""){
@@ -43,15 +45,16 @@ function userCtrl($scope) {
 		}
 	}
 	
-	$scope.checkInterval = function(){
-		$scope.intervalID = setInterval(function(){
+		$scope.checkInterval = function(){
+			$scope.intervalID = setInterval(function(){
 				$scope.$apply(function(scope){
 					document.addEventListener("deviceready", function(){
 					}, false);
 				scope.checkConnection();
 			  	})	
 			}, 5000);	
-	}
+		}
+	
 	
 	$scope.isAccessTokenInDatabase = function(){
 			// initial variables
@@ -77,15 +80,33 @@ function userCtrl($scope) {
 	
 	/* check Connection */
 	$scope.checkConnection = function(){
-		console.log("Checking connection");
-		if(navigator.connection.type == Connection.UNKNOWN || navigator.connection.type == Connection.NONE || navigator.connection.type == Connection.CELL || navigator.connection.type == Connection.CELL_2G){
-			console.log('Unknown connection');
-
-		} else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-			console.log("Found connection. Checking if database is empty ")
-			$scope.isDatabaseEmpty();
-
+		try{
+			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+				console.log('connectiontype is : ' + navigator.connection.type);
+				if(!window.google && $scope.hasInternet()){
+					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>');
+				}
+				$scope.isDatabaseEmpty();
+			}
+		}catch(err){
+			//console.log('cant get connection type')
 		}
+
+	}
+	
+	$scope.hasInternet = function(){
+		var has_internet=false
+		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+		if(app){
+			if(typeof navigator === 'undefined' || typeof navigator.connection === 'undefined' || typeof navigator.connection.type === 'undefined' | typeof Connection === 'undefined'){
+			}
+			else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
+				has_internet=true
+			}
+		}
+		console.log('hasInternet returns: ')
+		console.log(has_internet)
+		return has_internet;
 	}
 	
 	
@@ -168,76 +189,84 @@ function userCtrl($scope) {
 			$scope.createNewDB()
 		}	
 			
-			$scope.db.transaction(function (tx)	 
-				{
-					tx.executeSql('SELECT * FROM Trip', [], function (tx, result)  // Fetch records from SQLite		 
-					{	 
-						var dataset = result.rows; 
-						var trips = new Array();
-						for (var i = 0, item = null; i < dataset.length; i++) {
-							item = dataset.item(i);
-							var trip = {
-								trip_id			: item['Id'],
-								cargo			: item['_cargo'],
-								license_plate 	: $scope.license_plate,
-								start_location 	: item['_start_location'],
-								start_address 	: item['_start_address'],
-								end_location 	: item['_end_location'],
-								end_address	 	: item['_end_address'],
-								start_timestamp : item['_start_timestamp'],
-								end_timestamp 	: item['_end_timestamp'],
-								start_comments 	: item['_start_comments'],
-								end_comments 	: item['_end_comments']
-							};
-							
-							if(!!item['_is_finished']){
-								console.log(trip)
-								trips.push(trip);	
-							}
-						}
-						$scope.InsertRecordOnServerFunction(trips);      // Call Function for insert Record into SQl Server
-					});
-				});
-			}
+		$scope.db.transaction(function (tx){
+			tx.executeSql('SELECT * FROM Trip', [], function (tx, result){	 
+				var dataset = result.rows; 
+				var trips = new Array();
+				for (var i = 0, item = null; i < dataset.length; i++) {
+					item = dataset.item(i);
+					var trip = {
+						trip_id			: item['Id'],
+						cargo			: item['_cargo'],
+						license_plate 	: $scope.license_plate,
+						start_location 	: item['_start_location'],
+						start_address 	: item['_start_address'],
+						end_location 	: item['_end_location'],
+						end_address	 	: item['_end_address'],
+						start_timestamp : item['_start_timestamp'],
+						end_timestamp 	: item['_end_timestamp'],
+						start_comments 	: item['_start_comments'],
+						end_comments 	: item['_end_comments']
+					};
+					
+					if(!!item['_is_finished']){
+						trips.push(trip);	
+					}
+				}
+				$scope.InsertRecordOnServerFunction(trips);      // Call Function for insert Record into SQl Server
+			});
+		},function error(err){
+			console.log('push to db failed with error:')
+			console.log(err)
+		});
+	}
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
-		$.ajax({
-			type: "POST",
-			url: $scope.host + "/api/v1/trips",
-			data :  {
-			     access_token	: $scope.access_token, // Skal kun sættes en gang ind i databasen
-			     trips			: trips,
-			     device_id		: $scope.imei
-			 },
-						
-			processdata: true,
-			success: function (msg)
-			{
-				console.log('succes!!!!')
-				console.log()
-				//On Successfull service call
-				$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server 
-			},
-			error: function (msg) {
-				window.msg = msg;
-				console.log(msg);
-				console.log(msg.status);
-				if(!!msg.responseText && !!msg.responseText.err_ids){				
-					if(JSON.parse(msg.responseText).err_ids != 0){	
-						$scope.dropRowsSynced(JSON.parse(msg.responseText).err_ids)
-					}
-				}
+		console.log("InsertRecordOnServerFunction")
+		console.log("isAllowedToSync er : " + $scope.isAllowedToSync);
 
-				else if(msg.status == 401){
-					$scope.resetAccessToken()
-				}	
-				
-				else if(msg.status == 404){
-					console.log("404 error ")				
-					}						
-			}
-		});
+		if($scope.isAllowedToSync == true){	
+			$scope.isAllowedToSync = false;
+			$.ajax({
+				type: "POST",
+				url: $scope.host + "/api/v1/trips",
+				data :  {
+				     access_token	: $scope.access_token, // Skal kun sættes en gang ind i databasen
+				     trips			: trips,
+				     device_id		: $scope.imei
+				 },
+							
+				processdata: true,
+				success: function (msg)
+				{
+					console.log('succes!!!!')
+					console.log()
+					//On Successfull service call
+					$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server
+					$scope.isAllowedToSync = true; 
+				},
+				error: function (msg) {
+					window.msg = msg;
+					console.log(msg);
+					console.log(msg.status);
+					if(!!msg.responseText && !!msg.responseText.err_ids){				
+						if(JSON.parse(msg.responseText).err_ids != 0){	
+							$scope.dropRowsSynced(JSON.parse(msg.responseText).err_ids)
+						}
+					}
+	
+					else if(msg.status == 401){
+						$scope.resetAccessToken()
+					}	
+					
+					else if(msg.status == 404){
+						console.log("404 error ")				
+					}
+					$scope.isAllowedToSync = true;						
+				}
+			});
+		}
 	};
 	
 /* 	Reset access token if incorrect */
@@ -293,6 +322,7 @@ function userCtrl($scope) {
 	
 		/* 	Starting new trip*/
 	$scope.submitStartNewTrip = function($event){
+		$($event.target).parent().addClass('ui-btn-pressed')
 		$event.preventDefault();
 		$.mobile.changePage("#home");
 	}
@@ -344,13 +374,13 @@ function userCtrl($scope) {
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
-		$scope.startlocation=trip.start_location
-	 	$scope.startaddress=trip.start_address;
+		$scope.top_startlocation=trip.start_location
+	 	$scope.top_startaddress=trip.start_address;
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 	 
 		// this is the section that actually inserts the values into the User table
 		$scope.db.transaction(function(transaction) {
-			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + $scope.cargo);
+			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
 			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
 		},function error(err){alert('error on save to local db ' + err)}, function success(){});
 		return false;
@@ -358,8 +388,8 @@ function userCtrl($scope) {
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
-	 	$scope.endlocation=trip.end_location
-	 	$scope.endaddress=trip.end_address;
+	 	$scope.top_endlocation=trip.end_location
+	 	$scope.top_endaddress=trip.end_address;
 	 	console.log("trip end location" + trip.end_location)
 	 	console.log("trip end adress" + trip.end_address)
 		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
@@ -400,26 +430,29 @@ function userCtrl($scope) {
 
 /* DEBUGGING functions */
 
-$scope.dropTables = function(){
+	$scope.dropTables = function(){
 
-	shortName = 'WebSqlDB';
-	version = '1.0';
-	displayName = 'WebSqlDB';
-	maxSize = 65535;
+		shortName = 'WebSqlDB';
+		version = '1.0';
+		displayName = 'WebSqlDB';
+		maxSize = 65535;
 	
-	db = openDatabase(shortName, version, displayName, maxSize);
+		db = openDatabase(shortName, version, displayName, maxSize);
 
 
-	db.transaction(function(tx){
+		db.transaction(function(tx){
 
-		// IMPORTANT FOR DEBUGGING!!!!
-		// you can uncomment these next twp lines if you want the table Trip and the table Auth to be empty each time the application runs
-		tx.executeSql( 'DROP TABLE Trip');
-		tx.executeSql( 'DROP TABLE Auth');
+			// IMPORTANT FOR DEBUGGING!!!!
+			// you can uncomment these next twp lines if you want the table Trip and the table Auth to be empty each time the application runs
+			tx.executeSql( 'DROP TABLE Trip');
+			tx.executeSql( 'DROP TABLE Auth');
 
-	})
-}
+		})
+	}
 	
+	$scope.is_mobile_app = function(){
+		return navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)
+	}
 } 
 
 

@@ -1,4 +1,5 @@
-function loadmasterCtrl($scope,$element,$attrs) {
+var LoadmasterApp = angular.module("loadmaster",[])
+LoadmasterApp.controller('loadmasterCtrl',function($scope,$element,$attrs) {
 	
 	$scope.IS_MOBILE=false
 	
@@ -12,4 +13,4 @@ function loadmasterCtrl($scope,$element,$attrs) {
 		$event.stopImmediatePropagation();
 	}
 	
-}
+})
