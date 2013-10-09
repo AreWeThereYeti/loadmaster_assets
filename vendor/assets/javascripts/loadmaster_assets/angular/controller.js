@@ -12,6 +12,7 @@ function userCtrl($scope) {
 	window.db = $scope.isDatabaseEmpty;
 	$scope.isAllowedToSync = true;
 	
+	$scope.isAllowedToSync = true;
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
@@ -28,7 +29,7 @@ function userCtrl($scope) {
 	$scope.init = function(){
 /* 		debugging function */
 
- 		// $scope.dropTables(); 
+ 		//$scope.dropTables(); 
 
 /* 		End of debugging functions */
 		$scope.initializeDB()
@@ -94,6 +95,7 @@ function userCtrl($scope) {
 
 	}
 	
+
 	$scope.hasInternet = function(){
 		var has_internet=false
 		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
@@ -108,7 +110,6 @@ function userCtrl($scope) {
 		console.log(has_internet)
 		return has_internet;
 	}
-	
 	
 	/* Is database empty */
 	$scope.isDatabaseEmpty = function() {
@@ -241,7 +242,6 @@ function userCtrl($scope) {
 				success: function (msg)
 				{
 					console.log('succes!!!!')
-					console.log()
 					//On Successfull service call
 					$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server
 					$scope.isAllowedToSync = true; 
@@ -283,11 +283,10 @@ function userCtrl($scope) {
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
 		console.log("access token er " + $scope.access_token)
-		alert("Access token er forkert")
+		alert("Access token er forkert. Kontak Loadmaster.")
 		clearInterval($scope.intervalID);
 		$.mobile.changePage("#tokencontainer");
 	}
-
 	
 	/* Drops synced rows */
 	$scope.dropAllRows = function(){
@@ -302,7 +301,6 @@ function userCtrl($scope) {
 				},function error(err){alert('error deleting from database ' + err)}, function success(){}
 			);
 			return false;
-
 		}
 	
 		/* Drops synced rows */
@@ -424,7 +422,9 @@ function userCtrl($scope) {
 			return false
 		}
 		else if($scope.numberOfRows > 0){
-			$("div.database").html( "<span>Antal ture i databasen : </spam>" + $scope.numberOfRows );
+			$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
+			$('div.database').trigger("create");
+
 		}
 	})
 
