@@ -62,15 +62,15 @@ LoadmasterApp
 	.directive('ngStaticMap',function(){
    	return {
 	   	controller:'mapCtrl',
-		scope:{
-			start_lat:'=startlat',
-			start_lon:'=startlon',
-			end_lat:'=endlat',
-			end_lon:'=endlon',
-			startlabel:'=startlabel',
-			endlabel:'=endlabel'
+			scope:{
+				start_lat:'=startlat',
+				start_lon:'=startlon',
+				end_lat:'=endlat',
+				end_lon:'=endlon',
+				startlabel:'=startlabel',
+				endlabel:'=endlabel'
 
-		},
+			},
 	   	link:function(scope,element,attrs){
 				scope.initializeMap()
 				if(!!scope.start_lat && !!scope.start_lon){
@@ -103,7 +103,7 @@ LoadmasterApp
 				startorend:'=startorend'
 			},
 			link:function(scope,element,attrs){
-				scope.objid=element.parent('tr').attr('id')
+				scope.objid=element.closest('tr').attr('id')
 				scope.map_el=element.find('.map-container')[0]
 				if(!!scope.lat && !!scope.lon){
 					console.log('calling getAddressFromLatLon')
@@ -112,6 +112,22 @@ LoadmasterApp
 			}
 		}
 	})
+	.directive('ngGetDistance',function(){
+		return{
+			controller:'mapCtrl',
+			scope:{
+				start_lat:'=startlat',
+				start_lon:'=startlon',
+				end_lat:'=endlat',
+				end_lon:'=endlon'
+			},
+			link:function(scope,element,attrs){
+				scope.objid=element.closest('tr').attr('tripid').replace('"','').replace('"','')
+				scope.calcDistance(new google.maps.LatLng(scope.start_lat,scope.start_lon),new google.maps.LatLng(scope.end_lat,scope.end_lon),true)
+			}
+		}
+	})
+	
 
 	
 	

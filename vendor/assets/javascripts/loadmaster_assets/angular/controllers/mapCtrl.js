@@ -12,7 +12,13 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 			new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
 			new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
 		);
+			
+		$scope.directionsService = new google.maps.DirectionsService();
 	}
+	
+	/*-----------------------------------------------------------------------------
+	* Private methods
+	*------------------------------------------------------------------------------*/
 		
 	/* 			Initialize map */
 	$scope.initializeMap = function(latitude, longitude,div) {
@@ -221,10 +227,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 		});
 	}
 	
-	$scope.$on('resfreshMap',function(){
-		$scope.refreshMapAndCenter()
-	})
-	
 	
 	$scope.autoCompleteInput = function(input,marker){
 		var autocompleteInput = new google.maps.places.Autocomplete(input);
@@ -259,7 +261,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 	}
 	
 	$scope.getAddressFromLatLon = function(lat,lon,update_obj){
-		console.log('$scope.getAddressFromLatLon  ran')
 		var geocoder= new google.maps.Geocoder();
 		var latlng = new google.maps.LatLng(lat,lon);
     geocoder.geocode({'latLng': latlng}, function(results, status) {
@@ -273,18 +274,41 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 						}
 					});
         }
-      } else {
-	 			console.log("Geocoder failed due to: " + status);
-				if(status=="OVER_QUERY_LIMIT"){		//google request limit reached.. try again in a couple of secs
-					setTimeout(function(){
-						$scope.$apply(function(){
-							$scope.getAddressFromLatLon(lat,lon)
-						})
-					},2000)
-				}
+      }else if(status=="OVER_QUERY_LIMIT"){		//google request limit reached.. try again in a couple of secs
+				setTimeout(function(){
+					$scope.$apply(function(){
+						$scope.getAddressFromLatLon(lat,lon)
+					})
+				},2000)
       }
     });
 	}
+	
+	$scope.calcDistance = function(LatLng_start,LatLng_end,update_obj){
+	  var request = {
+	    origin:LatLng_start,
+	    destination:LatLng_end,
+	    travelMode:google.maps.TravelMode.DRIVING
+	  };
+	  $scope.directionsService.route(request, function(response, status) {
+	    if (status == google.maps.DirectionsStatus.OK) {
+	     	$scope.$apply(function(){
+	  			$scope.distance=response.routes[0].legs[0].distance.value/1000
+					$scope.distance=Math.round($scope.distance*100)/100
+					if(update_obj && !!$scope.distance){
+						ServerAjax.update($scope.objid,'trips',{trip:{distance:$scope.distance}})
+					}
+	  		})
+	    }else if(status=="OVER_QUERY_LIMIT"){		//google request limit reached.. try again in a couple of secs
+		  	setTimeout(function(){
+		  		$scope.$apply(function(){
+		  			$scope.calcDistance(LatLng_start,LatLng_end)
+		  		})
+		  	},2000)
+      }
+	  });
+	}
+	
 	
 	$scope.centerOnTwoMarkers = function(mark_1,mark_2){
 		if(!!window.google){
@@ -322,6 +346,15 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 		}, 1000);
 	}
 	
+	/*-----------------------------------------------------------------------------
+	* events
+	*------------------------------------------------------------------------------*/
+	
+	$scope.$on('resfreshMap',function(){
+		$scope.refreshMapAndCenter()
+	})
+	
+
 	$scope.$watch('address', function() {
 		$scope.location = null;
 		$scope.$emit($scope.set_address_event,$scope.address)
@@ -348,6 +381,11 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 			}
 		}
 	});
+	
+	
+	/*-----------------------------------------------------------------------------
+	* UI methods
+	*------------------------------------------------------------------------------*/
 	
 	$scope.gpsStateUndefined = function(){
 		return $scope.gps_found==null || $scope.gps_found==false || $scope.gpsFoundNoInternet() ? true : false
