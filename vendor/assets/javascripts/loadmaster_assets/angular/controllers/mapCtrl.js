@@ -1,4 +1,4 @@
-function mapCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 	
 	$scope.defaultLat=55.693745;
 	$scope.defaultLon=12.433777;
@@ -81,8 +81,6 @@ function mapCtrl($scope,$element,$attrs) {
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
 		if(!!window.google){
-			if(!latitude){var latitude=55.724355}
-			if(!longitude){var longitude=12.268982}
 			var markerPosition = new google.maps.LatLng(latitude, longitude)
 			if(!$scope.IS_MOBILE || $scope.savebounds){
 				$scope.bounds.extend(markerPosition)
@@ -260,20 +258,32 @@ function mapCtrl($scope,$element,$attrs) {
 		})
 	}
 	
-	$scope.getAddressFromLatLon = function(lat,lon){
+	$scope.getAddressFromLatLon = function(lat,lon,update_obj){
+		console.log('$scope.getAddressFromLatLon  ran')
 		var geocoder= new google.maps.Geocoder();
 		var latlng = new google.maps.LatLng(lat,lon);
-	    geocoder.geocode({'latLng': latlng}, function(results, status) {
-	      if (status == google.maps.GeocoderStatus.OK) {
-	        if (results[1]) {
-	          $scope.$apply(function(){
-							$scope.formatted_address=results[1].formatted_address
-						});
-	        }
-	      } else {
-	        console.log("Geocoder failed due to: " + status);
-	      }
-	    });
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          $scope.$apply(function(){
+						$scope.formatted_address=results[0].formatted_address
+						if(update_obj){
+							var data = $scope.startorend=="start" ? {trip:{start_address:$scope.formatted_address}} : {trip:{end_address:$scope.formatted_address}}
+							ServerAjax.update($scope.objid,'trips',data)
+						}
+					});
+        }
+      } else {
+	 			console.log("Geocoder failed due to: " + status);
+				if(status=="OVER_QUERY_LIMIT"){		//google request limit reached.. try again in a couple of secs
+					setTimeout(function(){
+						$scope.$apply(function(){
+							$scope.getAddressFromLatLon(lat,lon)
+						})
+					},2000)
+				}
+      }
+    });
 	}
 	
 	$scope.centerOnTwoMarkers = function(mark_1,mark_2){
@@ -388,5 +398,4 @@ function mapCtrl($scope,$element,$attrs) {
 		return has_internet;
 	}
 
-
-}
+})

@@ -1,4 +1,4 @@
-function tripsListCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('tripsListCtrl',function($scope,$element,$attrs) {
 	
 	$scope.selectedTrips=[]
 	$scope.selectedTripId
@@ -67,4 +67,4 @@ function tripsListCtrl($scope,$element,$attrs) {
 	}
 	
 	
-}
+})

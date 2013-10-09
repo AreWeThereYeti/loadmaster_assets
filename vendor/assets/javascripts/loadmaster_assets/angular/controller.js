@@ -1,9 +1,9 @@
 /* Is this needed? */
-angular.module("loadmaster",[])
+var LoadmasterApp = angular.module("loadmaster",[])
   .config(function($httpProvider){
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-});
-
+	})
+	
 /* User controller with angularjs */
 function userCtrl($scope) {
 
