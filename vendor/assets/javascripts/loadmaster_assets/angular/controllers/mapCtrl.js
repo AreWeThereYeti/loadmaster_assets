@@ -1,8 +1,10 @@
-LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
+LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,Helpers) {
 	
 	$scope.defaultLat=55.693745;
 	$scope.defaultLon=12.433777;
 	$scope.markersArray = [];
+	$scope.gps_not_found=null;
+	$scope.map_loading=true;
 	
 	if(!!window.google){
 		$scope.markerImage = new google.maps.MarkerImage(
@@ -48,16 +50,24 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 	}
 	
 	$scope.initMobileMap = function(watchPosition){
+		$scope.gps_not_found=null
 		if(!!window.google){
+			$scope.map_loading=true
 			$('.ui-btn-pressed').removeClass('ui-btn-pressed')
 			$scope.initializeMap()
 			$scope.removeAllMarkers()
 			$scope.refreshMap()
+			
 			if(watchPosition){
 				$scope.startWatchPosition()
 				$scope.checkForGPSNeverFound()
 			}
 		}
+		setTimeout(function(){
+			$scope.$apply(function(){
+				$scope.map_loading=false
+			})
+		},2000)
 	}
 	
 	
@@ -147,7 +157,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 					//alert("position found")
 					console.log("position found")
 					$scope.updatePosition(position.coords.latitude, position.coords.longitude)
-					$scope.gps_found=true;
+					$scope.gps_not_found=false;
 					$scope.has_position=true;
 				})
 			},
@@ -156,33 +166,38 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 				console.log('could not find position')
 				console.log('code: '    + errCode.code +
                   '. message: ' + errCode.message)
-
-/* 				$scope.$apply(function(){ */
-					$scope.gps_found=false;
-/* 				}) */
+ 				$scope.$apply(function(){ 
+					$scope.updatePosition(null)
+					$scope.gps_not_found=true;
+ 				}) 
 			}, 
 			{ maximumAge: 5000, timeout: 4000, enableHighAccuracy: true}
 		);
 	}
 	
 	$scope.updatePosition = function(latitude, longitude){
-		if(!!window.google){
-			if(!$scope.locationMarker){
-				$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-				setTimeout(function(){
-					$scope.$apply(function(){
-						$scope.centerOnPosition(latitude,longitude)
-					})
-				},100);		//need delay as map is not created properly before this is executed
-			}else{
-				$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-				if($scope.keep_updating_position){
-					$scope.centerOnPosition(latitude,longitude)
-	 			} 
-			}
+		if(latitude==null){
+			$scope.location=null
 		}
-		$scope.location=[latitude, longitude]
-		$scope.refreshMap()
+		else{
+			if(!!window.google){
+				if(!$scope.locationMarker){
+					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
+					setTimeout(function(){
+						$scope.$apply(function(){
+							$scope.centerOnPosition(latitude,longitude)
+						})
+					},100);		//need delay as map is not created properly before this is executed
+				}else{
+					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+					if($scope.keep_updating_position){
+						$scope.centerOnPosition(latitude,longitude)
+		 			} 
+				}
+			}
+			$scope.location=[latitude, longitude]
+			$scope.refreshMap()			
+		}
 	}
 	
 	$scope.centerOnPosition = function(latitude,longitude){
@@ -387,53 +402,41 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax) {
 	* UI methods
 	*------------------------------------------------------------------------------*/
 	
-	$scope.gpsStateUndefined = function(){
-		return $scope.gps_found==null || $scope.gps_found==false || $scope.gpsFoundNoInternet() ? true : false
-	}
 	
-	$scope.showMap = function(){
-		return $scope.gps_found && $scope.hasInternet() ? true : false
-	}
-	
-	$scope.gpsFound = function(){
-		return $scope.gps_found==true
-	}
-	
-	$scope.gpsNotFound = function(){
-		return $scope.gps_found==false ? true : false;
+	$scope.searchingForGps = function(){
+		return typeof $scope.location=="undefined" || $scope.location==undefined ? true : false
 	}
 	
 	$scope.gpsFoundNoInternet = function(){
-		return $scope.gps_found==true && !$scope.hasInternet() ? true : false
+		return !!$scope.location && !Helpers.hasInternet() ? true : false
 	}
 	
-	$scope.hasStartAndEndCoords = function(){
-		return !!$scope.startmarker && !!$scope.endmarker && $scope.hasInternet() ? true : false
+	$scope.gpsNotFound = function(){
+		return $scope.gps_not_found==true ? true : false;
 	}
 	
-	$scope.noStartAndEndCoords = function(){
-		return $scope.startmarker==undefined || $scope.endmarker==undefined ? true : false
+	$scope.showMap = function(){
+		return !!$scope.location && Helpers.hasInternet() ? true : false
+	}
+	
+	$scope.gpsFound = function(){
+		return !!$scope.location
+	}
+	
+	$scope.showEndRouteMap = function(){
+		return !!$scope.startlocation && !!$scope.endlocation && Helpers.hasInternet() ? true : false
+	}
+	
+	$scope.mapLoading = function(){
+		return $scope.map_loading
+	}
+	
+	$scope.showHasRouteNoInternet = function(){
+		return !$scope.map_loading && !!$scope.startlocation && !!$scope.endlocation && !Helpers.hasInternet() ? true : false
+	}
+	
+	$scope.noStartAndEndCoordsFound = function(){
+		return !$scope.map_loading && (typeof $scope.startlocation=="undefined" || $scope.startlocation==undefined || typeof $scope.endlocation=="undefined" || $scope.endlocation==undefined)  ? true : false
 	}	
-	
-	$scope.hasStartAndEndCoordsNoInternet = function(){
-		return !!$scope.startmarker && !!$scope.endmarker && !$scope.hasInternet() ? true : false
-	}
-
-	$scope.hasInternet = function(){
-		var has_internet=false
-		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
-		if(app){
-			if(typeof navigator === 'undefined' || typeof navigator.connection === 'undefined' || typeof navigator.connection.type === 'undefined' || typeof Connection === 'undefined'){
-				console.log('no internet!!')
-			}
-			else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-				console.log('has internet')
-				has_internet=true
-			}
-		}else{
-			has_internet=true
-		}
-		return has_internet;
-	}
 
 })

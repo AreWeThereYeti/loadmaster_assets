@@ -131,14 +131,15 @@ LoadmasterApp
 						);
 					}
 		    	$('#three').bind( "pageshow", function( event ) {
+						scope.map_loading=true
 						scope.showNoCoords = false;
 						scope.showmap = false;
 						scope.has_position=true;
-						scope.startlocation=scope.$parent.start_location
-						scope.startaddress=scope.$parent.start_address
-						scope.endlocation=scope.$parent.end_location
-						scope.endaddress=scope.$parent.end_address
-					
+						scope.startlocation=scope.$root.top_startlocation
+						scope.startaddress=scope.$root.top_startaddress
+						scope.endlocation=scope.$root.top_endlocation
+						scope.endaddress=scope.$root.top_endaddress
+						
 		    		if(!!scope.startmarker){ 
 							scope.removeMarker(scope.startmarker);
 							scope.startmarker=null
@@ -156,7 +157,7 @@ LoadmasterApp
 							scope.showmap = true;
 							scope.refreshMap();
 		    		}else{
-					    scope.showNoCoords = true;
+							scope.map_loading=false;
 						}
 						$('.gpsnotfound').trigger("create");		
 				})

@@ -5,39 +5,49 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
 
 	/* 	Submit buttons */
-	$scope.submit = function($event) {
+	$scope.submit_start = function($event) {
 		$($event.target).parent().addClass('ui-btn-pressed')
-		$scope.AddStartValuesToDB({
-			cargo			:	$scope.cargo,
-			start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
-			start_location	:	$scope.start_location,
-			start_address	:	$scope.start_address,
-			start_comments	:	$scope.start_comments
-		});
-		$scope.$emit("setcargo", $scope.cargo)
-		$scope.cargo 			= null;
-		$('#comments_start').val('');
-		$("select").prop("selectedIndex",0);
-		$('select').selectmenu('refresh', true);
-		$event.preventDefault();
-		$.mobile.changePage("#two");
-		//$scope.startWakeLock()
+		if(!!$scope.start_location || $scope.start_address){
+			$scope.AddStartValuesToDB({
+				cargo			:	$scope.cargo,
+				start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
+				start_location	:	$scope.start_location,
+				start_address	:	$scope.start_address,
+				start_comments	:	$scope.start_comments
+			});
+			$scope.$emit("setcargo", $scope.cargo)
+			$scope.cargo = null;
+			$('#comments_start').val('');
+			$("select").prop("selectedIndex",0);
+			$('select').selectmenu('refresh', true);
+			$event.preventDefault();
+			$.mobile.changePage("#two");
+			$scope.buttonDisable("#submit_end")
+			$scope.buttonDisable("#submit_start")
+			//$scope.startWakeLock()
+		}else{
+			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
+		}
 	};
 		
 	$scope.submit_end = function($event) {
 		$($event.target).parent().addClass('ui-btn-pressed')
-		//$scope.releaseWakeLock();
-		$scope.AddEndValuesToDB({
-			end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
-			end_location	:	$scope.end_location,
-			end_address		:	$scope.end_address,
-			end_comments	:	$scope.end_comments
-		});
-		$('#comments_end').val(''); 
-		$event.preventDefault();
-		$.mobile.changePage("#three");
-		$scope.buttonDisable("#submit_end")
-		$scope.buttonDisable("#submit_start")
+		if(!!$scope.end_location || $scope.end_address){
+			//$scope.releaseWakeLock();
+			$scope.AddEndValuesToDB({
+				end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
+				end_location	:	$scope.end_location,
+				end_address		:	$scope.end_address,
+				end_comments	:	$scope.end_comments
+			});
+			$('#comments_end').val(''); 
+			$event.preventDefault();
+			$.mobile.changePage("#three");
+			$scope.buttonDisable("#submit_end")
+			$scope.buttonDisable("#submit_start")
+		}else{
+			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
+		}
 	};
 	
 	$scope.startWakeLock = function() {
