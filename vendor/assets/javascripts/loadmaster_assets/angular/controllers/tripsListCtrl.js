@@ -1,4 +1,4 @@
-function tripsListCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('tripsListCtrl',function($scope,$element,$attrs) {
 	
 	$scope.selectedTrips=[]
 	$scope.selectedTripId
@@ -30,22 +30,26 @@ function tripsListCtrl($scope,$element,$attrs) {
 	}
 
 	$scope.deleteSelectedTrips = function(){
-		var delete_trips=confirm('Er du sikker på du vil slette alle turene? Dine ture vil blive slettet helt fra LoadMaster Logger og du vil ikke kunne genskabe dem!!')
-		if(delete_trips){
-			$.ajax({
-			  type: "DELETE",
-			  url: '/trips/destroy_multiple',
-			  data: JSON.stringify({ids:$scope.selectedTrips}),
-			  contentType: 'application/json', // format of request payload
-			  dataType: 'json', // format of the response
-			  success: function(msg) {
-					alert('Dine ture blev slettet')
-					window.location.reload(false); 
-			  },  
-				error: function(msg) {
-					alert('UPS der skete en fejl, de valgte ture kunne desværre ikke slettes. Kontakt venligst LoadMaster hvis denne fejl bliver ved med at ske')
-				}
-			});
+		if(!!$scope.selectedTrips && $scope.selectedTrips.length==0){
+			alert('Du har ikke valgt nogle ture. Prøv igen')
+		}else{
+			var delete_trips=confirm('Er du sikker på du vil slette alle turene? Dine ture vil blive slettet helt fra Loadmaster Logger og du vil ikke kunne genskabe dem!!')
+			if(delete_trips){
+				$.ajax({
+				  type: "DELETE",
+				  url: '/trips/destroy_multiple',
+				  data: JSON.stringify({ids:$scope.selectedTrips}),
+				  contentType: 'application/json', // format of request payload
+				  dataType: 'json', // format of the response
+				  success: function(msg){
+						alert('Dine ture blev slettet')
+						window.location.reload(false); 
+				  },  
+					error: function(msg){
+						alert('UPS der skete en fejl, de valgte ture kunne desværre ikke slettes. Kontakt venligst Loadmaster hvis denne fejl bliver ved med at ske')
+					}
+				});
+			}
 		}
 	}
 	
@@ -55,5 +59,12 @@ function tripsListCtrl($scope,$element,$attrs) {
 		window.location.href='/invoices/render_pdfs?ids='+JSON.stringify($scope.selectedTrips)
 	}
 	
+	$scope.checkOrUncheckAllTrips = function($event){
+		$element.find('tbody').find("input[type=checkbox]").each(function(){
+			$(this).prop("checked", $event.target.checked);
+			$event.target.checked ? $scope.checkboxTrip($(this).val()) : $scope.unCheckboxTrip($(this).val())
+		})
+	}
 	
-}
+	
+})
