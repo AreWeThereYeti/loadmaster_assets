@@ -124,5 +124,9 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 		$(id).button("disable");
 		$(id).button("refresh");
 	}
+	
+	$scope.$on('newTrip',function(){
+		
+	})
 
 })             

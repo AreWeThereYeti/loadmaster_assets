@@ -17,8 +17,11 @@ LoadmasterApp
 	.directive('ngMobileAccessPage', function() {
 	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
-		    link:function(scope,element,attrs){
+	    link:function(scope,element,attrs){
 				$('#tokencontainer').trigger('create')
+		  	$('#tokencontainer').bind("pageshow", function(e) {
+	    		$('#tokencontainer').trigger('create')
+	    	})
 			}
 		}
 	})
@@ -82,6 +85,7 @@ LoadmasterApp
 			scope:{},
 	    link:function(scope,element,attrs){
 				$('#home').bind( "pageshow", function( event ) {
+					scope.map_loading=true
 					scope.map_set_position="setstart_location"
 					scope.set_address_event="set_start_address"
 					scope.initMobileMap(true)
@@ -102,6 +106,7 @@ LoadmasterApp
 	    link:function(scope,element,attrs){
 				scope.keep_updating_position=true
 	    	$('#two').bind( "pageshow", function( event ) {
+					scope.map_loading=true
 					scope.map_set_position="setend_location"
 					scope.set_address_event="set_end_address"
 					scope.initMobileMap(true)

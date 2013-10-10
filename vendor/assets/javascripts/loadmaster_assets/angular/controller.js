@@ -325,14 +325,32 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 		/* 	Starting new trip*/
 	$scope.submitStartNewTrip = function($event){
 		$($event.target).parent().addClass('ui-btn-pressed')
+		$scope.resetAllVals();
 		$event.preventDefault();
 		$.mobile.changePage("#home");
 	}
 	
-	$scope.submitToken = function($event){
-
-		console.log($scope.access_token)
+	$scope.resetAllVals = function(){
+		$scope.start_address = null
+		$scope.start_location = null
+		$scope.start_comments = null
+		$scope.start_timestamp = null
+		$scope.top_cargo = null
+		$scope.cargo = null
+		$scope.top_cargo = null
+		$scope.top_startaddress = null
+		$scope.top_startlocation = null
 		
+		$scope.end_address = null
+		$scope.end_comments = null
+		$scope.end_location = null
+		$scope.end_timestamp = null
+		$scope.top_endaddress = null
+		$scope.top_endlocation = null
+		$scope.$broadcast('newTrip')
+	}
+	
+	$scope.submitToken = function($event){
 		// this is the section that actually inserts the values into the User table
 		$scope.db.transaction(function(transaction) {
 			transaction.executeSql('INSERT INTO AUTH (access_token, imei, license_plate) VALUES ("'+$scope.access_token+'", "'+$scope.imei+'", "'+$scope.license_plate+'")',[]);
@@ -392,8 +410,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 	$scope.AddEndValuesToDB = function(trip) {
 	 	$scope.top_endlocation=trip.end_location
 	 	$scope.top_endaddress=trip.end_address;
-	 	console.log("trip end location" + trip.end_location)
-	 	console.log("trip end adress" + trip.end_address)
+	 	console.log("trip end location " + trip.end_location)
+	 	console.log("trip end address " + trip.end_address)
 		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 
 

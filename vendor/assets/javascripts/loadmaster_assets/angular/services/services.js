@@ -29,7 +29,7 @@ LoadmasterApp.service('Helpers', function() {
 				has_internet=true
 			}
 		}else{
-			console.log('was not app... has internet is true')
+			//console.log('was not app... has internet is true')
 			has_internet=true
 		}
 		return has_internet;
