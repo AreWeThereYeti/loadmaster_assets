@@ -1,11 +1,11 @@
 /* Is this needed? */
 var LoadmasterApp = angular.module("loadmaster",[])
-  .config(function($httpProvider){
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-	})
+//   .config(function($httpProvider){
+//     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+// 	})
 	
 /* User controller with angularjs */
-function userCtrl($scope) {
+LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 
 	$scope.IS_MOBILE=true
 	window.myscope = $scope;
@@ -455,7 +455,7 @@ function userCtrl($scope) {
 	$scope.is_mobile_app = function(){
 		return navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)
 	}
-} 
+}) 
 
 
 

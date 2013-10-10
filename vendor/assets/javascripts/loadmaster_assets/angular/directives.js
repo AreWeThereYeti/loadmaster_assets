@@ -1,23 +1,21 @@
-console.log("directives loaded");
-
-angular.module('loadmaster', [])
+LoadmasterApp
 	.directive('ngUser', function() {
-	    return {
-	    controller:userCtrl,
+	  return {
+	    controller:'userCtrl',
 	    link:function(scope,element,attrs){
 				scope.init();
 			}
 		}
 	})
 	.directive('ngTrip', function() {
-	    return {
-		    controller:tripCtrl,
-		    link:function(scope,element,attrs){
+	  return {
+		  controller:'tripCtrl',
+		  link:function(scope,element,attrs){
 			}
 		}
 	})
 	.directive('ngMobileAccessPage', function() {
-	    return {
+	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
 		    link:function(scope,element,attrs){
 				$('#tokencontainer').trigger('create')
@@ -25,33 +23,32 @@ angular.module('loadmaster', [])
 		}
 	})
 	.directive('ngMobileTripStart', function() {
-	    return {
+	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
-		    link:function(scope,element,attrs){
-		    	$("#home").bind("pageshow", function(e) {
-		    		$('#home').trigger('create')
-		    	})
-		    	
+	    link:function(scope,element,attrs){
+	    	$("#home").bind("pageshow", function(e) {
+	    		$('#home').trigger('create')
+	    	})
 			}
 		}
 	})
 	.directive('ngMobileTripEnd', function() {
-	    return {
+	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
-		    link:function(scope,element,attrs){
-		    	$("#two").bind("pageshow", function(e) {
-		    		$('#two').trigger('create')
-		    	})
+	    link:function(scope,element,attrs){
+	    	$("#two").bind("pageshow", function(e) {
+	    		$('#two').trigger('create')
+	    	})
 			}
 		}
 	})
 	.directive('ngMobileTripEnded', function() {
-	    return {
-			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
-		    link:function(scope,element,attrs){
-		    	$("#three").bind("pageshow", function(e) {
-		    		$('#three').trigger('create')
-		    	})
+	  return {
+		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
+	    link:function(scope,element,attrs){
+	    	$("#three").bind("pageshow", function(e) {
+	    		$('#three').trigger('create')
+	    	})
 			}
 		}
 	})

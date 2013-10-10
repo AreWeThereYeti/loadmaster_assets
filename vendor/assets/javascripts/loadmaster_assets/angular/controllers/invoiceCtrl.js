@@ -1,4 +1,4 @@
-function invoiceCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('invoiceCtrl',function($scope,$element,$attrs) {
 	
 	$scope.items=[]
 	$scope.total_price=0
@@ -64,5 +64,5 @@ function invoiceCtrl($scope,$element,$attrs) {
 		});
 	}
 	 
-}
+})
 

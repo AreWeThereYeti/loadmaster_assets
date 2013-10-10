@@ -1,5 +1,5 @@
 /* trip controller with angularjs */
-function tripCtrl($scope, $http) {
+LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 
 	
 	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
@@ -115,4 +115,4 @@ function tripCtrl($scope, $http) {
 		$(id).button("refresh");
 	}
 
-}             
+})             
