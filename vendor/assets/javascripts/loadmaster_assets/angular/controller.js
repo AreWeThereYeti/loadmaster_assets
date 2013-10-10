@@ -17,7 +17,7 @@ function userCtrl($scope) {
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
 	$scope.host = 'https://portal.loadmasterloggerfms.dk';
-/* 	$scope.host = 'http://192.168.0.3:3000' */
+	// $scope.host = 'http://192.168.1.35:3000'
 	
 	$scope.$on("setcargo", function(evt, cargo){
 		$scope.top_cargo = cargo;
@@ -228,6 +228,8 @@ function userCtrl($scope) {
 
 		if($scope.isAllowedToSync == true){	
 			$scope.isAllowedToSync = false;
+			console.log('posting trip to:')
+			console.log($scope.host + "/api/v1/trips")
 			$.ajax({
 				type: "POST",
 				url: $scope.host + "/api/v1/trips",
