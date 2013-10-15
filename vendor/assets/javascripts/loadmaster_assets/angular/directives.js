@@ -1,57 +1,57 @@
-console.log("directives loaded");
-
-angular.module('loadmaster', [])
+LoadmasterApp
 	.directive('ngUser', function() {
-	    return {
-	    controller:userCtrl,
+	  return {
+	    controller:'userCtrl',
 	    link:function(scope,element,attrs){
 				scope.init();
 			}
 		}
 	})
 	.directive('ngTrip', function() {
-	    return {
-		    controller:tripCtrl,
-		    link:function(scope,element,attrs){
+	  return {
+		  controller:'tripCtrl',
+		  link:function(scope,element,attrs){
 			}
 		}
 	})
 	.directive('ngMobileAccessPage', function() {
-	    return {
+	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
-		    link:function(scope,element,attrs){
+	    link:function(scope,element,attrs){
 				$('#tokencontainer').trigger('create')
+		  	$('#tokencontainer').bind("pageshow", function(e) {
+	    		$('#tokencontainer').trigger('create')
+	    	})
 			}
 		}
 	})
 	.directive('ngMobileTripStart', function() {
-	    return {
+	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
-		    link:function(scope,element,attrs){
-		    	$("#home").bind("pageshow", function(e) {
-		    		$('#home').trigger('create')
-		    	})
-		    	
+	    link:function(scope,element,attrs){
+	    	$("#home").bind("pageshow", function(e) {
+	    		$('#home').trigger('create')
+	    	})
 			}
 		}
 	})
 	.directive('ngMobileTripEnd', function() {
-	    return {
+	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
-		    link:function(scope,element,attrs){
-		    	$("#two").bind("pageshow", function(e) {
-		    		$('#two').trigger('create')
-		    	})
+	    link:function(scope,element,attrs){
+	    	$("#two").bind("pageshow", function(e) {
+	    		$('#two').trigger('create')
+	    	})
 			}
 		}
 	})
 	.directive('ngMobileTripEnded', function() {
-	    return {
-			  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
-		    link:function(scope,element,attrs){
-		    	$("#three").bind("pageshow", function(e) {
-		    		$('#three').trigger('create')
-		    	})
+	  return {
+		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
+	    link:function(scope,element,attrs){
+	    	$("#three").bind("pageshow", function(e) {
+	    		$('#three').trigger('create')
+	    	})
 			}
 		}
 	})
@@ -85,6 +85,7 @@ angular.module('loadmaster', [])
 			scope:{},
 	    link:function(scope,element,attrs){
 				$('#home').bind( "pageshow", function( event ) {
+					scope.map_loading=true
 					scope.map_set_position="setstart_location"
 					scope.set_address_event="set_start_address"
 					scope.initMobileMap(true)
@@ -105,6 +106,7 @@ angular.module('loadmaster', [])
 	    link:function(scope,element,attrs){
 				scope.keep_updating_position=true
 	    	$('#two').bind( "pageshow", function( event ) {
+					scope.map_loading=true
 					scope.map_set_position="setend_location"
 					scope.set_address_event="set_end_address"
 					scope.initMobileMap(true)
@@ -134,14 +136,15 @@ angular.module('loadmaster', [])
 						);
 					}
 		    	$('#three').bind( "pageshow", function( event ) {
+						scope.map_loading=true
 						scope.showNoCoords = false;
 						scope.showmap = false;
 						scope.has_position=true;
-						scope.startlocation=scope.$parent.start_location
-						scope.startaddress=scope.$parent.start_address
-						scope.endlocation=scope.$parent.end_location
-						scope.endaddress=scope.$parent.end_address
-					
+						scope.startlocation=scope.$root.top_startlocation
+						scope.startaddress=scope.$root.top_startaddress
+						scope.endlocation=scope.$root.top_endlocation
+						scope.endaddress=scope.$root.top_endaddress
+						
 		    		if(!!scope.startmarker){ 
 							scope.removeMarker(scope.startmarker);
 							scope.startmarker=null
@@ -159,7 +162,7 @@ angular.module('loadmaster', [])
 							scope.showmap = true;
 							scope.refreshMap();
 		    		}else{
-					    scope.showNoCoords = true;
+							scope.map_loading=false;
 						}
 						$('.gpsnotfound').trigger("create");		
 				})

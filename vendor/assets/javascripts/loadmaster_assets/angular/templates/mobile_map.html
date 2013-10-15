@@ -1,22 +1,28 @@
 <div>
-  <div ng-show="gpsStateUndefined()" class="vertical_align">
-    <div class="overlay blink">
-      <h2 class="centered">
+  
+  <div class="map-container">
+	</div>
+	
+	<div class="overlay blink" ng-hide="showMap()">
+	  
+	  <div ng-show="searchingForGps()">
+  	  <h2 class="centered">
         <span class="searching">
         </span>
         Søger efter GPS signal
       </h2>
-      <div class="no-internet-container" ng-show="gpsFoundNoInternet()">
-        <h2 class="centered">Vi har fundet og gemt din position!</h2> 
-        <h3 class="centered">Da du ikke har forbindelse til internettet, kunne vi desværre ikke visse din position på kortet.</h3>
-      </div>
     </div>
-  </div>
-	<div class="map-container">
+	
+	  <div class="no-internet-container" ng-show="gpsFoundNoInternet()">
+      <h2 class="centered">Vi har fundet og gemt din position!</h2> 
+      <h3 class="centered">Da du ikke har forbindelse til internettet, kunne vi desværre ikke visse din position på kortet.</h3>
+    </div>
+    
+    <div ng-show="gpsNotFound()" class="gpsnotfound">
+  		<h2 class="vertical_align">Vi kunne desværre ikke finde din GPS position. Indtast venligst en adresse manuelt</h2>
+  		<textarea name="textarea" id="textarea-a" class="textarea" ng-model="address" placeholder="Indtast Adresse"></textarea>
+  	</div>
+	
 	</div>
-	<div ng-show="gpsNotFound()" class="gpsnotfound">
-		<h2 class="vertical_align">Vi kunne desværre ikke finde din GPS position. Indtast venligst en adresse manuelt</h2>
-    <!-- <label for="textarea-a">Indtast Adresse</label> -->
-		<textarea name="textarea" id="textarea-a" class="textarea" ng-model="address" placeholder="Indtast Adresse"></textarea>
-	</div>
+	
 </div>

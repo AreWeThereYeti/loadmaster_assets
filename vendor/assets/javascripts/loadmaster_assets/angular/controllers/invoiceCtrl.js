@@ -1,4 +1,4 @@
-function invoiceCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('invoiceCtrl',function($scope,$element,$attrs) {
 	
 	$scope.items=[]
 	$scope.total_price=0
@@ -22,6 +22,10 @@ function invoiceCtrl($scope,$element,$attrs) {
 			unit_price:null,
 			total_price:null	
 		})
+	}
+	
+	$scope.removeItemRow = function(ev,idx){
+		$scope.items.splice(idx,1)
 	}
 	
 	$scope.$watch('items',function(newVal){
@@ -64,5 +68,5 @@ function invoiceCtrl($scope,$element,$attrs) {
 		});
 	}
 	 
-}
+})
 
