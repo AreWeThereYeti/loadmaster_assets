@@ -34,4 +34,15 @@ LoadmasterApp.service('Helpers', function() {
 		}
 		return has_internet;
 	};
+	
+	this.buttonEnable = function(id){
+		$(id).button("enable");
+		$(id).button("refresh");
+	}
+	
+	this.buttonDisable = function(id){
+		$(id).button("disable");
+		$(id).button("refresh");
+	}
+	
 });

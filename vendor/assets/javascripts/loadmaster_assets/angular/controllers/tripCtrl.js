@@ -6,6 +6,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 
 	/* 	Submit buttons */
 	$scope.submit_start = function($event) {
+		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
 		if(!!$scope.start_location || $scope.start_address){
 			$scope.AddStartValuesToDB({
@@ -31,6 +32,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 	};
 		
 	$scope.submit_end = function($event) {
+		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
 		if(!!$scope.end_location || $scope.end_address){
 			//$scope.releaseWakeLock();
