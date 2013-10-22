@@ -5,7 +5,7 @@ var LoadmasterApp = angular.module("loadmaster",[])
 // 	})
 	
 /* User controller with angularjs */
-LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
+LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Helpers) {
 
 	$scope.IS_MOBILE=true
 	window.myscope = $scope;
@@ -36,24 +36,22 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 		$scope.checkLastTripFinished()
 		$scope.checkLengthOfDatabase()
 		
-	    $.mobile.buttonMarkup.hoverDelay = 0;
+	  $.mobile.buttonMarkup.hoverDelay = 0;
 		$.mobile.defaultPageTransition   = 'slide';
-	    $.mobile.defaultDialogTransition = 'none';
+	  $.mobile.defaultDialogTransition = 'none';
 		
 		if($scope.access_token != ""){
 			$scope.checkInterval();		
 		}
 	}
 	
-		$scope.checkInterval = function(){
-			$scope.intervalID = setInterval(function(){
-				$scope.$apply(function(scope){
-					document.addEventListener("deviceready", function(){
-					}, false);
+	$scope.checkInterval = function(){
+		$scope.intervalID = setInterval(function(){
+			$scope.$apply(function(scope){
 				scope.checkConnection();
-			  	})	
-			}, 5000);	
-		}
+		  	})	
+		}, 5000);	
+	}
 	
 	
 	$scope.isAccessTokenInDatabase = function(){
@@ -66,7 +64,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 			tx.executeSql('SELECT * FROM Auth', [], function (tx, result){  // Fetch records from SQLite
 				var dataset = result.rows; 
 				if (dataset.length == 0 ){
-					$.mobile.changePage("#tokencontainer");
+					$scope.loadAndShowRegistrationPage()
 				}
 				else if(!!dataset.length){
 					$scope.access_token = dataset.item(0).access_token;
@@ -78,12 +76,42 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 		});	
 	}
 	
+	/* 	Reset access token if incorrect */
+	$scope.resetAccessToken = function(){
+	 	if(!$scope.$root.db){
+			$scope.$root.createNewDB()
+		}	
+
+		console.log("Deleting access token and device id from table")
+
+		/* 	Deletes synced rows from trips table */
+		$scope.$root.db.transaction(function(transaction) {
+			transaction.executeSql('DELETE FROM Auth', []);
+			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
+		);
+		console.log("access token er " + $scope.access_token)
+		alert("Access token er forkert")
+		clearInterval($scope.intervalID);
+		$scope.loadAndShowRegistrationPage()
+	}
+	
+	$scope.loadAndShowRegistrationPage = function(){
+		$.mobile.loadPage( "registration.html",true).done(function (e, ui, page) {
+			$scope.$apply(function(){
+				$compile($('#tokenpage'))($scope)
+				$.mobile.changePage("#tokenpage");
+			})
+		}).fail(function () {
+    	alert.log("We're sorry but something went wrong. Please close the app and try again");
+    });
+	}
+	
 	/* check Connection */
 	$scope.checkConnection = function(){
 		try{
 			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 				console.log('connectiontype is : ' + navigator.connection.type);
-				if(!window.google && $scope.hasInternet()){
+				if(!window.google && Helpers.hasInternet()){
 					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>');
 				}
 				$scope.isDatabaseEmpty();
@@ -92,21 +120,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 			//console.log('cant get connection type')
 		}
 
-	}
-	
-	$scope.hasInternet = function(){
-		var has_internet=false
-		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
-		if(app){
-			if(typeof navigator === 'undefined' || typeof navigator.connection === 'undefined' || typeof navigator.connection.type === 'undefined' | typeof Connection === 'undefined'){
-			}
-			else if(navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-				has_internet=true
-			}
-		}
-		console.log('hasInternet returns: ')
-		console.log(has_internet)
-		return has_internet;
 	}
 	
 	
@@ -270,25 +283,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 			});
 		}
 	};
-	
-/* 	Reset access token if incorrect */
-	$scope.resetAccessToken = function(){
-	 	if(!$scope.db){
-			$scope.createNewDB()
-		}	
-		
-		console.log("Deleting access token and device id from table")
-		 
-		/* 	Deletes synced rows from trips table */
-		$scope.db.transaction(function(transaction) {
-			transaction.executeSql('DELETE FROM Auth', []);
-			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
-		);
-		console.log("access token er " + $scope.access_token)
-		alert("Access token er forkert")
-		clearInterval($scope.intervalID);
-		$.mobile.changePage("#tokencontainer");
-	}
 
 	
 	/* Drops synced rows */
@@ -348,20 +342,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 		$scope.top_endaddress = null
 		$scope.top_endlocation = null
 		$scope.$broadcast('newTrip')
-	}
-	
-	$scope.submitToken = function($event){
-		// this is the section that actually inserts the values into the User table
-		$scope.db.transaction(function(transaction) {
-			transaction.executeSql('INSERT INTO AUTH (access_token, imei, license_plate) VALUES ("'+$scope.access_token+'", "'+$scope.imei+'", "'+$scope.license_plate+'")',[]);
-			},function error(err){alert('error on save to local db ' + err)}, function success(){}
-		);
-		
-		$scope.checkInterval()
-		$event.preventDefault();
-		$.mobile.changePage("#home");
-		
-		return false;
 	}
 	 
 	/* --------------  Database ---------------- */	 	

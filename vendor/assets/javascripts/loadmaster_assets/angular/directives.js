@@ -14,14 +14,22 @@ LoadmasterApp
 			}
 		}
 	})
+	// .directive('ngMobileAccessPage', function() {
+	//   return {
+	// 		templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
+	//     link:function(scope,element,attrs){
+	// 			$('#tokencontainer').trigger('create')
+	// 	  	$('#tokencontainer').bind("pageshow", function(e) {
+	//     		$('#tokencontainer').trigger('create')
+	//     	})
+	// 		}
+	// 	}
+	// })
 	.directive('ngMobileAccessPage', function() {
 	  return {
-			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
+			controller: 'mobileRegistrationCtrl',
 	    link:function(scope,element,attrs){
-				$('#tokencontainer').trigger('create')
-		  	$('#tokencontainer').bind("pageshow", function(e) {
-	    		$('#tokencontainer').trigger('create')
-	    	})
+				console.log('loaded ngMobileAccessPage')
 			}
 		}
 	})
@@ -29,9 +37,10 @@ LoadmasterApp
 	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
 	    link:function(scope,element,attrs){
-	    	$("#home").bind("pageshow", function(e) {
-	    		$('#home').trigger('create')
-	    	})
+				$('#home').trigger('create')
+	    	// $("#home").on("pagebeforeshow", function(e) {
+	    	// 	$('#home').trigger('create')
+	    	// })
 			}
 		}
 	})
@@ -39,7 +48,7 @@ LoadmasterApp
 	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 	    link:function(scope,element,attrs){
-	    	$("#two").bind("pageshow", function(e) {
+	    	$("#two").bind("pagebeforeshow", function(e) {
 	    		$('#two').trigger('create')
 	    	})
 			}
@@ -49,7 +58,7 @@ LoadmasterApp
 	  return {
 		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 	    link:function(scope,element,attrs){
-	    	$("#three").bind("pageshow", function(e) {
+	    	$("#three").bind("pagebeforeshow", function(e) {
 	    		$('#three').trigger('create')
 	    	})
 			}
@@ -84,10 +93,11 @@ LoadmasterApp
 	    controller:'mapCtrl',
 			scope:{},
 	    link:function(scope,element,attrs){
-				$('#home').bind( "pageshow", function( event ) {
-					scope.map_loading=true
-					scope.map_set_position="setstart_location"
-					scope.set_address_event="set_start_address"
+				scope.map_loading=true
+				scope.map_set_position="setstart_location"
+				scope.set_address_event="set_start_address"
+				scope.initMobileMap(true)
+				$('#home').bind( "pagebeforeshow", function( event ) {
 					scope.initMobileMap(true)
 				})
 				$('#home').bind( "pagehide", function( event ) {
@@ -105,10 +115,10 @@ LoadmasterApp
 	    templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_map.html',
 	    link:function(scope,element,attrs){
 				scope.keep_updating_position=true
-	    	$('#two').bind( "pageshow", function( event ) {
-					scope.map_loading=true
-					scope.map_set_position="setend_location"
-					scope.set_address_event="set_end_address"
+				scope.map_loading=true
+				scope.map_set_position="setend_location"
+				scope.set_address_event="set_end_address"
+				$('#two').bind( "pagebeforeshow", function( event ) {
 					scope.initMobileMap(true)
 				})
 				$('#two').bind( "pagehide", function( event ) {
