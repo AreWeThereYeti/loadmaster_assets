@@ -96,7 +96,13 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		clearInterval($scope.watchPositionTimer)
 		$scope.watchPositionTimer=null
 		$scope.resetVals()
-	} 
+	}
+	
+	$scope.$on('stopWatchPositionTimer', function() {
+    console.log("destroy");
+    clearInterval($scope.watchPositionTimer)
+		$scope.watchPositionTimer=null
+  }); 
 	
 	$scope.resetVals = function(){
 		$scope.location=null
