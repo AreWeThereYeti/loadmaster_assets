@@ -236,9 +236,9 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					},100);		//need delay as map is not created properly before this is executed
 				}else{
 					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-					if($scope.keep_updating_position){
+/* 					if($scope.keep_updating_position){ */
 						$scope.centerOnPosition(latitude,longitude)
-		 			} 
+/* 		 			}  */
 				}
 			}
 			$scope.location=[latitude, longitude]
