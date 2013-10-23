@@ -316,14 +316,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		return false;
 	}	
 	
-		/* 	Starting new trip*/
-	$scope.submitStartNewTrip = function($event){
-		$event.preventDefault();
-		$($event.target).parent().addClass('ui-btn-pressed')
-		$scope.resetAllVals();
-		$.mobile.changePage("#home");
-	}
-	
 	$scope.resetAllVals = function(){
 		$scope.start_address = null
 		$scope.start_location = null

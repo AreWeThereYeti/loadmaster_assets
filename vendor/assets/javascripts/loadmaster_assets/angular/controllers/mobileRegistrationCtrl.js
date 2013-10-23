@@ -6,10 +6,9 @@ LoadmasterApp.controller('mobileRegistrationCtrl',function($scope,$element,$attr
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('INSERT INTO AUTH (access_token, imei, license_plate) VALUES ("'+$scope.access_token+'", "'+$scope.imei+'", "'+$scope.license_plate+'")',[]);
 			},function error(err){
-				alert("We're sorry but something went wrong. Please try again" + err)
+				alert("Ups, noget gik galt. Prøv venligst igen")
 				console.log(err)
 			}, function success(){
-				console.log('success saving access token')
 				$.mobile.changePage("#home");
 			}
 		);

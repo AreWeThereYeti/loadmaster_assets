@@ -17,16 +17,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				start_address	:	$scope.start_address,
 				start_comments	:	$scope.start_comments
 			});
-			$scope.$emit("setcargo", $scope.cargo)
-			$scope.cargo = null;
-			$('#comments_start').val('');
-			$("select").prop("selectedIndex",0);
-			$('select').selectmenu('refresh', true);
-			$event.preventDefault();
-			$.mobile.changePage("#two");
-			$scope.buttonDisable("#submit_end")
-			$scope.buttonDisable("#submit_start")
-			//$scope.startWakeLock()
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
 		}
@@ -46,11 +36,18 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				end_address		:	$scope.end_address,
 				end_comments	:	$scope.end_comments
 			});
-			$('#comments_end').val(''); 
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
 		}
 	};
+	
+	/* 	Starting new trip*/
+	$scope.submitStartNewTrip = function($event){
+		$event.preventDefault();
+		$($event.target).parent().addClass('ui-btn-pressed')
+		$scope.$root.resetAllVals();
+		$.mobile.changePage("#home");
+	}
 	
 	$scope.startWakeLock = function() {
 		if($scope.is_mobile_app()){
@@ -72,36 +69,43 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
-		$scope.top_startlocation=trip.start_location
-	 	$scope.top_startaddress=trip.start_address;
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 	 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {
 			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
 			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
-		},function error(err){alert('error on save to local db ' + err)}, function success(){});
+			},
+			function error(err){alert("Ups, noget gik galt da vi prøvede at starte din tur. Prøv venligst igen")}, 
+			function success(){
+				$scope.$emit("setcargo", $scope.cargo)
+				$scope.cargo = null;
+				$('#comments_start').val('');
+				$("select").prop("selectedIndex",0);
+				$('select').selectmenu('refresh', true);
+				$.mobile.changePage("#two");
+				$scope.buttonDisable("#submit_end")
+				$scope.buttonDisable("#submit_start")
+				//$scope.startWakeLock()
+			}
+		);
 		return false;
 	}	
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
-	 	$scope.top_endlocation=trip.end_location
-	 	$scope.top_endaddress=trip.end_address;
-	 	console.log("trip end location " + trip.end_location)
-	 	console.log("trip end address " + trip.end_address)
 		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
-
 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('UPDATE Trip SET _end_timestamp ="'+trip.end_timestamp+'", _end_location ="'+trip.end_location+'", _end_address ="'+trip.end_address+'", _end_comments ="'+trip.end_comments+'", _is_finished = 1 WHERE Id = (SELECT MAX(Id) from Trip)',[],function(tx,rs){
 			});
 			},function error(error){
-				alert("We're sorry but something went wrong when we tried to save your trip. Please try again")
+				alert("Ups, noget gik galt da vi prøvede at gemme din tur. Prøv venligst igen")
 				console.log(error)
 			},function success(data){
 				$.mobile.changePage("#three")
+				$('#comments_end').val(''); 
 			}
 		)
 	}
@@ -157,10 +161,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('SELECT * FROM Trip WHERE _is_finished = 1 AND Id = (SELECT MAX(Id) from Trip)',[],function(tx,rs){
 				if(rs.rows.length>0){
-					$scope.$apply(function(){
-						$scope.trip=rs.rows.item(0)
-						$scope.compileMap($element.find('#three').find('.map_container'),"<div ng-map-finish startlocation=trip._start_location endlocation=trip._end_location></div>")
-					})
+					$scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0)))
 				}else{
 					$scope.trip=null
 				}
@@ -168,10 +169,30 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			},function error(error){
 				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
 				$scope.trip=null
-			},function success(data){
-				console.log(data)
-			}
+			},function success(data){}
 		)
+	}
+	
+	$scope.drawTrip = function(trip){
+		$scope.trip=trip
+		$scope.compileMap($element.find('#three').find('.map_container'),"<div ng-map-finish startlocation=trip.startlocation endlocation=trip.endlocation startaddress=trip.startaddress endaddress=trip.endaddress></div>")	
+	}
+	
+	$scope.formatSQLDbTrip = function(trip){
+		if(trip._start_location!=null && trip._end_location!=null && trip._start_location!="null" && trip._end_location!="null"){
+			trip.startlocation=trip._start_location		//passing variables with underscore to view in $compile throws error using vars without underscore instead
+			trip.endlocation=trip._end_location
+		}else{
+			trip.startlocation=null
+			trip.endlocation=null
+		}
+		trip.startaddress=trip._start_address
+		trip.endaddress=trip._end_address
+		trip.start_timestamp=moment(trip._start_timestamp).format("HH:mm:ss DD-MM-YYYY")
+		trip.end_timestamp=moment(trip._end_timestamp).format("HH:mm:ss DD-MM-YYYY")
+		trip.cargo=trip._cargo
+		
+		return trip
 	}
 	
 	$scope.compileMap = function(el,map){
@@ -187,9 +208,5 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$(id).button("disable");
 		$(id).button("refresh");
 	}
-	
-	$scope.$on('newTrip',function(){
-		
-	})
 
 })             

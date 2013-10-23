@@ -79,21 +79,19 @@ LoadmasterApp
 	.directive('ngCargoAutocomplete', function(){
 		return{
 			link:function(scope,element,attrs){
-				$("#home").bind("pageshow", function(e) {
-					element.find('input').autocomplete({
-						target: element.find('ul'),
-						source: scope.cargo_types,
-						callback: function(e) {
-							var val = $(e.currentTarget).text();
-							element.find('input').val(val);
-							element.find('input').autocomplete('clear');
-							scope.$apply(function(){
-								scope.cargo=val
-							})
-						},
-						link: 'target.html?term=',
-						minLength: 1
-					});
+				$("#home").find('input').autocomplete({
+					target: element.find('ul'),
+					source: scope.cargo_types,
+					callback: function(e) {
+						var val = $(e.currentTarget).text();
+						element.find('input').val(val);
+						element.find('input').autocomplete('clear');
+						scope.$apply(function(){
+							scope.cargo=val
+						})
+					},
+					link: 'target.html?term=',
+					minLength: 1
 				});
 			}
 		}
@@ -137,10 +135,10 @@ LoadmasterApp
 			scope:{
 				startlocation:"=startlocation",
 				endlocation:"=endlocation",
+				startaddress:"=startaddress",
+				endaddress:"=endaddress",
 			},
 	    link:function(scope,element,attrs){
-				scope.startlocation=scope.startlocation.split(',')
-				scope.endlocation=scope.endlocation.split(',')
 				if(!!window.google){
 			    scope.markerImage = new google.maps.MarkerImage(
 						'src/img/start_marker.png',
@@ -163,6 +161,8 @@ LoadmasterApp
 					scope.endmarker=null 
 				}
     		if(!!scope.startlocation && !!scope.endlocation){
+					scope.startlocation=scope.startlocation.split(',')
+					scope.endlocation=scope.endlocation.split(',')
 	    		scope.initMobileMap(false);
 	    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
 	    		scope.startmarker.setIcon('src/img/start_marker.png')
