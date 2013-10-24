@@ -4,8 +4,7 @@ LoadmasterApp
 	    controller:'userCtrl',
 	    link:function(scope,element,attrs){
 				scope.init();
-				$(document).on('pageshow',function(){
-					console.log('pageshow ran')
+				$(document).on('pagebeforeshow',function(){
 					$(document).find('.ui-btn-down-b').each(function(){
 						$(this).removeClass('ui-btn-down-b')
 					})
