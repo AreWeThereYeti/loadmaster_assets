@@ -3,7 +3,7 @@
   <div class="map-container">
 	</div>
 	
-	<div class="overlay blink" ng-hide="showMap()">
+	<div class="overlay" ng-hide="showMap()">
 	  
 	  <div ng-show="searchingForGps()">
   	  <h2 class="centered">
@@ -15,6 +15,7 @@
 	
 	  <div class="no-internet-container" ng-show="gpsFoundNoInternet()">
       <h2 class="centered">Vi har fundet og gemt din position!</h2> 
+      <div class="check"></div>
       <h3 class="centered">Da du ikke har forbindelse til internettet, kunne vi desværre ikke visse din position på kortet.</h3>
     </div>
     
