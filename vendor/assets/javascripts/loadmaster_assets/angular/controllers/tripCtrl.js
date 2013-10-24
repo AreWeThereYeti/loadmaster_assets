@@ -1,5 +1,5 @@
 /* trip controller with angularjs */
-LoadmasterApp.controller('tripCtrl', function($scope, $http) {
+LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $compile) {
 
 	
 	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
@@ -7,6 +7,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 	/* 	Submit buttons */
 	$scope.submit_start = function($event) {
 		$event.preventDefault()
+		$scope.$broadcast('stopWatchPositionTimer')
 		$($event.target).parent().addClass('ui-btn-pressed')
 		if(!!$scope.start_location || $scope.start_address){
 			$scope.AddStartValuesToDB({
@@ -16,16 +17,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 				start_address	:	$scope.start_address,
 				start_comments	:	$scope.start_comments
 			});
-			$scope.$emit("setcargo", $scope.cargo)
-			$scope.cargo = null;
-			$('#comments_start').val('');
-			$("select").prop("selectedIndex",0);
-			$('select').selectmenu('refresh', true);
-			$event.preventDefault();
-			$.mobile.changePage("#two");
-			$scope.buttonDisable("#submit_end")
-			$scope.buttonDisable("#submit_start")
-			//$scope.startWakeLock()
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
 		}
@@ -33,7 +24,10 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 		
 	$scope.submit_end = function($event) {
 		$event.preventDefault()
+		$scope.$broadcast('stopWatchPositionTimer')
 		$($event.target).parent().addClass('ui-btn-pressed')
+		$scope.buttonDisable("#submit_end")
+		$scope.buttonDisable("#submit_start")
 		if(!!$scope.end_location || $scope.end_address){
 			//$scope.releaseWakeLock();
 			$scope.AddEndValuesToDB({
@@ -42,15 +36,18 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 				end_address		:	$scope.end_address,
 				end_comments	:	$scope.end_comments
 			});
-			$('#comments_end').val(''); 
-			$event.preventDefault();
-			$.mobile.changePage("#three");
-			$scope.buttonDisable("#submit_end")
-			$scope.buttonDisable("#submit_start")
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
 		}
 	};
+	
+	/* 	Starting new trip*/
+	$scope.submitStartNewTrip = function($event){
+		$event.preventDefault();
+		$($event.target).parent().addClass('ui-btn-pressed')
+		$scope.$root.resetAllVals();
+		$.mobile.changePage("#home");
+	}
 	
 	$scope.startWakeLock = function() {
 		if($scope.is_mobile_app()){
@@ -69,6 +66,49 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 			);
 		}
 	};	
+	
+	// this is the function that puts values into the database from page #home
+	$scope.AddStartValuesToDB = function(trip) {
+		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+	 
+		// this is the section that actually inserts the values into the User table
+		$scope.$root.db.transaction(function(transaction) {
+			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
+			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
+			},
+			function error(err){alert("Ups, noget gik galt da vi prøvede at starte din tur. Prøv venligst igen")}, 
+			function success(){
+				$scope.$emit("setcargo", $scope.cargo)
+				$scope.cargo = null;
+				$('#comments_start').val('');
+				$("select").prop("selectedIndex",0);
+				$('select').selectmenu('refresh', true);
+				$.mobile.changePage("#two");
+				$scope.buttonDisable("#submit_end")
+				$scope.buttonDisable("#submit_start")
+				//$scope.startWakeLock()
+			}
+		);
+		return false;
+	}	
+	
+	// this is the function that puts values into the database from page #home
+	$scope.AddEndValuesToDB = function(trip) {
+		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+
+		// this is the section that actually inserts the values into the User table
+		$scope.$root.db.transaction(function(transaction) {
+			transaction.executeSql('UPDATE Trip SET _end_timestamp ="'+trip.end_timestamp+'", _end_location ="'+trip.end_location+'", _end_address ="'+trip.end_address+'", _end_comments ="'+trip.end_comments+'", _is_finished = 1 WHERE Id = (SELECT MAX(Id) from Trip)',[],function(tx,rs){
+			});
+			},function error(error){
+				alert("Ups, noget gik galt da vi prøvede at gemme din tur. Prøv venligst igen")
+				console.log(error)
+			},function success(data){
+				$.mobile.changePage("#three")
+				$('#comments_end').val(''); 
+			}
+		)
+	}
 	
 			/* 	Set positions */
 	$scope.$on('setstart_location',function(ev,start_location){
@@ -117,6 +157,48 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 		}
 	});
 	
+	$scope.showLastTrip = function(){
+		$scope.$root.db.transaction(function(transaction) {
+			transaction.executeSql('SELECT * FROM Trip WHERE _is_finished = 1 AND Id = (SELECT MAX(Id) from Trip)',[],function(tx,rs){
+				if(rs.rows.length>0){
+					$scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0)))
+				}else{
+					$scope.trip=null
+				}
+			});
+			},function error(error){
+				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
+				$scope.trip=null
+			},function success(data){}
+		)
+	}
+	
+	$scope.drawTrip = function(trip){
+		$scope.trip=trip
+		$scope.compileMap($element.find('#three').find('.map_container'),"<div ng-map-finish startlocation=trip.startlocation endlocation=trip.endlocation startaddress=trip.startaddress endaddress=trip.endaddress></div>")	
+	}
+	
+	$scope.formatSQLDbTrip = function(trip){
+		if(trip._start_location!=null && trip._end_location!=null && trip._start_location!="null" && trip._end_location!="null"){
+			trip.startlocation=trip._start_location		//passing variables with underscore to view in $compile throws error using vars without underscore instead
+			trip.endlocation=trip._end_location
+		}else{
+			trip.startlocation=null
+			trip.endlocation=null
+		}
+		trip.startaddress=trip._start_address
+		trip.endaddress=trip._end_address
+		trip.start_timestamp=moment(trip._start_timestamp).format("HH:mm:ss DD-MM-YYYY")
+		trip.end_timestamp=moment(trip._end_timestamp).format("HH:mm:ss DD-MM-YYYY")
+		trip.cargo=trip._cargo
+		
+		return trip
+	}
+	
+	$scope.compileMap = function(el,map){
+		$compile(el.append(map))($scope)
+	}	
+	
 	$scope.buttonEnable = function(id){
 		$(id).button("enable");
 		$(id).button("refresh");
@@ -126,9 +208,5 @@ LoadmasterApp.controller('tripCtrl', function($scope, $http) {
 		$(id).button("disable");
 		$(id).button("refresh");
 	}
-	
-	$scope.$on('newTrip',function(){
-		
-	})
 
 })             

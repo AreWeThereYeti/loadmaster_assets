@@ -90,7 +90,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
 		console.log("access token er " + $scope.access_token)
-		alert("Access token er forkert")
+		alert("Access token er forkert.")
 		clearInterval($scope.intervalID);
 		$scope.loadAndShowRegistrationPage()
 	}
@@ -316,14 +316,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		return false;
 	}	
 	
-		/* 	Starting new trip*/
-	$scope.submitStartNewTrip = function($event){
-		$($event.target).parent().addClass('ui-btn-pressed')
-		$scope.resetAllVals();
-		$event.preventDefault();
-		$.mobile.changePage("#home");
-	}
-	
 	$scope.resetAllVals = function(){
 		$scope.start_address = null
 		$scope.start_location = null
@@ -403,7 +395,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		return false;
 	}
 	
-		$scope.checkLengthOfDatabase = function() {
+	$scope.checkLengthOfDatabase = function() {
 		if(!$scope.db){
 			$scope.createNewDB()
 		}	

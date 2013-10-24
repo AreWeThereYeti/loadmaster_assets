@@ -96,7 +96,12 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		clearInterval($scope.watchPositionTimer)
 		$scope.watchPositionTimer=null
 		$scope.resetVals()
-	} 
+	}
+	
+	$scope.$on('stopWatchPositionTimer', function() {
+    clearInterval($scope.watchPositionTimer)
+		$scope.watchPositionTimer=null
+  }); 
 	
 	$scope.resetVals = function(){
 		$scope.location=null
@@ -167,15 +172,15 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		console.log('trying to find position again')
+		//console.log('trying to find position again')
 		navigator.geolocation.getCurrentPosition(
 			function(position){
 				$scope.$apply(function(){
 					//alert("position found")
-					console.log("position found")
-					console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
+					//console.log("position found")
+					//console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
 					if(position.coords.accuracy < 150 && position.coords.speed < 200){
-						console.log("speed and accuracy is good. Updating position.")
+						//console.log("speed and accuracy is good. Updating position.")
 						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 						$scope.gps_not_found=false;
 						$scope.gps_found=true
