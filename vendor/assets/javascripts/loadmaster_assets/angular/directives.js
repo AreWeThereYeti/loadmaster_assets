@@ -6,7 +6,7 @@ LoadmasterApp
 				scope.init();
 				$(document).on('pageshow',function(){
 					console.log('pageshow ran')
-					$(document).find('[class*="ui-btn-down-b"]').each(function(){
+					$(document).find('.ui-btn-down-b').each(function(){
 						$(this).removeClass('ui-btn-down-b')
 					})
 				})
@@ -48,10 +48,9 @@ LoadmasterApp
 				$('#home').trigger('create')
 				scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
 	    	$("#home").on("pagebeforeshow", function(e) {
-	    		$('#home').trigger('create')
+	    		//$('#home').trigger('create')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							console.log('running apply')
 							scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
 						})
 					}else{	
@@ -68,11 +67,10 @@ LoadmasterApp
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 	    link:function(scope,element,attrs){
 	    	$("#two").bind("pagebeforeshow", function(e) {
-	    		$('#two').trigger('create')
+	    		//$('#two').trigger('create')
 					console.log('inserting map in pagebeforeshow')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							console.log('running apply')
 							scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")
 		    		})
 					}else{	
@@ -89,10 +87,9 @@ LoadmasterApp
 		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 	    link:function(scope,element,attrs){
 	    	$("#three").on("pagebeforeshow", function(e) {
-	    		$('#three').trigger('create')
+	    		//$('#three').trigger('create')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							console.log('running apply')
 							scope.showLastTrip()
 						})
 					}else{	
