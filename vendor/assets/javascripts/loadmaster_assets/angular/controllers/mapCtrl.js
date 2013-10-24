@@ -178,7 +178,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				$scope.$apply(function(){
 					//alert("position found")
 					//console.log("position found")
-					//console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
+					console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
 					if(position.coords.accuracy < 150 && position.coords.speed < 200){
 						//console.log("speed and accuracy is good. Updating position.")
 						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
@@ -199,7 +199,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					}
  				}) 
 			}, 
-			{ maximumAge: 5000, timeout: 4000, enableHighAccuracy: true}
+			{ maximumAge: 20000, timeout: 16000, enableHighAccuracy: true}
 		);
 	}
 	

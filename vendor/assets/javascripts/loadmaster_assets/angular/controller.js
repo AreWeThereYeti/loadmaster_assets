@@ -102,7 +102,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				$.mobile.changePage("#tokenpage");
 			})
 		}).fail(function () {
-    	alert.log("We're sorry but something went wrong. Please close the app and try again");
+/*     	alert.log("We're sorry but something went wrong. Please close the app and try again"); */
     });
 	}
 	
