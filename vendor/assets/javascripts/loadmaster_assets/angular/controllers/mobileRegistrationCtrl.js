@@ -18,7 +18,7 @@ LoadmasterApp.controller('mobileRegistrationCtrl',function($scope,$element,$attr
 	
 	$scope.$watch('license_plate + access_token + imei',function(){
 		if(!!$scope.license_plate && !!$scope.access_token && !!$scope.imei){
-			if($scope.license_plate.length > 8 && $scope.access_token.length > 8 && $scope.imei.length > 8){
+			if($scope.license_plate.length > 6 && $scope.access_token.length > 8 && $scope.imei.length > 8){
 				Helpers.buttonEnable("#submit_accesstoken")
 			}else{
 				Helpers.buttonDisable("#submit_accesstoken")
