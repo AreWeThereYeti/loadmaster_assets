@@ -249,7 +249,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					}
  				}) 
 			}, 
-			{ maximumAge: 20000, timeout: 16000, enableHighAccuracy: true}
+			{ maximumAge: 30000, timeout: 25000, enableHighAccuracy: true}
 		);
 	}
 	
