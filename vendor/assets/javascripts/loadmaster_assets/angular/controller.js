@@ -295,7 +295,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		/* 	Deletes synced rows from trips table */
 			$scope.db.transaction(function(transaction) {
 				transaction.executeSql('DELETE FROM Trip WHERE _is_finished = 1', [/* Insert array of IDs of synced rows. See below */]);
-				},function error(err){alert('error deleting from database ' + err)}, function success(){}
+				},function error(err){alert('error deleting from database ; ' + err.message)}, function success(){}
 			);
 			return false;
 
@@ -311,7 +311,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		/* 	Deletes synced rows from trips table */
 		$scope.db.transaction(function(transaction) {
 			transaction.executeSql('DELETE FROM Trip WHERE id <> *', [err_ids]);
-			},function error(err){alert('error deleting from database ' + err)}, function success(){}
+			},function error(err){alert('error deleting from database : ' + err.message)}, function success(){}
 		);
 		return false;
 	}	
@@ -368,7 +368,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			// note the UserId column is an auto incrementing column which is useful if you want to pull back distinct rows
 			// easily from the table.
 			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Trip(Id INTEGER PRIMARY KEY AUTOINCREMENT, _cargo varchar, _start_timestamp int, _start_location int, _start_address varchar,  _start_comments varchar, _end_timestamp int, _end_location int, _end_address varchar, _end_comments varchar, _is_finished int)', [])},
-			function error(err){alert('error on init local db ' + err)}, function success(){console.log("database created")}
+			function error(err){alert('error on init local db : ' + err.message)}, function success(){console.log("database created")}
 		) 
 	}
 	
@@ -382,7 +382,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.db.transaction(function(transaction) {
 			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
 			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
-		},function error(err){alert('error on save to local db ' + err)}, function success(){});
+		},function error(err){alert('error on save to local db : ' + err.message)}, function success(){});
 		return false;
 	}	
 	
@@ -398,7 +398,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		// this is the section that actually inserts the values into the User table
 		$scope.db.transaction(function(transaction) {
 			transaction.executeSql('UPDATE Trip SET _end_timestamp ="'+trip.end_timestamp+'", _end_location ="'+trip.end_location+'", _end_address ="'+trip.end_address+'", _end_comments ="'+trip.end_comments+'", _is_finished = 1 WHERE Id = (SELECT MAX(Id) from Trip)',[]);
-			},function error(err){console.log('error on save to local db '); console.log(err)}, function success(){}
+			},function error(err){console.log('error on save to local db : '); console.log(err)}, function success(){}
 		);
 		return false;
 	}
@@ -424,7 +424,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			return false
 		}
 		else if($scope.numberOfRows > 0){
-			$("div.database").html( "<span>Antal ture i databasen : </spam>" + $scope.numberOfRows );
+			$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
 		}
 	})
 
