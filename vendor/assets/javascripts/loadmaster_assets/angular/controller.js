@@ -90,19 +90,21 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
 		console.log("access token er " + $scope.access_token)
-		alert("Access token er forkert.")
+		alert("Access token er forkert")
 		clearInterval($scope.intervalID);
 		$scope.loadAndShowRegistrationPage()
 	}
 	
 	$scope.loadAndShowRegistrationPage = function(){
-		$.mobile.loadPage( "registration.html",true).done(function (e, ui, page) {
+		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
 			$scope.$apply(function(){
 				$compile($('#tokenpage'))($scope)
 				$.mobile.changePage("#tokenpage");
 			})
-		}).fail(function () {
-/*     	alert.log("We're sorry but something went wrong. Please close the app and try again"); */
+
+		}).fail(function (err) {
+    	alert("We're sorry but something went wrong. Please close the app and try again");
+			console.log(err)
     });
 	}
 	
@@ -117,7 +119,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				$scope.isDatabaseEmpty();
 			}
 		}catch(err){
-			//console.log('cant get connection type')
+			console.log('cant get connection type')
 		}
 
 	}
@@ -445,6 +447,11 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.is_mobile_app = function(){
 		return navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)
 	}
+	
+	$scope.applyInProggess = function(scope){
+		return scope.$$phase || scope.$root.$$phase ? true : false
+	}
+	
 }) 
 
 

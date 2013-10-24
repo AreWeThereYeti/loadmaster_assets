@@ -1,5 +1,5 @@
 /* trip controller with angularjs */
-LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $compile) {
+LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $compile, Helpers) {
 
 	
 	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
@@ -73,11 +73,11 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {
-			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
 			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
 			},
 			function error(err){alert("Ups, noget gik galt da vi prøvede at starte din tur. Prøv venligst igen")}, 
 			function success(){
+				console.log('start values inserted into db successfully')
 				$scope.$emit("setcargo", $scope.cargo)
 				$scope.cargo = null;
 				$('#comments_start').val('');
@@ -161,9 +161,17 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('SELECT * FROM Trip WHERE _is_finished = 1 AND Id = (SELECT MAX(Id) from Trip)',[],function(tx,rs){
 				if(rs.rows.length>0){
-					$scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0)))
+					if(!$scope.$root.applyInProggess($scope)){
+						$scope.$apply(function(){
+							$scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0)))
+						})
+					}else{ $scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0))) }	
 				}else{
-					$scope.trip=null
+					if(!scope.$root.applyInProggess(scope)){
+						$scope.$apply(function(){
+							$scope.trip=null
+						})
+					}else{ $scope.trip=null }
 				}
 			});
 			},function error(error){
@@ -196,7 +204,13 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	}
 	
 	$scope.compileMap = function(el,map){
-		$compile(el.append(map))($scope)
+		try{
+			$compile(el.append(map))($scope)
+		}catch(err){
+			console.log('failed to comple map: ')
+			console.log(err)
+		}
+		
 	}	
 	
 	$scope.buttonEnable = function(id){
