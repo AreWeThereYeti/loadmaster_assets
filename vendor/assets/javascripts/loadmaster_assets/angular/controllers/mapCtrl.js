@@ -101,6 +101,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.$on('stopWatchPositionTimer', function() {
     clearInterval($scope.watchPositionTimer)
 		$scope.watchPositionTimer=null
+		$scope.stopGpsNotFoundTimer()
   }); 
 	
 	$scope.resetVals = function(){
@@ -177,7 +178,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			function(position){
 				$scope.$apply(function(){
 					//alert("position found")
-					//console.log("position found")
+					console.log("position found")
 					//console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
 					if(position.coords.accuracy < 150 && position.coords.speed < 200){
 						//console.log("speed and accuracy is good. Updating position.")
@@ -208,14 +209,17 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		var counter=0
 		$scope.gps_timer_check_running=true
 		$scope.gps_not_found_timer=setInterval(function(){
+			console.log('gps_not_found_timer ran with gps_found: ' + $scope.gps_found)
 			if(counter==$scope.wait_for_gps_time){		//if gps not found in 30 secs
 				console.log('gps was never found')
 				$scope.gps_not_found=true;
 				$scope.updatePosition(null)
 				$scope.stopGpsNotFoundTimer()
 			}else if(!$scope.gps_found){
+				console.log('running gps not found timer with counter: ' + counter)
 				counter++
 			}else if($scope.gps_found){
+				console.log('stopping gps not found timer')
 				$scope.stopGpsNotFoundTimer()
 			}
 		},1000)
