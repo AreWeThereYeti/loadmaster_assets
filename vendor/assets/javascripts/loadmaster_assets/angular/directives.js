@@ -4,9 +4,8 @@ LoadmasterApp
 	    controller:'userCtrl',
 	    link:function(scope,element,attrs){
 				scope.init();
-				$(document).on('pageshow',function(){
-					console.log('pageshow ran')
-					$(document).find('[class*="ui-btn-down-b"]').each(function(){
+				$(document).on('pagebeforeshow',function(){
+					$(document).find('.ui-btn-down-b').each(function(){
 						$(this).removeClass('ui-btn-down-b')
 					})
 				})
@@ -35,6 +34,7 @@ LoadmasterApp
 	  return {
 			controller: 'mobileRegistrationCtrl',
 	    link:function(scope,element,attrs){
+				$('#tokenpage').trigger('create')
 				$('#tokenpage').on('pagehide', function (){
 					$(this).remove();
 				});
@@ -48,10 +48,9 @@ LoadmasterApp
 				$('#home').trigger('create')
 				scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
 	    	$("#home").on("pagebeforeshow", function(e) {
-	    		$('#home').trigger('create')
+	    		//$('#home').trigger('create')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							console.log('running apply')
 							scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
 						})
 					}else{	
@@ -68,11 +67,10 @@ LoadmasterApp
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 	    link:function(scope,element,attrs){
 	    	$("#two").bind("pagebeforeshow", function(e) {
-	    		$('#two').trigger('create')
+	    		//$('#two').trigger('create')
 					console.log('inserting map in pagebeforeshow')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							console.log('running apply')
 							scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")
 		    		})
 					}else{	
@@ -89,10 +87,9 @@ LoadmasterApp
 		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 	    link:function(scope,element,attrs){
 	    	$("#three").on("pagebeforeshow", function(e) {
-	    		$('#three').trigger('create')
+	    		//$('#three').trigger('create')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							console.log('running apply')
 							scope.showLastTrip()
 						})
 					}else{	
@@ -134,7 +131,17 @@ LoadmasterApp
 				scope.map_loading=true
 				scope.map_set_position="setstart_location"
 				scope.set_address_event="set_start_address"
+				scope.setMarkerImage=function(){
+					scope.markerImage = new google.maps.MarkerImage(
+						'src/img/bluedot_retina.png',
+						null, // size
+						null, // origin
+						new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
+						new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
+					);
+				}
 				scope.initMobileMap(true)
+				
 				$('.gpsnotfound').trigger("create");
 			}
 		}
@@ -150,6 +157,15 @@ LoadmasterApp
 				scope.map_loading=true
 				scope.map_set_position="setend_location"
 				scope.set_address_event="set_end_address"
+				scope.setMarkerImage=function(){
+					scope.markerImage = new google.maps.MarkerImage(
+						'src/img/bluedot_retina.png',
+						null, // size
+						null, // origin
+						new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
+						new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
+					);
+				}
 				scope.initMobileMap(true)
 				$('.gpsnotfound').trigger("create");
 			}
@@ -167,40 +183,20 @@ LoadmasterApp
 				endaddress:"=endaddress",
 			},
 	    link:function(scope,element,attrs){
-				if(!!window.google){
-			    scope.markerImage = new google.maps.MarkerImage(
-						'src/img/start_marker.png',
-						null, // size
-						null, // origin
-						new google.maps.Point( 0, 25 ),
-						new google.maps.Size( 50, 50 ) // scaled size (required for Retina display icon)
-					);
+				
+				scope.setMarkerImage=function(){
+					if(!!window.google){
+				    scope.markerImage = new google.maps.MarkerImage(
+							'src/img/start_marker.png',
+							null, // size
+							null, // origin
+							new google.maps.Point( 0, 25 ),
+							new google.maps.Size( 50, 50 ) // scaled size (required for Retina display icon)
+						);
+					}
 				}
-				scope.map_loading=true
-				scope.showNoCoords = false;
-				scope.showmap = false;
-				scope.has_position=true;
-    		if(!!scope.startmarker){ 
-					scope.removeMarker(scope.startmarker);
-					scope.startmarker=null
-				}
-    		if(!!scope.endmarker){	
-					scope.removeMarker(scope.endmarker);
-					scope.endmarker=null 
-				}
-    		if(!!scope.startlocation && !!scope.endlocation){
-					scope.startlocation=scope.startlocation.split(',')
-					scope.endlocation=scope.endlocation.split(',')
-	    		scope.initMobileMap(false);
-	    		scope.startmarker = scope.addMarkerToMap(scope.startlocation[0],scope.startlocation[1]);
-	    		scope.startmarker.setIcon('src/img/start_marker.png')
-	    		scope.endmarker = scope.addMarkerToMap(scope.endlocation[0],scope.endlocation[1]);
-	    		scope.endmarker.setIcon('src/img/end_marker.png')
-					scope.showmap = true;
-					scope.refreshMap();
-    		}else{
-					scope.map_loading=false;
-				}
+				
+				scope.initMobileRouteMap()
 				$('.gpsnotfound').trigger("create");			
 			}
 		}
