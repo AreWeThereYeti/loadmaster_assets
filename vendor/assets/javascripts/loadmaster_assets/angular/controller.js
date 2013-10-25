@@ -411,15 +411,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
 	}
-		
-	$scope.$watch("numberOfRows", function () {
-		console.log($scope.numberOfRows)
-		if($scope.numberOfRows == undefined)
-		{
-			return false
-		}
-		$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
-	})
 
 /* DEBUGGING functions */
 
