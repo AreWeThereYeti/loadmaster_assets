@@ -99,8 +99,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
 			$scope.$apply(function(){
 				$compile($('#tokenpage'))($scope)
-				$('#tokenpage').trigger('create');
-				$.mobile.changePage("#tokenpage");
+				setTimeout(function () {
+				  $('#tokenpage').trigger('create');
+					$.mobile.changePage("#tokenpage");
+				}, 1000);
 			})
 
 		}).fail(function (err) {
@@ -418,9 +420,9 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		{
 			return false
 		}
-		else if($scope.numberOfRows > 0){
-			$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
-		}
+		// else if($scope.numberOfRows > 0){
+		// 	$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
+		// }
 	})
 
 /* DEBUGGING functions */
