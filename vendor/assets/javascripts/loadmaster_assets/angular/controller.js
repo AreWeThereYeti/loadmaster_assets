@@ -418,9 +418,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		{
 			return false
 		}
-		else if($scope.numberOfRows > 0){
-			$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
-		}
+		$("div.database").html( "<span>Antal ture i databasen : </span>" + $scope.numberOfRows );
 	})
 
 /* DEBUGGING functions */
