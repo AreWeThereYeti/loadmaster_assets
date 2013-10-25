@@ -222,7 +222,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.drawCurrentPosition =function(){
 		//console.log('trying to find position again')
-		navigator.geolocation.getCurrentPosition(
+		navigator.geolocation.watchPosition(
 			function(position){
 				$scope.$apply(function(){
 					//alert("position found")
