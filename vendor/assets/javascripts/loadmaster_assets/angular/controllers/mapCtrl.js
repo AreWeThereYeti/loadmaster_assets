@@ -227,14 +227,14 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				$scope.$apply(function(){
 					//alert("position found")
 					//console.log("position found")
-					//console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
+					console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
 
-					if(position.coords.accuracy < 150 && position.coords.speed < 200){
-						//console.log("speed and accuracy is good. Updating position.")
+/* 					if(position.coords.accuracy < 150){ */
+						console.log("speed and accuracy is good. Updating position.")
 						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 						$scope.gps_not_found=false;
 						$scope.gps_found=true
-					}
+/* 					} */
 				})
 			},
 			function(errCode){
@@ -249,7 +249,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					}
  				}) 
 			}, 
-			{ maximumAge: 30000, timeout: 25000, enableHighAccuracy: true}
+			{ maximumAge: 30000, timeout: 2000, enableHighAccuracy: true}
 		);
 	}
 	

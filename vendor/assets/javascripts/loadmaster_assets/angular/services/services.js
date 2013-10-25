@@ -25,7 +25,7 @@ LoadmasterApp.service('Helpers', function() {
 				console.log('cant see if there is internet, for some reason...')
 			}
 			else if(navigator.connection.type == Connection.CELL_2G || navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-				//console.log('has internet')
+				console.log('has internet')
 				has_internet=true
 			}
 		}else{
