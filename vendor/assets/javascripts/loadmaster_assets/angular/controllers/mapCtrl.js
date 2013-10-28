@@ -237,7 +237,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				})
 			},
 			function(errCode){
-				console.log('could not find position')
 				console.log(errCode)
 				if($scope.$parent.current_map_scope==$scope.set_address_event){
 					if(errCode.PERMISSION_DENIED == errCode.code || errCode.POSITION_UNAVAILABLE == errCode.code){
@@ -445,8 +444,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						$scope.getAddressFromLatLon(lat,lon)
 					})
 				},2000)
-      }
-    });
+			}
+		});
 	}
 	
 	$scope.calcDistance = function(LatLng_start,LatLng_end,update_obj){

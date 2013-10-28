@@ -101,13 +101,13 @@ LoadmasterApp
 	.directive('ngCargoAutocomplete', function(){
 		return{
 			link:function(scope,element,attrs){
-				$("#home").find('input').autocomplete({
+				$("#home").find('.autocomplete').autocomplete({
 					target: element.find('ul'),
 					source: scope.cargo_types,
 					callback: function(e) {
 						var val = $(e.currentTarget).text();
-						element.find('input').val(val);
-						element.find('input').autocomplete('clear');
+						element.find('.autocomplete').val(val);
+						element.find('.autocomplete').autocomplete('clear');
 						scope.$apply(function(){
 							scope.cargo=val
 						})
