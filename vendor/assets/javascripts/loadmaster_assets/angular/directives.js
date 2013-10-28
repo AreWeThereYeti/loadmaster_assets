@@ -37,7 +37,7 @@ LoadmasterApp
 	    link:function(scope,element,attrs,Helpers){
 				$('#home').trigger('create')
 				scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
-	    	$("#home").on("pagebeforeshow", function(e) {
+	    	$("#home").on("pageshow", function(e) {
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
 							scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
@@ -47,9 +47,8 @@ LoadmasterApp
 						scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")	
 						scope.current_map_scope="set_start_address"	
 					}
-				}).on("pagebeforehide", function(e) {
+				}).on("pagehide", function(e) {
 					scope.$broadcast('deleteMap')
-	    		//$('#home').find('.map_container').html('') 	//clear map
 	    	})
 			}
 		}
@@ -58,9 +57,11 @@ LoadmasterApp
 	  return {
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 	    link:function(scope,element,attrs){
-	    	$("#two").bind("pagebeforeshow", function(e) {
+	    	$("#two").bind("pageshow", function(e) {
 					if(!scope.$root.applyInProggess(scope)){
-
+						$('.ui-btn-pressed').each(function(){
+							$(this).removeClass('ui-btn-pressed')
+						})
 						scope.$apply(function(){
 							scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")
 							scope.current_map_scope="set_end_address"		
@@ -69,10 +70,12 @@ LoadmasterApp
 						scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")	
 						scope.current_map_scope="set_end_address"			
 					}
-				}).on("pagebeforehide", function(e) {
+				}).on("pagehide", function(e) {
 					console.log('clearing map')
 					scope.$broadcast('deleteMap')
-					//$('#two').find('.map_container').html('') 	//clear map
+					$('.ui-btn-pressed').each(function(){
+						$(this).removeClass('ui-btn-pressed')
+					})
 		    })
 			}
 		}
@@ -81,7 +84,7 @@ LoadmasterApp
 	  return {
 		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 	    link:function(scope,element,attrs){
-	    	$("#three").on("pagebeforeshow", function(e) {
+	    	$("#three").on("pageshow", function(e) {
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
 							scope.showLastTrip()
@@ -89,9 +92,8 @@ LoadmasterApp
 					}else{	
 						scope.showLastTrip()
 					}
-	    	}).on("pagebeforehide", function(e) {
+	    	}).on("pagehide", function(e) {
 					scope.$broadcast('deleteMap')
-	    		//$("#three").find('.map_container').html('') 	//clear map
 	    	})
 			}
 		}

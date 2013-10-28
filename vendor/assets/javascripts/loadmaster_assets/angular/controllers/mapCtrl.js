@@ -44,7 +44,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.initMobileMap = function(watchPosition){
 		$scope.gps_not_found=null
 		$scope.map_loading=true
-		$('.ui-btn-pressed').removeClass('ui-btn-pressed')
 		if(!!window.google){
 			$scope.initializeMap()
 			$scope.removeAllMarkers()
