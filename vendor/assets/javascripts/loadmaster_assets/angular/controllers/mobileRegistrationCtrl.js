@@ -9,6 +9,7 @@ LoadmasterApp.controller('mobileRegistrationCtrl',function($scope,$element,$attr
 				alert("Ups, noget gik galt. Prøv venligst igen")
 				console.log(err)
 			}, function success(){
+				$scope.$root.checkInterval();		
 				$.mobile.changePage("#home");
 			}
 		);

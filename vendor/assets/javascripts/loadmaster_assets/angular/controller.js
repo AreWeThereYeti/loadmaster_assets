@@ -87,10 +87,9 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			transaction.executeSql('DELETE FROM Auth', []);
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
-		alert("Access token er forkert")
 		clearInterval($scope.intervalID);
 		$scope.loadAndShowRegistrationPage()
-	}
+	}	
 	
 	$scope.loadAndShowRegistrationPage = function(){
 		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
@@ -105,7 +104,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		}).fail(function (err) {
     	alert("We're sorry but something went wrong. Please close the app and try again");
 			console.log(err)
-    });
+	    });
 	}
 	
 	/* check Connection */
@@ -285,6 +284,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 					}
 	
 					else if(msg.status == 401){
+						alert("Resetting accesstoken.")
 						$scope.resetAccessToken()
 					}	
 					
