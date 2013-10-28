@@ -37,9 +37,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.checkLengthOfDatabase()
 		
 	  $.mobile.buttonMarkup.hoverDelay = 0;
-		$.mobile.defaultPageTransition   = 'slide';
+	  $.mobile.defaultPageTransition   = 'none';
 	  $.mobile.defaultDialogTransition = 'none';
-		
+/* 	  $.mobile.useFastClick = true; */
+
 		if($scope.access_token != ""){
 			$scope.checkInterval();		
 		}
@@ -81,15 +82,11 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	 	if(!$scope.$root.db){
 			$scope.$root.createNewDB()
 		}	
-
-		console.log("Deleting access token and device id from table")
-
 		/* 	Deletes synced rows from trips table */
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('DELETE FROM Auth', []);
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
-		console.log("access token er " + $scope.access_token)
 		alert("Access token er forkert")
 		clearInterval($scope.intervalID);
 		$scope.loadAndShowRegistrationPage()
@@ -117,12 +114,12 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 				console.log('connectiontype is : ' + navigator.connection.type);
 				if(!window.google && Helpers.hasInternet()){
-					alert('fetching google maps')
+/* 					alert('fetching google maps') */
 					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=asyncInitGoogleMaps"></script>');
 					var checkForGoogleMapsInit=setInterval(function(){
 						console.log('checking for google present')
 						if(!!window.google){
-							console.log('google present')
+/* 							console.log('google present') */
 							$scope.$broadcast('reDrawCurrentPosition')
 							clearInterval(checkForGoogleMapsInit)
 						}else{
@@ -245,16 +242,15 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				$scope.InsertRecordOnServerFunction(trips);      // Call Function for insert Record into SQl Server
 			});
 		},function error(err){
+/*
 			console.log('push to db failed with error:')
 			console.log(err)
+*/
 		});
 	}
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
-		console.log("InsertRecordOnServerFunction")
-		console.log("isAllowedToSync er : " + $scope.isAllowedToSync);
-
 		if($scope.isAllowedToSync == true){	
 			$scope.isAllowedToSync = false;
 			console.log('posting trip to:')
@@ -280,6 +276,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				error: function (msg) {
 					window.msg = msg;
 					console.log(msg);
+					alert("Accesstoken er forkert");
 					console.log(msg.status);
 					if(!!msg.responseText && !!msg.responseText.err_ids){				
 						if(JSON.parse(msg.responseText).err_ids != 0){	
@@ -342,7 +339,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.top_cargo = null
 		$scope.top_startaddress = null
 		$scope.top_startlocation = null
-		
 		$scope.end_address = null
 		$scope.end_comments = null
 		$scope.end_location = null
