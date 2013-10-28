@@ -19,17 +19,6 @@ LoadmasterApp
 			}
 		}
 	})
-	// .directive('ngMobileAccessPage', function() {
-	//   return {
-	// 		templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_access_page.html',
-	//     link:function(scope,element,attrs){
-	// 			$('#tokencontainer').trigger('create')
-	// 	  	$('#tokencontainer').bind("pageshow", function(e) {
-	//     		$('#tokencontainer').trigger('create')
-	//     	})
-	// 		}
-	// 	}
-	// })
 	.directive('ngMobileAccessPage', function() {
 	  return {
 			controller: 'mobileRegistrationCtrl',
@@ -47,7 +36,6 @@ LoadmasterApp
 				$('#home').trigger('create')
 				scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
 	    	$("#home").on("pagebeforeshow", function(e) {
-	    		//$('#home').trigger('create')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
 							scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
@@ -56,6 +44,8 @@ LoadmasterApp
 						scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
 					}
 				}).on("pagehide", function(e) {
+					console.log('clearing map')
+					$scope.$broadcast('stopWatchPositionTimer')
 	    		$('#home').find('.map_container').html('') 	//clear map
 	    	})
 			}
@@ -66,16 +56,16 @@ LoadmasterApp
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 	    link:function(scope,element,attrs){
 	    	$("#two").bind("pagebeforeshow", function(e) {
-	    		//$('#two').trigger('create')
-					console.log('inserting map in pagebeforeshow')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
 							scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")
 		    		})
 					}else{	
-						scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
+						scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")		
 					}
 				}).on("pagehide", function(e) {
+					console.log('clearing map')
+					$scope.$broadcast('stopWatchPositionTimer')
 		    	$('#two').find('.map_container').html('') 	//clear map
 		    })
 			}
@@ -86,7 +76,6 @@ LoadmasterApp
 		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 	    link:function(scope,element,attrs){
 	    	$("#three").on("pagebeforeshow", function(e) {
-	    		//$('#three').trigger('create')
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
 							scope.showLastTrip()
