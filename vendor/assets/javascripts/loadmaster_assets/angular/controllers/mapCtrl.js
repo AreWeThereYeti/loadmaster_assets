@@ -222,7 +222,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.drawCurrentPosition =function(){
 		console.log('trying to find position again')
-		$('.position-counter').append('starting watch position again')
 		navigator.geolocation.clearWatch($scope.watchPositionNavigator)
 		$scope.watchPositionNavigator = navigator.geolocation.watchPosition(
 			function(position){
@@ -231,9 +230,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					//alert("position found")
 					console.log("position found")
 					//console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
-					$('.stats').html("<p>Lat, Lon " + position.coords.latitude + ',' + position.coords.longitude + '</p><p> Accuracy: ' + position.coords.accuracy + '</p><p>Speed: ' + position.coords.speed+"</p><p>updated: "+new Date()+"</p>")
-					$('.position-available').html("<p>Is position availble?: true </p>")
-					$('.position-err-code').html('<p>No Errors</p>')
 					if(position.coords.accuracy < 1000 && position.coords.speed < 200){
 						console.log("speed and accuracy is good. Updating position.")
 						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
@@ -247,10 +243,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				})
 			},
 			function(errCode){
-				$('.position-err-code').html("<p>could not find position false </p>")
-				$('.position-err-code').append('<p> error was: code: '    + errCode.code + '. message: ' + errCode.message + "</p><p>updated: "+new Date()+"</p>")
 				console.log('could not find position')
-				$('.position-available').html("<p>watch position error callback ran </p>")
 				console.log(errCode)
 				if(errCode.PERMISSION_DENIED == errCode.code || errCode.POSITION_UNAVAILABLE == errCode.code){
 					if(errCode.PERMISSION_DENIED == errCode.code){
@@ -269,7 +262,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.positionNotFound = function(){
-		$('.position-available').append("<p>no position found (not timeout error)</p>")
 		$scope.gps_found=false
 		$scope.stopGpsNotFoundTimer()
 		if(!$scope.gps_timer_check_running){
@@ -301,14 +293,12 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			console.log('gps_not_found_timer ran with gps_found: ' + $scope.gps_found)
 			if(counter==$scope.wait_for_gps_time){		//if gps not found in e.g. 30 secs
 				console.log('gps was never found')
-				$('.position-counter').html('<p>gps was not found within 30 secs</p>')
 				// $scope.gps_not_found=true;
 				// $scope.updatePosition(null)
 				$scope.drawCurrentPosition()
 				$scope.stopGpsNotFoundTimer()
 			}else{
 				console.log('running gps not found timer with counter: ' + counter)
-				$('.position-counter').html('<p>running gps not found timer with counter: ' + counter + '</p>')
 				counter++
 			}
 		},1000)
