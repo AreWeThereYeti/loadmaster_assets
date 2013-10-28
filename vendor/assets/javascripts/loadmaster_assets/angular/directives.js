@@ -23,7 +23,9 @@ LoadmasterApp
 	  return {
 			controller: 'mobileRegistrationCtrl',
 	    link:function(scope,element,attrs){
-				$('#tokenpage').on('pagehide', function (){
+				$('#tokenpage').on('pageshow', function (){
+					scope.$root.resetAllVals()
+				}).on('pagehide', function (){
 					$(this).remove();
 				});
 			}
@@ -38,15 +40,16 @@ LoadmasterApp
 	    	$("#home").on("pagebeforeshow", function(e) {
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
-							scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
+							scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
+							scope.current_map_scope="set_start_address"		
 						})
 					}else{	
-						scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
+						scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")	
+						scope.current_map_scope="set_start_address"	
 					}
-				}).on("pagehide", function(e) {
-					console.log('clearing map')
-					$scope.$broadcast('stopWatchPositionTimer')
-	    		$('#home').find('.map_container').html('') 	//clear map
+				}).on("pagebeforehide", function(e) {
+					scope.$broadcast('deleteMap')
+	    		//$('#home').find('.map_container').html('') 	//clear map
 	    	})
 			}
 		}
@@ -57,16 +60,19 @@ LoadmasterApp
 	    link:function(scope,element,attrs){
 	    	$("#two").bind("pagebeforeshow", function(e) {
 					if(!scope.$root.applyInProggess(scope)){
+
 						scope.$apply(function(){
 							scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")
+							scope.current_map_scope="set_end_address"		
 		    		})
 					}else{	
-						scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")		
+						scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")	
+						scope.current_map_scope="set_end_address"			
 					}
-				}).on("pagehide", function(e) {
+				}).on("pagebeforehide", function(e) {
 					console.log('clearing map')
-					$scope.$broadcast('stopWatchPositionTimer')
-		    	$('#two').find('.map_container').html('') 	//clear map
+					scope.$broadcast('deleteMap')
+					//$('#two').find('.map_container').html('') 	//clear map
 		    })
 			}
 		}
@@ -83,8 +89,9 @@ LoadmasterApp
 					}else{	
 						scope.showLastTrip()
 					}
-	    	}).on("pagehide", function(e) {
-	    		$("#three").find('.map_container').html('') 	//clear map
+	    	}).on("pagebeforehide", function(e) {
+					scope.$broadcast('deleteMap')
+	    		//$("#three").find('.map_container').html('') 	//clear map
 	    	})
 			}
 		}

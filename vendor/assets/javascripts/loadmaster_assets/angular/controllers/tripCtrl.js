@@ -1,13 +1,13 @@
 /* trip controller with angularjs */
 LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $compile, Helpers) {
 
+	$scope.current_map_scope="set_start_address"
 	
 	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
 
 	/* 	Submit buttons */
 	$scope.submit_start = function($event) {
 		$event.preventDefault()
-		$scope.$broadcast('stopWatchPositionTimer')
 		$($event.target).parent().addClass('ui-btn-pressed')
 		if(!!$scope.start_location || $scope.start_address){
 			$scope.AddStartValuesToDB({
@@ -24,7 +24,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		
 	$scope.submit_end = function($event) {
 		$event.preventDefault()
-		$scope.$broadcast('stopWatchPositionTimer')
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.buttonDisable("#submit_end")
 		$scope.buttonDisable("#submit_start")

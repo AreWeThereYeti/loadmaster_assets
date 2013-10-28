@@ -90,12 +90,15 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
 		);
 		console.log("access token er " + $scope.access_token)
-		alert("Access token er forkert")
+		if(!$('#tokenpage').is(':visible')){
+			alert("Access token er forkert")
+		}
 		clearInterval($scope.intervalID);
 		$scope.loadAndShowRegistrationPage()
 	}
 	
 	$scope.loadAndShowRegistrationPage = function(){
+		console.log('-----!!!!! broadcasting stop watch position timer-------')
 		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
 			$scope.$apply(function(){
 				$compile($('#tokenpage'))($scope)
@@ -134,6 +137,9 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			}
 		}catch(err){
 			console.log('cant get connection type')
+			if(!$scope.is_mobile_app()){
+				$scope.isDatabaseEmpty();
+			}
 		}
 
 	}
@@ -252,7 +258,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
-		console.log("InsertRecordOnServerFunction")
+		console.log("---------------InsertRecordOnServerFunction-------------------")
 		console.log("isAllowedToSync er : " + $scope.isAllowedToSync);
 
 		if($scope.isAllowedToSync == true){	
@@ -349,7 +355,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.end_timestamp = null
 		$scope.top_endaddress = null
 		$scope.top_endlocation = null
-		$scope.$broadcast('newTrip')
+		if(!!$scope.$$nextSibling){
+			$scope.$broadcast('deleteMap')
+		}
+
 	}
 	 
 	/* --------------  Database ---------------- */	 	
