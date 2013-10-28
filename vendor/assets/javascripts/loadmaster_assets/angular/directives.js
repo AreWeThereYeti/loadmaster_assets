@@ -34,7 +34,6 @@ LoadmasterApp
 	  return {
 			controller: 'mobileRegistrationCtrl',
 	    link:function(scope,element,attrs){
-				$('#tokenpage').trigger('create')
 				$('#tokenpage').on('pagehide', function (){
 					$(this).remove();
 				});

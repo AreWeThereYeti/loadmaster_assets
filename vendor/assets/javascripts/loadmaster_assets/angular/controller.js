@@ -99,7 +99,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
 			$scope.$apply(function(){
 				$compile($('#tokenpage'))($scope)
-				$.mobile.changePage("#tokenpage");
+				setTimeout(function () {
+				  $('#tokenpage').trigger('create');
+					$.mobile.changePage("#tokenpage");
+				}, 1000);
 			})
 
 		}).fail(function (err) {
@@ -114,8 +117,18 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 				console.log('connectiontype is : ' + navigator.connection.type);
 				if(!window.google && Helpers.hasInternet()){
-					alert("fetching google maps")
+					alert('fetching google maps')
 					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=asyncInitGoogleMaps"></script>');
+					var checkForGoogleMapsInit=setInterval(function(){
+						console.log('checking for google present')
+						if(!!window.google){
+							console.log('google present')
+							$scope.$broadcast('reDrawCurrentPosition')
+							clearInterval(checkForGoogleMapsInit)
+						}else{
+							console.log('no google yet')
+						}
+					},1000)
 				}
 				$scope.isDatabaseEmpty();
 			}
