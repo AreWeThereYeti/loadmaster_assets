@@ -223,11 +223,9 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.drawCurrentPosition =function(){
 		console.log('trying to find position again')
 		$('.position-counter').append('starting watch position again')
-		var max_age=0
 		navigator.geolocation.clearWatch($scope.watchPositionNavigator)
 		$scope.watchPositionNavigator = navigator.geolocation.watchPosition(
 			function(position){
-				max_age=30000
 				console.log('watchPosition success callback called')
 				$scope.$apply(function(){
 					//alert("position found")
@@ -250,8 +248,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			},
 			function(errCode){
 				$('.position-err-code').html("<p>could not find position false </p>")
-				$('.position-err-code').append('<p> error was: code: '    + errCode.code +
-                  '. message: ' + errCode.message + "</p><p>updated: "+new Date()+"</p>")
+				$('.position-err-code').append('<p> error was: code: '    + errCode.code + '. message: ' + errCode.message + "</p><p>updated: "+new Date()+"</p>")
 				console.log('could not find position')
 				$('.position-available').html("<p>watch position error callback ran </p>")
 				console.log(errCode)
@@ -259,20 +256,27 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					if(errCode.PERMISSION_DENIED == errCode.code){
 						alert("Vi kunne ikke finde din location da du ikke har aktiveret location services på din enhed. Gå venligst ind i dine instillinger og slå location services til.")
 					}
-					$scope.$apply(function(){ 
-						$('.position-available').append("<p>no position found (not timeout error)</p>")
-						$scope.gps_found=false
-						$scope.stopGpsNotFoundTimer()
-						if(!$scope.gps_timer_check_running){
-							$scope.listenForGpsNotFound() 
-						}
-						$scope.gps_not_found=true;
-						$scope.updatePosition(null)
-	 				})
+					$scope.positionNotFound()
+				}else if(errCode.TIMEOUT == errCode.code){			
+					console.log('timeout error does happen')
+					if(!$scope.location){				//only try to find position again on timeout error if no $scope.location is previously found
+						$scope.positionNotFound()
+					}
 				}
 			}, 
-			{ maximumAge: max_age, timeout: 2000, enableHighAccuracy: true}
+			{ maximumAge: 30000, timeout: 4000, enableHighAccuracy: true}
 		);
+	}
+	
+	$scope.positionNotFound = function(){
+		$('.position-available').append("<p>no position found (not timeout error)</p>")
+		$scope.gps_found=false
+		$scope.stopGpsNotFoundTimer()
+		if(!$scope.gps_timer_check_running){
+			$scope.listenForGpsNotFound() 
+		}
+		$scope.gps_not_found=true;
+		$scope.updatePosition(null)
 	}
 	
 	$scope.$on('reDrawCurrentPosition',function(){
