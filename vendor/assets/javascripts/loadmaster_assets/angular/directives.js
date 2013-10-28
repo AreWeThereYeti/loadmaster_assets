@@ -44,6 +44,8 @@ LoadmasterApp
 						scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")		
 					}
 				}).on("pagehide", function(e) {
+					console.log('clearing map')
+					$scope.$broadcast('stopWatchPositionTimer')
 	    		$('#home').find('.map_container').html('') 	//clear map
 	    	})
 			}
@@ -62,6 +64,8 @@ LoadmasterApp
 						scope.compileMap($('#two').find('.map_container'),"<div class='markeranimation' ng-map-end></div>")		
 					}
 				}).on("pagehide", function(e) {
+					console.log('clearing map')
+					$scope.$broadcast('stopWatchPositionTimer')
 		    	$('#two').find('.map_container').html('') 	//clear map
 		    })
 			}

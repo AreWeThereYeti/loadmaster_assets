@@ -2,6 +2,7 @@ LoadmasterApp.controller('mobileRegistrationCtrl',function($scope,$element,$attr
 	
 	$scope.submitToken = function($event){
 		// this is the section that actually inserts the values into the User table
+		console.log('submitting access token')
 		$event.preventDefault();
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('INSERT INTO AUTH (access_token, imei, license_plate) VALUES ("'+$scope.access_token+'", "'+$scope.imei+'", "'+$scope.license_plate+'")',[]);
@@ -9,6 +10,7 @@ LoadmasterApp.controller('mobileRegistrationCtrl',function($scope,$element,$attr
 				alert("Ups, noget gik galt. Prøv venligst igen")
 				console.log(err)
 			}, function success(){
+				console.log('changing to page home from mobileRegistrationCtrl')
 				$.mobile.changePage("#home");
 			}
 		);

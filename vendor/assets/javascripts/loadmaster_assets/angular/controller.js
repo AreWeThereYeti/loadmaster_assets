@@ -70,7 +70,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 					$scope.access_token = dataset.item(0).access_token;
 					$scope.imei = dataset.item(0).imei;
 					$scope.license_plate = dataset.item(0).license_plate;
-					$.mobile.changePage("#home");
+					// $.mobile.changePage("#home");
 				}
 			});
 		});	
