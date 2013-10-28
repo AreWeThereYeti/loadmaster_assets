@@ -76,7 +76,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			},
 			function error(err){alert("Ups, noget gik galt da vi prøvede at starte din tur. Prøv venligst igen")}, 
 			function success(){
-				console.log('start values inserted into db successfully')
 				$scope.$emit("setcargo", $scope.cargo)
 				$scope.cargo = null;
 				$('#comments_start').val('');

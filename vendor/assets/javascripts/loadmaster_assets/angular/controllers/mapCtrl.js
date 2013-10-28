@@ -220,14 +220,14 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		console.log('trying to find position again')
+		//console.log('trying to find position again')
 		$scope.watchPositionNavigator = navigator.geolocation.watchPosition(
 			function(position){
 				$scope.$apply(function(){
-					console.log("position found")
-					//console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
+					//console.log("position found")
+					console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
 					if($scope.$parent.current_map_scope==$scope.set_address_event && position.coords.accuracy < 1000 && position.coords.speed < 200){
-						console.log("speed and accuracy is good. Updating position.")
+						//console.log("speed and accuracy is good. Updating position.")
 						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 						$scope.gps_not_found=false;
 						$scope.gps_found=true
@@ -249,7 +249,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 							})
 						}
 					}else if(errCode.TIMEOUT == errCode.code){			
-						console.log('timeout error does happen')
 						if(!$scope.location && !$scope.gps_not_found_timer){				//only try to find position again on timeout error if no $scope.location is previously found
 							$scope.$apply(function(){
 								$scope.positionNotFound()
@@ -271,12 +270,10 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.$on('reDrawCurrentPosition',function(){
-		console.log('reDrawCurrentPosition ran')
 		if(!$scope.map){
 			$scope.initMobileMap(true)
 		}
 		if(!!$scope.location){
-			console.log('there is an location... draw it!')
 			$scope.gps_not_found=false;
 			$scope.gps_found=true
 			$scope.updatePosition($scope.location[0],$scope.location[1])
@@ -284,7 +281,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	})
 	
 	$scope.listenForGpsNotFound = function(){
-		console.log('starting gps_not_found_timer')
 		var counter=0
 		if(!$scope.gps_not_found_timer){
 			$scope.gps_not_found_timer=setInterval(function(){
@@ -296,14 +292,10 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 					}else{	
 						$scope.restartWatchPosition()	
 					}
-					console.log('gps_not_found_timer ran with gps_found: ' + $scope.gps_found)
 				}else{
-					console.log('running gps not found timer with counter: ' + counter)
 					counter++
 				}
 			},1000)
-		}else{
-			console.log('------------gps not found timer already running-----------')
 		}
 	}
 	
@@ -324,7 +316,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		else{
 			if(!!window.google){
 				if(!$scope.locationMarker){
-					console.log('reinitting marker and updating position')
 					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
 					setTimeout(function(){
 						$scope.$apply(function(){
@@ -332,14 +323,11 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						})
 					},100);		//need delay as map is not created properly before this is executed
 				}else{
-					console.log('updating marker position')
 					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
 /* 					if($scope.keep_updating_position){ */
 						$scope.centerOnPosition(latitude,longitude)
 /* 		 			}  */
 				}
-			}else{
-				alert('google not defined.. cant draw marker')
 			}
 			$scope.location=[latitude, longitude]
 			if(!!window.google){
@@ -359,7 +347,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	
 	$scope.startWatchPosition = function(){
-		console.log('calling draw current position')
 		$scope.drawCurrentPosition()
 		// $scope.watchPositionTimer=setInterval(function(){
 		// 	$scope.$apply(function(){
@@ -544,7 +531,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	});
 	
 	$scope.deleteMapListener=$scope.$on('deleteMap',function(){
-		console.log('deleteMap ran')
 		if(!$scope.$root.applyInProggess($scope)){
 			$scope.$apply(function(){
 				$scope.deconstructor()
