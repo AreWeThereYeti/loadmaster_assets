@@ -337,23 +337,28 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				if(!$scope.locationMarker){
 					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
 					setTimeout(function(){
-						$scope.$apply(function(){
-							$scope.centerOnPosition(latitude,longitude)
-						})
+						if(!$scope.$root.applyInProggess($scope)){
+							$scope.$apply(function(){
+								$scope.centerOnPosition(latitude,longitude)
+							})
+						}else{		$scope.centerOnPosition(latitude,longitude)  }
 					},100);		//need delay as map is not created properly before this is executed
 				}else{
 					setTimeout(function(){
-						$scope.$apply(function(){
+						if(!$scope.$root.applyInProggess($scope)){
+							$scope.$apply(function(){
+								$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+								$scope.centerOnPosition(latitude,longitude)
+							})
+						}else{		
 							$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-							$scope.centerOnPosition(latitude,longitude)
-						})
+							$scope.centerOnPosition(latitude,longitude) 
+						}
 					},100);		//need delay as map is not created properly before this is executed
 				}
 			}
 			$scope.location=[latitude, longitude]
-			if(!!window.google){
-				$scope.refreshMap()	
-			}		
+			$scope.refreshMap()	
 		}
 	}
 	
@@ -377,10 +382,12 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.refreshMap = function(){
-		setTimeout(function(){ 
-			google.maps.event.trigger($scope.map, 'resize'); 
-		}, 20)
-		$scope.preventLinksToGoogle()
+		if(!!window.google){
+			setTimeout(function(){ 
+				google.maps.event.trigger($scope.map, 'resize'); 
+			}, 20)
+			$scope.preventLinksToGoogle()
+		}
 	}
 	
 	$scope.refreshMapAndCenter = function(){
