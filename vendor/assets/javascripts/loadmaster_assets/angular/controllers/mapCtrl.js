@@ -123,7 +123,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.setMarkerImage=function(){			//override this method to use other markers than default google
-		scope.markerImage = null;
+		return false;
 	}
 	
 	$scope.resetMap = function(){
@@ -168,20 +168,21 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				$scope.bounds.extend(markerPosition)
 			}
 			
-			if(!$scope.markerImage){
-				
-			}
-		
-			var marker = new google.maps.Marker({
+			var marker_params={
 				map: $scope.map,
 				flat: true,
 				optimized: false,
-				icon: $scope.markerImage,
 				position: markerPosition,
 				title: "marker",
 				labelContent: "second",
 				labelClass: "labels" // the CSS class for the label
-			});
+			}
+			
+			if(!!$scope.markerImage){
+				marker_params['icon']=$scope.markerImage
+			}
+		
+			var marker = new google.maps.Marker(marker_params);
 			$scope.markersArray.push(marker)
 			return marker;
 		}
@@ -327,8 +328,12 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						})
 					},100);		//need delay as map is not created properly before this is executed
 				}else{
-					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-					$scope.centerOnPosition(latitude,longitude)
+					setTimeout(function(){
+						$scope.$apply(function(){
+							$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+							$scope.centerOnPosition(latitude,longitude)
+						})
+					},100);		//need delay as map is not created properly before this is executed
 				}
 			}
 			$scope.location=[latitude, longitude]
