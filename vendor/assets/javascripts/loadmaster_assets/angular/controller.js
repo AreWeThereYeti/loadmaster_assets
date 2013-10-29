@@ -38,7 +38,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.checkLengthOfDatabase()
 		
 	  $.mobile.buttonMarkup.hoverDelay = 0;
-	  $.mobile.defaultPageTransition   = 'fade';
+	  //$.mobile.defaultPageTransition   = 'fade';
+		$.mobile.defaultPageTransition   = 'none';
 	  $.mobile.defaultDialogTransition = 'none';
 /* 	  $.mobile.useFastClick = true; */
 
@@ -117,7 +118,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.checkConnection = function(){
 		try{
 			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-				console.log('connectiontype is : ' + navigator.connection.type);
+				//console.log('connectiontype is : ' + navigator.connection.type);
 				if(!window.google && Helpers.hasInternet()){
 /* 					alert('fetching google maps') */
 					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=asyncInitGoogleMaps"></script>');
@@ -381,37 +382,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Trip(Id INTEGER PRIMARY KEY AUTOINCREMENT, _cargo varchar, _start_timestamp int, _start_location int, _start_address varchar,  _start_comments varchar, _end_timestamp int, _end_location int, _end_address varchar, _end_comments varchar, _is_finished int)', [])},
 			function error(err){alert('error on init local db : ' + err.message)}, function success(){console.log("database created")}
 		) 
-	}
-	
-	// this is the function that puts values into the database from page #home
-	$scope.AddStartValuesToDB = function(trip) {
-		$scope.top_startlocation=trip.start_location
-	 	$scope.top_startaddress=trip.start_address;
-		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
-	 
-		// this is the section that actually inserts the values into the User table
-		$scope.db.transaction(function(transaction) {
-			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
-			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
-		},function error(err){alert('error on save to local db : ' + err.message)}, function success(){});
-		return false;
-	}	
-	
-	// this is the function that puts values into the database from page #home
-	$scope.AddEndValuesToDB = function(trip) {
-	 	$scope.top_endlocation=trip.end_location
-	 	$scope.top_endaddress=trip.end_address;
-	 	console.log("trip end location " + trip.end_location)
-	 	console.log("trip end address " + trip.end_address)
-		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
-
-
-		// this is the section that actually inserts the values into the User table
-		$scope.db.transaction(function(transaction) {
-			transaction.executeSql('UPDATE Trip SET _end_timestamp ="'+trip.end_timestamp+'", _end_location ="'+trip.end_location+'", _end_address ="'+trip.end_address+'", _end_comments ="'+trip.end_comments+'", _is_finished = 1 WHERE Id = (SELECT MAX(Id) from Trip)',[]);
-			},function error(err){console.log('error on save to local db : '); console.log(err)}, function success(){}
-		);
-		return false;
 	}
 	
 	$scope.checkLengthOfDatabase = function() {
