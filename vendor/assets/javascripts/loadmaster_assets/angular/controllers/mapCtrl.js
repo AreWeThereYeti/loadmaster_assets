@@ -242,7 +242,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				})
 			},
 			function(errCode){
-				console.log(errCode)
 				if($scope.$parent.current_map_scope==$scope.set_address_event){
 					if(errCode.PERMISSION_DENIED == errCode.code || errCode.POSITION_UNAVAILABLE == errCode.code){
 						if(errCode.PERMISSION_DENIED == errCode.code){
@@ -250,13 +249,13 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						}
 						if(!$scope.gps_not_found_timer){
 							$scope.$apply(function(){
-								$scope.positionNotFound()
+								$scope.positionNotFound(true)
 							})
 						}
 					}else if(errCode.TIMEOUT == errCode.code){			
 						if(!$scope.location && !$scope.gps_not_found_timer){				//only try to find position again on timeout error if no $scope.location is previously found
 							$scope.$apply(function(){
-								$scope.positionNotFound()
+								$scope.positionNotFound(false)
 							})
 						}
 					}
@@ -266,12 +265,12 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		);
 	}
 	
-	$scope.positionNotFound = function(){
+	$scope.positionNotFound = function(set_postion_to_null){
 		$scope.gps_found=false
 		$scope.stopGpsNotFoundTimer()
 		$scope.listenForGpsNotFound() 
 		$scope.gps_not_found=true;
-		$scope.updatePosition(null)
+		if(set_postion_to_null){	$scope.updatePosition(null)  }
 	}
 	
 	$scope.$on('reDrawCurrentPosition',function(){

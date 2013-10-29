@@ -386,37 +386,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		) 
 	}
 	
-	// this is the function that puts values into the database from page #home
-	$scope.AddStartValuesToDB = function(trip) {
-		$scope.top_startlocation=trip.start_location
-	 	$scope.top_startaddress=trip.start_address;
-		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
-	 
-		// this is the section that actually inserts the values into the User table
-		$scope.db.transaction(function(transaction) {
-			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
-			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
-		},function error(err){alert('error on save to local db : ' + err.message)}, function success(){});
-		return false;
-	}	
-	
-	// this is the function that puts values into the database from page #home
-	$scope.AddEndValuesToDB = function(trip) {
-	 	$scope.top_endlocation=trip.end_location
-	 	$scope.top_endaddress=trip.end_address;
-	 	console.log("trip end location " + trip.end_location)
-	 	console.log("trip end address " + trip.end_address)
-		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
-
-
-		// this is the section that actually inserts the values into the User table
-		$scope.db.transaction(function(transaction) {
-			transaction.executeSql('UPDATE Trip SET _end_timestamp ="'+trip.end_timestamp+'", _end_location ="'+trip.end_location+'", _end_address ="'+trip.end_address+'", _end_comments ="'+trip.end_comments+'", _is_finished = 1 WHERE Id = (SELECT MAX(Id) from Trip)',[]);
-			},function error(err){console.log('error on save to local db : '); console.log(err)}, function success(){}
-		);
-		return false;
-	}
-	
 	$scope.checkLengthOfDatabase = function() {
 		if(!$scope.db){
 			$scope.createNewDB()
