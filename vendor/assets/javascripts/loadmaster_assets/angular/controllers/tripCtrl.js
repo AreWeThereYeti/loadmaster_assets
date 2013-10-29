@@ -9,6 +9,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	$scope.submit_start = function($event) {
 		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
+		$scope.buttonDisable("#submit_end")
+		$scope.buttonDisable("#submit_start")
 		if(!!$scope.start_location || $scope.start_address){
 			$scope.AddStartValuesToDB({
 				cargo			:	$scope.cargo,
@@ -82,8 +84,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				$("select").prop("selectedIndex",0);
 				$('select').selectmenu('refresh', true);
 				$.mobile.changePage("#two");
-				$scope.buttonDisable("#submit_end")
-				$scope.buttonDisable("#submit_start")
 				//$scope.startWakeLock()
 			}
 		);
@@ -174,6 +174,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			});
 			},function error(error){
 				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
+				alert(error.message)
 				$scope.trip=null
 			},function success(data){}
 		)
