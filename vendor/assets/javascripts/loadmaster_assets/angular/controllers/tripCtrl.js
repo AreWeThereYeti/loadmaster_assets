@@ -102,8 +102,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				alert("Ups, noget gik galt da vi prøvede at gemme din tur. Prøv venligst igen")
 				console.log(error)
 			},function success(data){
-				$.mobile.changePage("#three")
 				$('#comments_end').val(''); 
+				$.mobile.changePage("#three")
 			}
 		)
 	}
@@ -165,7 +165,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 						})
 					}else{ $scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0))) }	
 				}else{
-					if(!scope.$root.applyInProggess(scope)){
+					if(!$scope.$root.applyInProggess(scope)){
 						$scope.$apply(function(){
 							$scope.trip=null
 						})
@@ -174,6 +174,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			});
 			},function error(error){
 				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
+				alert(error.message)
 				$scope.trip=null
 			},function success(data){}
 		)
