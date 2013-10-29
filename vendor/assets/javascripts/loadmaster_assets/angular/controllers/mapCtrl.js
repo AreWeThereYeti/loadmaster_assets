@@ -320,7 +320,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.restartWatchPosition = function(){
 		$scope.stopGpsNotFoundTimer()
-		$scope.drawCurrentPosition()
+		$scope.stopWatchPositionTimer()
+		$scope.startWatchPosition()
 	}
 	
 	$scope.stopGpsNotFoundTimer = function(){
@@ -336,26 +337,10 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			if(!!window.google){
 				if(!$scope.locationMarker){
 					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-					setTimeout(function(){
-						if(!$scope.$root.applyInProggess($scope)){
-							$scope.$apply(function(){
-								$scope.centerOnPosition(latitude,longitude)
-							})
-						}else{		$scope.centerOnPosition(latitude,longitude)  }
-					},100);		//need delay as map is not created properly before this is executed
 				}else{
-					setTimeout(function(){
-						if(!$scope.$root.applyInProggess($scope)){
-							$scope.$apply(function(){
-								$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-								$scope.centerOnPosition(latitude,longitude)
-							})
-						}else{		
-							$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-							$scope.centerOnPosition(latitude,longitude) 
-						}
-					},100);		//need delay as map is not created properly before this is executed
+					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
 				}
+				$scope.centerOnPosition(latitude,longitude)
 			}
 			$scope.location=[latitude, longitude]
 			$scope.refreshMap()	
@@ -366,19 +351,10 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		if(!!window.google){
 			$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
 		}
-		// if($scope.map.getZoom()>15){
-		// 	$scope.map.setZoom(14)
-		// }
 	}
-	
 	
 	$scope.startWatchPosition = function(){
 		$scope.drawCurrentPosition()
-		// $scope.watchPositionTimer=setInterval(function(){
-		// 	$scope.$apply(function(){
-		// 		$scope.drawCurrentPosition()
-		// 	})
-		// }, 3000);
 	}
 	
 	$scope.refreshMap = function(){
