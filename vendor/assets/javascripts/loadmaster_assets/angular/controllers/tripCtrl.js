@@ -165,7 +165,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 						})
 					}else{ $scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0))) }	
 				}else{
-					if(!scope.$root.applyInProggess(scope)){
+					if(!$scope.$root.applyInProggess(scope)){
 						$scope.$apply(function(){
 							$scope.trip=null
 						})

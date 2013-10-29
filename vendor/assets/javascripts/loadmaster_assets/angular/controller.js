@@ -37,7 +37,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.checkLengthOfDatabase()
 		
 	  $.mobile.buttonMarkup.hoverDelay = 0;
-	  $.mobile.defaultPageTransition   = 'fade';
+	  //$.mobile.defaultPageTransition   = 'fade';
+		$.mobile.defaultPageTransition   = 'none';
 	  $.mobile.defaultDialogTransition = 'none';
 /* 	  $.mobile.useFastClick = true; */
 
@@ -116,7 +117,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.checkConnection = function(){
 		try{
 			if(!!navigator && !!navigator.connection && !!navigator.connection.type && !!Connection && navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
-				console.log('connectiontype is : ' + navigator.connection.type);
+				//console.log('connectiontype is : ' + navigator.connection.type);
 				if(!window.google && Helpers.hasInternet()){
 /* 					alert('fetching google maps') */
 					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=asyncInitGoogleMaps"></script>');
