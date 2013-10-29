@@ -241,6 +241,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						$scope.gps_found=true
 						$scope.stopGpsNotFoundTimer()
 						$scope.listenForGpsNotFound() 
+					}else if(!$scope.gps_not_found_timer){
+						$scope.positionNotFound(true)
 					}
 				})
 			},
@@ -285,6 +287,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.$on('reDrawCurrentPosition',function(){
 		console.log('reDrawCurrentPosition ran')
+		$scope.stopWatchPositionTimer()
 		if(!$scope.map){
 			console.log('initing map')
 			$scope.initMobileMap(true)
@@ -302,7 +305,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		if(!$scope.gps_not_found_timer){
 			$scope.gps_not_found_timer=setInterval(function(){
 				if(counter==$scope.wait_for_gps_time){		//if gps not found in e.g. 30 secs
-					//console.log('------- restarting watch position timer ------------')
+					console.log('------- restarting watch position timer ------------')
 					//alert('------- restarting watch position timer ------------')
 					if(!$scope.$root.applyInProggess($scope)){
 						$scope.$apply(function(){

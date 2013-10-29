@@ -97,7 +97,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	}	
 	
 	$scope.loadAndShowRegistrationPage = function(){
-		console.log('-----!!!!! broadcasting stop watch position timer-------')
 		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
 			$scope.$apply(function(){
 				$compile($('#tokenpage'))($scope)
@@ -110,7 +109,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		}).fail(function (err) {
     	alert("We're sorry but something went wrong. Please close the app and try again");
 			console.log(err)
-	    });
+	  });
 	}
 	
 	/* check Connection */
@@ -131,9 +130,9 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 							console.log('no google yet')
 						}
 					},1000)
-				}else{
-					console.log('cant fetch google maps as no internet or google maps already fetched')
-				}
+				}// else{
+				// 					//console.log('cant fetch google maps as no internet or google maps already fetched')
+				// 				}
 				$scope.isDatabaseEmpty();
 			}else{
 				console.log('cant fetch google maps as no connection type')
