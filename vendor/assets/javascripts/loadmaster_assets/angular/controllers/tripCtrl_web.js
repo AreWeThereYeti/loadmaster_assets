@@ -1,4 +1,4 @@
-function tripsCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('tripsCtrl',function($scope,$element,$attrs) {
 	 
-}
+})
 

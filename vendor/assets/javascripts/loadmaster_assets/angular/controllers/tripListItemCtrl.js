@@ -1,4 +1,4 @@
-function tripsListItemCtrl($scope,$element,$attrs) {
+LoadmasterApp.controller('tripsListItemCtrl',function($scope,$element,$attrs) {
 	
 	$scope.select = function(){
 		$scope.showDetails=true;
@@ -17,4 +17,4 @@ function tripsListItemCtrl($scope,$element,$attrs) {
 		return $scope.showDetails
 	}
 	
-}
+})
