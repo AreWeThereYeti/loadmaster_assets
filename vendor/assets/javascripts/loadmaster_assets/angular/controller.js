@@ -85,13 +85,18 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		/* 	Deletes synced rows from trips table */
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('DELETE FROM Auth', []);
-			},function error(err){alert('error resetting accesstoken ' + err)}, function success(){}
+			},function error(err){console.log('error resetting accesstoken ' + err)}, function success(){}
 		);
+		console.log("access token er " + $scope.access_token)
+		if(!$('#tokenpage').is(':visible')){
+			alert("Access token er forkert")
+		}
 		clearInterval($scope.intervalID);
 		$scope.loadAndShowRegistrationPage()
 	}	
 	
 	$scope.loadAndShowRegistrationPage = function(){
+		console.log('-----!!!!! broadcasting stop watch position timer-------')
 		$.mobile.loadPage("src/pages/registration.html",true).done(function (e, ui, page) {
 			$scope.$apply(function(){
 				$compile($('#tokenpage'))($scope)
@@ -130,6 +135,9 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			}
 		}catch(err){
 			console.log('cant get connection type')
+			if(!$scope.is_mobile_app()){
+				//$scope.isDatabaseEmpty();
+			}
 		}
 
 	}
@@ -190,12 +198,12 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	}
 	
 	$scope.promptUnfinishedTrip = function(){
-		var confirm=window.confirm('Du har en uafsluttet tur. Vil du fortsætte din tur?? Hvis du trykker cancel, vil din uafsluttede tur blive slettet.')
+		var confirm=window.confirm('Du har en uafsluttet tur. Vil du fortsætte din tur?? Hvis du trykker annuller, vil din uafsluttede tur blive slettet.')
 		if(confirm){
 			$.mobile.changePage('#two')
 		}else{
 			/* 	Deletes synced rows from trips table */
-			var confirm=window.confirm('Er du sikker? Din uafsluttede tur vil blive slettet hvis du trykker ok. Tryk cancel for at fortsætte turen')
+			var confirm=window.confirm('Er du sikker? Din uafsluttede tur vil blive slettet hvis du trykker ok. Tryk annuller for at fortsætte turen')
 			if(confirm){
 				$scope.db.transaction(function(transaction) {
 					transaction.executeSql('DELETE FROM Trip WHERE id = (SELECT MAX(Id) from Trip)');
@@ -250,6 +258,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
+		console.log('InsertRecordOnServerFunction')
 		if($scope.isAllowedToSync == true){	
 			$scope.isAllowedToSync = false;
 			console.log('posting trip to:')
@@ -275,7 +284,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				error: function (msg) {
 					window.msg = msg;
 					console.log(msg);
-					alert("Accesstoken er forkert");
 					console.log(msg.status);
 					if(!!msg.responseText && !!msg.responseText.err_ids){				
 						if(JSON.parse(msg.responseText).err_ids != 0){	
@@ -284,7 +292,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 					}
 	
 					else if(msg.status == 401){
-						alert("Resetting accesstoken.")
 						$scope.resetAccessToken()
 					}	
 					
@@ -345,7 +352,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.end_timestamp = null
 		$scope.top_endaddress = null
 		$scope.top_endlocation = null
-		$scope.$broadcast('newTrip')
+		if(!!$scope.$$nextSibling){
+			$scope.$broadcast('deleteMap')
+		}
+
 	}
 	 
 	/* --------------  Database ---------------- */	 	
