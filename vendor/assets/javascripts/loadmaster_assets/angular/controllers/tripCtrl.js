@@ -218,10 +218,10 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	}
 	
 	$scope.buttonDisable = function(id){
-/* 		if($('#submit_end').attr('disabled')!="disabled"){ */
+		if($(id).attr('disabled')!="disabled"){
 			$(id).button("disable");
 			$(id).button("refresh");
-/* 		} */
+		}
 	}
 
 })             
