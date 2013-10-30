@@ -286,14 +286,13 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.$on('reDrawCurrentPosition',function(){
-		console.log('reDrawCurrentPosition ran')
 		$scope.stopWatchPositionTimer()
 		if(!$scope.map){
-			console.log('initing map')
 			$scope.initMobileMap(true)
+		}else{
+			$scope.restartWatchPosition()
 		}
 		if(!!$scope.location){
-			console.log('has location... trying to draw')
 			$scope.gps_not_found=false;
 			$scope.gps_found=true
 			$scope.updatePosition($scope.location[0],$scope.location[1])
