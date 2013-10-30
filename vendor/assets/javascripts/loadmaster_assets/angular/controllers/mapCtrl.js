@@ -167,17 +167,22 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			if(!$scope.IS_MOBILE || $scope.savebounds){
 				$scope.bounds.extend(markerPosition)
 			}
-		
-			var marker = new google.maps.Marker({
+			
+			var marker_params={
 				map: $scope.map,
 				flat: true,
 				optimized: false,
-				icon: $scope.markerImage,
 				position: markerPosition,
 				title: "marker",
 				labelContent: "second",
 				labelClass: "labels" // the CSS class for the label
-			});
+			}
+			
+			if(!!$scope.markerImage){
+				marker_params['icon']=$scope.markerImage
+			}
+		
+			var marker = new google.maps.Marker(marker_params);
 			$scope.markersArray.push(marker)
 			return marker;
 		}
@@ -220,38 +225,49 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		//console.log('trying to find position again')
+		console.log('starting watch position')
 		$scope.watchPositionNavigator = navigator.geolocation.watchPosition(
 			function(position){
 				$scope.$apply(function(){
 					//console.log("position found")
-					console.log('lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed)
-					if($scope.$parent.current_map_scope==$scope.set_address_event && position.coords.accuracy < 1000 && position.coords.speed < 200){
+					var log_str='lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed + ' timestamp: ' + new Date()
+					console.log(log_str)
+					//$('.stats').html(log_str)
+					//$('.position-available').html('position available is true')
+					if($scope.$parent.current_map_scope==$scope.set_address_event && position.coords.accuracy < 200 && position.coords.speed < 200){
 						//console.log("speed and accuracy is good. Updating position.")
 						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
 						$scope.gps_not_found=false;
 						$scope.gps_found=true
 						$scope.stopGpsNotFoundTimer()
 						$scope.listenForGpsNotFound() 
+					}else if(!$scope.gps_not_found_timer){
+						$scope.positionNotFound(true)
 					}
 				})
 			},
 			function(errCode){
-				console.log(errCode)
+				//console.log('---------got error -------------')
 				if($scope.$parent.current_map_scope==$scope.set_address_event){
 					if(errCode.PERMISSION_DENIED == errCode.code || errCode.POSITION_UNAVAILABLE == errCode.code){
+						//var log_str='error on position. Position unavailable or denied: ' + errCode.code + ' timestamp: ' + new Date()
+						//console.log(log_str)
+						//$('.position-available').html(log_str)
 						if(errCode.PERMISSION_DENIED == errCode.code){
 							alert("Vi kunne ikke finde din location da du ikke har aktiveret location services på din enhed. Gå venligst ind i dine instillinger og slå location services til.")
 						}
 						if(!$scope.gps_not_found_timer){
 							$scope.$apply(function(){
-								$scope.positionNotFound()
+								$scope.positionNotFound(true)
 							})
 						}
-					}else if(errCode.TIMEOUT == errCode.code){			
+					}else if(errCode.TIMEOUT == errCode.code){	
+						//var log_str='error on position. Timeout error: ' + errCode.code + ' timestamp: ' + new Date()
+						//console.log(log_str)
+						//$('.position-available').html(log_str)		
 						if(!$scope.location && !$scope.gps_not_found_timer){				//only try to find position again on timeout error if no $scope.location is previously found
 							$scope.$apply(function(){
-								$scope.positionNotFound()
+								$scope.positionNotFound(false)
 							})
 						}
 					}
@@ -261,19 +277,23 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		);
 	}
 	
-	$scope.positionNotFound = function(){
+	$scope.positionNotFound = function(set_postion_to_null){
 		$scope.gps_found=false
 		$scope.stopGpsNotFoundTimer()
 		$scope.listenForGpsNotFound() 
 		$scope.gps_not_found=true;
-		$scope.updatePosition(null)
+		if(set_postion_to_null){	$scope.updatePosition(null)  }
 	}
 	
 	$scope.$on('reDrawCurrentPosition',function(){
+		console.log('reDrawCurrentPosition ran')
+		$scope.stopWatchPositionTimer()
 		if(!$scope.map){
+			console.log('initing map')
 			$scope.initMobileMap(true)
 		}
 		if(!!$scope.location){
+			console.log('has location... trying to draw')
 			$scope.gps_not_found=false;
 			$scope.gps_found=true
 			$scope.updatePosition($scope.location[0],$scope.location[1])
@@ -285,6 +305,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		if(!$scope.gps_not_found_timer){
 			$scope.gps_not_found_timer=setInterval(function(){
 				if(counter==$scope.wait_for_gps_time){		//if gps not found in e.g. 30 secs
+					console.log('------- restarting watch position timer ------------')
+					//alert('------- restarting watch position timer ------------')
 					if(!$scope.$root.applyInProggess($scope)){
 						$scope.$apply(function(){
 							$scope.restartWatchPosition()
@@ -301,7 +323,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.restartWatchPosition = function(){
 		$scope.stopGpsNotFoundTimer()
-		$scope.drawCurrentPosition()
+		$scope.stopWatchPositionTimer()
+		$scope.startWatchPosition()
 	}
 	
 	$scope.stopGpsNotFoundTimer = function(){
@@ -317,22 +340,13 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			if(!!window.google){
 				if(!$scope.locationMarker){
 					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-					setTimeout(function(){
-						$scope.$apply(function(){
-							$scope.centerOnPosition(latitude,longitude)
-						})
-					},100);		//need delay as map is not created properly before this is executed
 				}else{
 					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-/* 					if($scope.keep_updating_position){ */
-						$scope.centerOnPosition(latitude,longitude)
-/* 		 			}  */
 				}
+				$scope.centerOnPosition(latitude,longitude)
 			}
 			$scope.location=[latitude, longitude]
-			if(!!window.google){
-				$scope.refreshMap()	
-			}		
+			$scope.refreshMap()	
 		}
 	}
 	
@@ -340,26 +354,19 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		if(!!window.google){
 			$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
 		}
-		// if($scope.map.getZoom()>15){
-		// 	$scope.map.setZoom(14)
-		// }
 	}
-	
 	
 	$scope.startWatchPosition = function(){
 		$scope.drawCurrentPosition()
-		// $scope.watchPositionTimer=setInterval(function(){
-		// 	$scope.$apply(function(){
-		// 		$scope.drawCurrentPosition()
-		// 	})
-		// }, 3000);
 	}
 	
 	$scope.refreshMap = function(){
-		setTimeout(function(){ 
-			google.maps.event.trigger($scope.map, 'resize'); 
-		}, 20)
-		$scope.preventLinksToGoogle()
+		if(!!window.google){
+			setTimeout(function(){ 
+				google.maps.event.trigger($scope.map, 'resize'); 
+			}, 20)
+			$scope.preventLinksToGoogle()
+		}
 	}
 	
 	$scope.refreshMapAndCenter = function(){
