@@ -7,6 +7,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.map_loading=true;
 	
 	$scope.wait_for_gps_time=30; 	//secs to wait before prompting gps not found...
+
+	$scope.lastMarkerUpdate=new Date()
 	
 	/*-----------------------------------------------------------------------------
 	* Private methods
@@ -191,10 +193,13 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.updateMarker = function(marker, latitude, longitude, label ){
 		if(!!window.google){
 			try{
-				marker.setPosition(new google.maps.LatLng(latitude, longitude));
-				if (label){
-					marker.setTitle( label );
-				}				
+				if(new Date()-$scope.lastMarkerUpdate>2000){
+					$scope.lastMarkerUpdate=new Date()
+					marker.setPosition(new google.maps.LatLng(latitude, longitude));
+					if (label){
+						marker.setTitle( label );
+					}
+				}
 			}catch(err){
 				console.log('error on setting position')
 			}
