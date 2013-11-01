@@ -9,7 +9,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	$scope.submit_start = function($event) {
 		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
-		$scope.buttonDisable("#submit_end")
 		$scope.buttonDisable("#submit_start")
 		if(!!$scope.start_location || $scope.start_address){
 			$scope.AddStartValuesToDB({
@@ -28,7 +27,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.buttonDisable("#submit_end")
-		$scope.buttonDisable("#submit_start")
 		if(!!$scope.end_location || $scope.end_address){
 			//$scope.releaseWakeLock();
 			$scope.AddEndValuesToDB({
@@ -47,7 +45,9 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$event.preventDefault();
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.$root.resetAllVals();
+		$scope.buttonDisable("#submit_start")
 		$.mobile.changePage("#home");
+
 	}
 	
 	$scope.startWakeLock = function() {
@@ -102,8 +102,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				alert("Ups, noget gik galt da vi prøvede at gemme din tur. Prøv venligst igen")
 				console.log(error)
 			},function success(data){
-				$.mobile.changePage("#three")
 				$('#comments_end').val(''); 
+				$.mobile.changePage("#three")
 			}
 		)
 	}
@@ -174,7 +174,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			});
 			},function error(error){
 				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
-				alert(error.message)
 				$scope.trip=null
 			},function success(data){}
 		)
@@ -218,7 +217,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	}
 	
 	$scope.buttonDisable = function(id){
-		if($('#submit_end').attr('disabled')!="disabled"){
+		if($(id).attr('disabled')!="disabled"){
 			$(id).button("disable");
 			$(id).button("refresh");
 		}
