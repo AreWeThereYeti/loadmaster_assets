@@ -174,7 +174,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			});
 			},function error(error){
 				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
-				alert(error.message)
 				$scope.trip=null
 			},function success(data){}
 		)
