@@ -183,7 +183,7 @@ LoadmasterApp
 				
 				scope.setMarkerImage=function(){
 					if(!!window.google){
-				    scope.markerImage = new google.maps.MarkerImage(
+				    	scope.markerImage = new google.maps.MarkerImage(
 							'src/img/start_marker.png',
 							null, // size
 							null, // origin

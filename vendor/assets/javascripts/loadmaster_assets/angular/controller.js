@@ -13,6 +13,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.isAllowedToSync = true;
 	$scope.last_time_internet_found=null
 	
+	$scope.isAllowedToSync = true;
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
 	$scope.displayName = 'WebSqlDB';
@@ -30,7 +31,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.init = function(){
 /* 		debugging function */
 
- 		// $scope.dropTables(); 
+ 		//$scope.dropTables(); 
 
 /* 		End of debugging functions */
 		$scope.initializeDB()
@@ -173,6 +174,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 					}else{
 						$scope.no_internet=true
 					}
+				}
 			}
 		},1000)
 	}
@@ -314,8 +316,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				processdata: true,
 				success: function (msg)
 				{
-					//console.log('succes!!!!')
-					//console.log()
 					//On Successfull service call
 					$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server
 					$scope.isAllowedToSync = true; 
@@ -342,7 +342,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			});
 		}
 	};
-
 	
 	/* Drops synced rows */
 	$scope.dropAllRows = function(){
@@ -357,7 +356,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				},function error(err){alert('error deleting from database ; ' + err.message)}, function success(){}
 			);
 			return false;
-
 		}
 	
 		/* Drops synced rows */
