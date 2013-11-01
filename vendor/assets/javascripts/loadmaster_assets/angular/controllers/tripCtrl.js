@@ -16,7 +16,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 				start_location	:	$scope.start_location,
 				start_address	:	$scope.start_address,
-				start_comments	:	$scope.start_comments
+				start_comments	:	$scope.start_comments.replace(/"/g , "-"); // Removes " if present in string
 			});
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
@@ -33,7 +33,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 				end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 				end_location	:	$scope.end_location,
 				end_address		:	$scope.end_address,
-				end_comments	:	$scope.end_comments
+				end_comments	:	$scope.end_comments.replace(/"/g , "-"); // Removes " if present in string
 			});
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')

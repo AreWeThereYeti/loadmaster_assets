@@ -253,10 +253,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				$scope.InsertRecordOnServerFunction(trips);      // Call Function for insert Record into SQl Server
 			});
 		},function error(err){
-/*
-			console.log('push to db failed with error:')
 			console.log(err)
-*/
+
 		});
 	}
 	
