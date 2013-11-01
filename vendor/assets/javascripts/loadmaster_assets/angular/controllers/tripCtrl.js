@@ -45,7 +45,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$event.preventDefault();
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.$root.resetAllVals();
-		$scope.buttonDisable("#submit_start")
+		$scope.buttonDisable("#submit_start");
+		$scope.buttonDisable("#submitStartNewTrip")
 		$.mobile.changePage("#home");
 
 	}
@@ -175,7 +176,9 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 			},function error(error){
 				alert("We're sorry but something went wrong when trying to show your trip. Please try again")
 				$scope.trip=null
-			},function success(data){}
+			},function success(data){
+				$scope.buttonEnable("#submitStartNewTrip")
+			}
 		)
 	}
 	
