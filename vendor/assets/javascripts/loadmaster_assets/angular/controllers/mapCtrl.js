@@ -62,7 +62,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			$scope.$apply(function(){
 				$scope.map_loading=false
 			})
-		},10000)
+		},$scope.wait_for_gps_time*1000)
 	}
 	
 	
@@ -299,12 +299,9 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		
 		var counter=0
 		if(!$scope.gps_inaccurate_timer){
-			console.log('--------------starting gps_inaccurate_timer-------------')
 			$scope.gps_inaccurate_timer=setInterval(function(){
 				if(!$scope.gps_found){
-					console.log('accurate gps position still not found')
 					if(counter==$scope.gps_not_found_delay){		//if gps not found in e.g. 30 secs
-						console.log('accurate position was never found!')
 						if(!$scope.$root.applyInProggess($scope)){
 							$scope.$apply(function(){
 								$scope.stopPositionInaccurateTimer(true)
@@ -316,7 +313,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						counter++
 					}
 				}else{
-					console.log('gps was found within wait_for_gps_time timer interval... stopping gps_inaccurate_timer')
 					$scope.stopPositionInaccurateTimer(false)
 				}
 			},1000)
@@ -392,7 +388,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				$scope.centerOnPosition(latitude,longitude)
 			}
 			$scope.location=[latitude, longitude]
-			$scope.refreshMap()	
+			//$scope.refreshMap()	
 		}
 	}
 	
@@ -579,9 +575,9 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		}
 	});
 	
-	$scope.$on('$destroy', function(){
-		console.log('---------------- destroy on map ctrl ran!!!! -----------------')
-	});
+	// $scope.$on('$destroy', function(){
+	// 	console.log('---------------- destroy on map ctrl ran!!!! -----------------')
+	// });
 	
 	$scope.deleteMapListener=$scope.$on('deleteMap',function(){
 		if(!$scope.$root.applyInProggess($scope)){
@@ -609,7 +605,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.gpsFoundNoInternet = function(){
-		return !!$scope.location && ( !Helpers.last_time_internet_found || (!Helpers.hasInternet() && new Date()-$scope.$root.last_time_internet_found > $scope.wait_for_gps_time) || !window.google) ? true : false
+		return !!$scope.location && ($scope.$root.no_internet || !window.google) ? true : false
 	}
 	
 	$scope.gpsNotFound = function(){
@@ -617,7 +613,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.showMap = function(){
-		return !!$scope.location && Helpers.hasInternet() && !!window.google ? true : false
+		return !!$scope.location && !$scope.$root.no_internet && !!window.google ? true : false
 	}
 	
 	$scope.gpsFound = function(){
