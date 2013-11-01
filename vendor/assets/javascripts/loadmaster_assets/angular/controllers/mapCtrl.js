@@ -335,7 +335,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
       }else if(status=="OVER_QUERY_LIMIT"){		//google request limit reached.. try again in a couple of secs
 				setTimeout(function(){
 					$scope.$apply(function(){
-						$scope.getAddressFromLatLon(lat,lon)
+						$scope.getAddressFromLatLon(lat,lon,true)
 					})
 				},2000)
       }
