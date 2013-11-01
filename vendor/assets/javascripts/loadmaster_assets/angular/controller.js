@@ -11,6 +11,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
 	$scope.isAllowedToSync = true;
+	$scope.last_time_internet_found=null
 	
 	$scope.shortName = 'WebSqlDB';
 	$scope.version = '1.0';
@@ -45,6 +46,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		if($scope.access_token != ""){
 			$scope.checkInterval();		
 		}
+		
+		$scope.checkInternetTimer()
 	}
 	
 	$scope.checkInterval = function(){
@@ -146,6 +149,24 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 
 	}
 	
+	$scope.checkInternetTimer = function(){
+		$scope.check_internet_timer=setInterval(function(){
+			if(Helpers.hasInternet()){ 
+				if(!$scope.applyInProggess($scope)){
+					$scope.$apply(function(){
+						$scope.last_time_internet_found=new Date() 
+					})
+				}else{
+					$scope.last_time_internet_found=new Date() 
+				}
+			}
+		},1000)
+	}
+	
+	$scope.stopInternetTimer = function(){
+		clearInterval($scope.check_internet_timer)
+		$scope.check_internet_timer=null
+	}
 	
 	/* Is database empty */
 	$scope.isDatabaseEmpty = function() {
