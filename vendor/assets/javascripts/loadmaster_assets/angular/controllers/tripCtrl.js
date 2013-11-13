@@ -10,13 +10,14 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.buttonDisable("#submit_start")
+		$.mobile.loading( 'show');
 		if(!!$scope.start_location || $scope.start_address){
 			$scope.AddStartValuesToDB({
 				cargo			:	$scope.cargo,
 				start_timestamp	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 				start_location	:	$scope.start_location,
 				start_address	:	$scope.start_address,
-				start_comments	:	$scope.start_comments.replace(/"/g , "-"); // Removes " if present in string
+				start_comments	:	$scope.start_comments
 			});
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
@@ -27,13 +28,14 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$event.preventDefault()
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.buttonDisable("#submit_end")
+		$.mobile.loading( 'show');
 		if(!!$scope.end_location || $scope.end_address){
 			//$scope.releaseWakeLock();
 			$scope.AddEndValuesToDB({
 				end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
 				end_location	:	$scope.end_location,
 				end_address		:	$scope.end_address,
-				end_comments	:	$scope.end_comments.replace(/"/g , "-"); // Removes " if present in string
+				end_comments	:	$scope.end_comments
 			});
 		}else{
 			alert('Vi har desværre ikke fundet din position endnu. Prøv igen')
@@ -166,7 +168,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 						})
 					}else{ $scope.drawTrip($scope.formatSQLDbTrip(rs.rows.item(0))) }	
 				}else{
-					if(!$scope.$root.applyInProggess(scope)){
+					if(!$scope.$root.applyInProggess($scope)){
 						$scope.$apply(function(){
 							$scope.trip=null
 						})

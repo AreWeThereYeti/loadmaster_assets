@@ -429,6 +429,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		return scope.$$phase || scope.$root.$$phase ? true : false
 	}
 	
+	$scope.removeElement = function(time, elm){
+		$(elm).fadeOut(time, function(){})
+	}
+	
 }) 
 
 

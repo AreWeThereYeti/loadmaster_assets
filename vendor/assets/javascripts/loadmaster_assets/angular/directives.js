@@ -58,6 +58,10 @@ LoadmasterApp
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_end.html',
 	    link:function(scope,element,attrs){
 	    	$("#two").bind("pageshow", function(e) {
+					setTimeout(function(){	
+						scope.removeElement(250 ,".registered");
+						console.log("fired timer")
+						},2000);
 					if(!scope.$root.applyInProggess(scope)){
 						$('.ui-btn-pressed').each(function(){
 							$(this).removeClass('ui-btn-pressed')
@@ -73,6 +77,7 @@ LoadmasterApp
 				}).on("pagehide", function(e) {
 					console.log('clearing map')
 					scope.$broadcast('deleteMap')
+					$(".registered").show();
 					$('.ui-btn-pressed').each(function(){
 						$(this).removeClass('ui-btn-pressed')
 					})
@@ -85,6 +90,10 @@ LoadmasterApp
 		  templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_ended.html',
 	    link:function(scope,element,attrs){
 	    	$("#three").on("pageshow", function(e) {
+	    			setTimeout(function(){	
+						scope.removeElement(250 ,".registered");
+						console.log("fired timer")
+						},2000);
 					if(!scope.$root.applyInProggess(scope)){
 						scope.$apply(function(){
 							scope.showLastTrip()
@@ -94,6 +103,7 @@ LoadmasterApp
 					}
 	    	}).on("pagehide", function(e) {
 					scope.$broadcast('deleteMap')
+					$(".registered").show();
 	    	})
 			}
 		}
