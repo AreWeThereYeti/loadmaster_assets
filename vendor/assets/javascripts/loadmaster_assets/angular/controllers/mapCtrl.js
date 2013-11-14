@@ -134,6 +134,29 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		}
 	}
 	
+	$scope.addMarkerWitTextToMap = function( latitude, longitude, label ){
+		if(!!window.google){
+			var markerPosition = new google.maps.LatLng(latitude, longitude)
+			if(!$scope.IS_MOBILE || $scope.savebounds){
+				$scope.bounds.extend(markerPosition)
+			}
+		
+			var marker = new MarkerWithLabel({
+	      position: markerPosition,
+	      map: $scope.map,
+				icon: $scope.markerImage,
+				title:"marker",
+	      labelContent: label,
+	      labelAnchor: new google.maps.Point(75, 75),
+	      labelClass: "labels", // the CSS class for the label
+	      labelStyle: {opacity: 0.8}
+	    });
+		
+			$scope.markersArray.push(marker)
+			return marker;
+		}
+	}
+	
 	$scope.updateMarker = function(marker, latitude, longitude, label ){
 		if(!!window.google){
 			marker.setPosition(new google.maps.LatLng(latitude, longitude));
