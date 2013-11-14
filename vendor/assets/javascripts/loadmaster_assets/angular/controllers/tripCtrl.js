@@ -158,11 +158,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		}
 	});
 	
-	$scope.$watch('start_comments + end_comments', function () {
-		if(!!$scope.start_comments){	$scope.start_comments=$scope.start_comments.replace(/"/g, "'")	}
-		if(!!$scope.end_comments){	$scope.end_comments=$scope.end_comments.replace(/"/g, "'")	}
-	});
-	
 	$scope.showLastTrip = function(){
 		$scope.$root.db.transaction(function(transaction) {
 			transaction.executeSql('SELECT * FROM Trip WHERE _is_finished = 1 AND Id = (SELECT MAX(Id) from Trip)',[],function(tx,rs){
