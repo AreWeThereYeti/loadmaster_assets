@@ -17,6 +17,7 @@ LoadmasterApp.service('ServerAjax', function() {
 });
 
 LoadmasterApp.service('Helpers', function() {
+	
 	this.hasInternet = function() {
 		var has_internet=false
 		var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
@@ -27,9 +28,11 @@ LoadmasterApp.service('Helpers', function() {
 			else if(navigator.connection.type == Connection.CELL_2G || navigator.connection.type == Connection.CELL_3G || navigator.connection.type == Connection.CELL_4G || navigator.connection.type == Connection.WIFI ||navigator.connection.type == Connection.ETHERNET){
 /* 				console.log('has internet') */
 				has_internet=true
+				this.last_time_internet_found=new Date()
 			}
 		}else{
 			//console.log('was not app... has internet is true')
+			this.last_time_internet_found=new Date()
 			has_internet=true
 		}
 		return has_internet;

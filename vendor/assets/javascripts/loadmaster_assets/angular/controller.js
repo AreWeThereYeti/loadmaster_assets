@@ -11,6 +11,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	window.myscope = $scope;
 	window.db = $scope.isDatabaseEmpty;
 	$scope.isAllowedToSync = true;
+	$scope.last_time_internet_found=null
 	
 	$scope.isAllowedToSync = true;
 	$scope.shortName = 'WebSqlDB';
@@ -18,6 +19,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.displayName = 'WebSqlDB';
 	$scope.maxSize = 65535;
 	$scope.host = 'https://portal.loadmasterloggerfms.dk';
+	$scope.no_internet=true
 	// $scope.host = 'http://192.168.1.35:3000'
 	
 	$scope.$on("setcargo", function(evt, cargo){
@@ -46,6 +48,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		if($scope.access_token != ""){
 			$scope.checkInterval();		
 		}
+		
+		$scope.checkInternetTimer()
 	}
 	
 	$scope.checkInterval = function(){
@@ -89,7 +93,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			transaction.executeSql('DELETE FROM Auth', []);
 			},function error(err){console.log('error resetting accesstoken ' + err)}, function success(){}
 		);
-		console.log("access token er " + $scope.access_token)
+		//console.log("access token er " + $scope.access_token)
 		if(!$('#tokenpage').is(':visible')){
 			alert("Access token er forkert")
 		}
@@ -122,29 +126,62 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
  					//alert('fetching google maps') 
 					$("head").append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=asyncInitGoogleMaps"></script>');
 					var checkForGoogleMapsInit=setInterval(function(){
-						console.log('checking for google present')
+						//console.log('checking for google present')
 						if(!!window.google && !!window.google.maps && !!window.google.maps.LatLng){
- 							console.log('got google maps') 
+ 							//console.log('got google maps') 
 							$scope.$broadcast('reDrawCurrentPosition')
 							clearInterval(checkForGoogleMapsInit)
 						}else{
-							console.log('no google yet')
+							//console.log('no google yet')
 						}
 					},1000)
 				}// else{
 				// 					//console.log('cant fetch google maps as no internet or google maps already fetched')
 				// 				}
 				$scope.isDatabaseEmpty();
-			}else{
-				console.log('cant fetch google maps as no connection type')
-			}
+			}// else{
+			// 				console.log('cant fetch google maps as no connection type')
+			// 			}
 		}catch(err){
-			console.log('cant get connection type')
-			if(!$scope.is_mobile_app()){
-				//$scope.isDatabaseEmpty();
-			}
+			//console.log('cant get connection type')
+			// if(!$scope.is_mobile_app()){
+			// 	//$scope.isDatabaseEmpty();
+			// }
 		}
 
+	}
+	
+	$scope.checkInternetTimer = function(){										//checkInternetTimer() checks if no internet connection found within timer interval
+		var wait_for_internet=15000;		//time to wait before displaying no internet...
+		$scope.check_internet_timer=setInterval(function(){
+			if(Helpers.hasInternet()){ 
+				if(!$scope.applyInProggess($scope)){
+					$scope.$apply(function(){
+						$scope.last_time_internet_found=new Date() 
+						$scope.no_internet=false
+					})
+				}else{
+					$scope.last_time_internet_found=new Date() 
+					$scope.no_internet=false
+				}
+				counter=0
+			}else{
+				if($scope.last_time_internet_found - new Date() < -wait_for_internet){
+					if(!$scope.applyInProggess($scope)){
+						$scope.$apply(function(){
+							$scope.no_internet=true
+						})
+					}else{
+						$scope.no_internet=true
+					}
+				}
+			}
+		},1000)
+	}
+	
+	$scope.stopInternetTimer = function(){
+		clearInterval($scope.check_internet_timer)
+		$scope.check_internet_timer=null
 	}
 	
 	/* Is database empty */
@@ -260,11 +297,11 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	
 	/* Syncs with server */
 	$scope.InsertRecordOnServerFunction = function(trips){  // Function for insert Record into SQl Server
-		console.log('InsertRecordOnServerFunction')
+		//console.log('InsertRecordOnServerFunction')
 		if($scope.isAllowedToSync == true){	
 			$scope.isAllowedToSync = false;
-			console.log('posting trip to:')
-			console.log($scope.host + "/api/v1/trips")
+			//console.log('posting trip to:')
+			//console.log($scope.host + "/api/v1/trips")
 			$.ajax({
 				type: "POST",
 				url: $scope.host + "/api/v1/trips",
@@ -277,7 +314,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 				processdata: true,
 				success: function (msg)
 				{
-					console.log('succes!!!!')
 					//On Successfull service call
 					$scope.dropAllRows(); //Uncomment this when success message is received. Make this function receive synced rows from server
 					$scope.isAllowedToSync = true; 
@@ -296,9 +332,9 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 						$scope.resetAccessToken()
 					}	
 					
-					else if(msg.status == 404){
-						console.log("404 error ")				
-					}
+					// else if(msg.status == 404){
+					// 	console.log("404 error ")				
+					// }
 					$scope.isAllowedToSync = true;						
 				}
 			});
