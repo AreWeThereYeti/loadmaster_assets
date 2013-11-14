@@ -37,7 +37,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs) {
 		$scope.checkLengthOfDatabase()
 		
 	    $.mobile.buttonMarkup.hoverDelay = 0;
-		$.mobile.defaultPageTransition   = 'slide';
+		$.mobile.defaultPageTransition   = 'none';
 	    $.mobile.defaultDialogTransition = 'none';
 		
 		if($scope.access_token != ""){
