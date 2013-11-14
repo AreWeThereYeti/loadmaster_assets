@@ -29,7 +29,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				  zoom: 12,
 				  streetViewControl: false,
 				  zoomControl: true,
-				  draggable:true,
+				  draggable:false,
 				  zoomControlOptions: {
 				  	style: google.maps.ZoomControlStyle.LARGE
 				  },
@@ -63,8 +63,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			})
 		},2000)
 	}
-	
-	
 
 	$scope.initUIMap = function(start_input_id,end_input_id){
 		$scope.start_marker = new google.maps.Marker({  
@@ -342,10 +340,14 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		}
 		else{
 			if(!!window.google){
-				if(!$scope.locationMarker){
-					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
+				if($scope.set_address_event != "set_end_address"){
+					if(!$scope.locationMarker){
+						$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position");
+					}else{
+						$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+					}
 				}else{
-					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+					
 				}
 				$scope.centerOnPosition(latitude,longitude)
 			}
@@ -596,6 +598,10 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.noStartAndEndCoordsFound = function(){
 		return !$scope.map_loading && (typeof $scope.startlocation=="undefined" || $scope.startlocation==undefined || typeof $scope.endlocation=="undefined" || $scope.endlocation==undefined)  ? true : false
+	}
+	
+	$scope.showStaticMarker = function(){
+		return $scope.showMap()==true && $scope.set_address_event== "set_end_address" ? true : false
 	}	
 
 })

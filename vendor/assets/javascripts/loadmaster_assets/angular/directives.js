@@ -148,7 +148,6 @@ LoadmasterApp
 					);
 				}
 				scope.initMobileMap(true)
-				
 				$('.gpsnotfound').trigger("create");
 			}
 		}
