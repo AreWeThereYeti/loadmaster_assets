@@ -69,7 +69,6 @@ LoadmasterApp
 				end_lon:'=endlon',
 				startlabel:'=startlabel',
 				endlabel:'=endlabel'
-
 			},
 	   	link:function(scope,element,attrs){
 				scope.initializeMap()

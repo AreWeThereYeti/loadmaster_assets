@@ -15,7 +15,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	*------------------------------------------------------------------------------*/
 		
 	/* 			Initialize map */
-	$scope.initializeMap = function(latitude, longitude,div) {
+	$scope.initializeMap = function(latitude, longitude,div, draggable) {
 		if(!!window.google){
 			if(!!google.maps.DirectionsService){	$scope.directionsService = new google.maps.DirectionsService(); }
 			if(!!google.maps.LatLngBounds){	$scope.bounds=new google.maps.LatLngBounds() 	}
@@ -24,12 +24,15 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 			if(!$scope.map){
 				if(!latitude){var latitude=$scope.defaultLat}
 				if(!longitude){var longitude=$scope.defaultLon}
+				if(!draggable){var draggable=true;}
+				if($scope.map_set_position=="setend_location"){draggable=false}
+				
 				$scope.mapOptions = {
 				  center: new google.maps.LatLng(latitude, longitude), 
 				  zoom: 12,
 				  streetViewControl: false,
 				  zoomControl: true,
-				  draggable:false,
+				  draggable:draggable,
 				  zoomControlOptions: {
 				  	style: google.maps.ZoomControlStyle.LARGE
 				  },
@@ -250,11 +253,11 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				})
 			},
 			function(errCode){
-				//console.log('---------got error -------------')
+				console.log('--------- got error on watch position -------------')
 				if($scope.$parent.current_map_scope==$scope.set_address_event){
 					if(errCode.PERMISSION_DENIED == errCode.code || errCode.POSITION_UNAVAILABLE == errCode.code){
-						//var log_str='error on position. Position unavailable or denied: ' + errCode.code + ' timestamp: ' + new Date()
-						//console.log(log_str)
+						var log_str='error on position. Position unavailable or denied: ' + errCode.code + ' timestamp: ' + new Date()
+						console.log(log_str)
 						//$('.position-available').html(log_str)
 						if(errCode.PERMISSION_DENIED == errCode.code){
 							alert("Vi kunne ikke finde din location da du ikke har aktiveret location services på din enhed. Gå venligst ind i dine instillinger og slå location services til.")
@@ -265,8 +268,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 							})
 						}
 					}else if(errCode.TIMEOUT == errCode.code){	
-						//var log_str='error on position. Timeout error: ' + errCode.code + ' timestamp: ' + new Date()
-						//console.log(log_str)
+						var log_str='error on position. Timeout error: ' + errCode.code + ' timestamp: ' + new Date()
+						console.log(log_str)
 						//$('.position-available').html(log_str)		
 						if(!$scope.location && !$scope.gps_not_found_timer){				//only try to find position again on timeout error if no $scope.location is previously found
 							$scope.$apply(function(){
