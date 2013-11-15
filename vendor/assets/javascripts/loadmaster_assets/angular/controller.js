@@ -36,13 +36,10 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.isAccessTokenInDatabase()
 		$scope.checkLastTripFinished()
 		$scope.checkLengthOfDatabase()
-		
-	  $.mobile.buttonMarkup.hoverDelay = 0;
-	  //$.mobile.defaultPageTransition   = 'fade';
+	    $.mobile.buttonMarkup.hoverDelay = 0;
 		$.mobile.defaultPageTransition   = 'none';
-	  $.mobile.defaultDialogTransition = 'none';
-/* 	  $.mobile.useFastClick = true; */
-
+	    $.mobile.defaultDialogTransition = 'none';
+		
 		if($scope.access_token != ""){
 			$scope.checkInterval();		
 		}

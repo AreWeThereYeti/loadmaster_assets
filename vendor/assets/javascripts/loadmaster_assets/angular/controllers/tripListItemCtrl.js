@@ -1,9 +1,14 @@
 LoadmasterApp.controller('tripsListItemCtrl',function($scope,$element,$attrs) {
-	
-	$scope.select = function(){
-		$scope.showDetails=true;
-		$scope.$broadcast('resfreshMap')
+
+	$scope.select = function(){	
+		if($scope.showDetails==true){
+			$scope.unselect()
+		}else{
+			$scope.showDetails=true;
+			$scope.$broadcast('resfreshMap');
+		}
 	} 
+	
 	
 	$scope.unselect = function(){
 		$scope.showDetails=false;
