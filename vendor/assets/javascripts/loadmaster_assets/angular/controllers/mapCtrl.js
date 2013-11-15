@@ -147,7 +147,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				icon: $scope.markerImage,
 				title:"marker",
 	      labelContent: label,
-	      labelAnchor: new google.maps.Point(75, 75),
+	      labelAnchor: new google.maps.Point(75, 85),
 	      labelClass: "labels", // the CSS class for the label
 	      labelStyle: {opacity: 0.8}
 	    });
