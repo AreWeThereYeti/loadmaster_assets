@@ -29,11 +29,14 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.init = function(){
 /* 		debugging function */
 
- 		$scope.dropTables(); 
+/*  		$scope.dropTables();  */
+
 
 /* 		End of debugging functions */
 		$scope.initializeDB()
-		$scope.isAccessTokenInDatabase()
+		$scope.pushToAutocompleteArray();
+		console.log("pushToAutocompleteArray");
+		$scope.isAccessTokenInDatabase()		
 		$scope.checkLastTripFinished()
 		$scope.checkLengthOfDatabase()
 	    $.mobile.buttonMarkup.hoverDelay = 0;
@@ -373,14 +376,27 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.db.transaction(function(tx){
 
 			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Auth(access_token varchar, imei varchar, license_plate varchar)', []);
-			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Cargo_types(Id INTEGER PRIMARY KEY AUTOINCREMENT, cargo_type varchar)', []); 
-/* 			tx.executeSql('INSERT INTO Cargo_types (id, cargo_type) VALUES (id, "'dyr'", "'korn'")', []); */
-			 
+			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Cargo_types(Id INTEGER PRIMARY KEY AUTOINCREMENT, value varchar)', []);
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (1, "Dyr")'); 
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (2, "Korn")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (3, "Jord")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (4, "Stabilgrus")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (5, "Grus")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (6, "Cement")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (7, "Kalk")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (8, "Mursten")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (9, "foder")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (10, "Malm")');
+			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (11, "Halm")');
+
 			// this line actually creates the table User if it does not exist and sets up the three columns and their types
 			// note the UserId column is an auto incrementing column which is useful if you want to pull back distinct rows
 			// easily from the table.
 			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Trip(Id INTEGER PRIMARY KEY AUTOINCREMENT, _cargo varchar, _start_timestamp int, _start_location int, _start_address varchar,  _start_comments varchar, _end_timestamp int, _end_location int, _end_address varchar, _end_comments varchar, _is_finished int)', [])},
-			function error(err){alert('error on init local db : ' + err.message)}, function success(){console.log("database created")}
+			function error(err){alert('error on init local db : ' + err.message)}, 
+			function success(){
+				console.log("database created")
+				}
 		) 
 	}
 	
@@ -389,7 +405,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.top_startlocation=trip.start_location
 	 	$scope.top_startaddress=trip.start_address;
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
-	 
+
+
 		// this is the section that actually inserts the values into the User table
 		$scope.db.transaction(function(transaction) {
 			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
@@ -428,6 +445,31 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	         },function error(err){alert('error selecting from database ' + err)}, function success(){});              
 		});
 	}
+	
+	
+	$scope.pushToAutocompleteArray = function (){
+		$scope.cargo_types = [];
+		$scope.db.transaction(function (tx){
+			tx.executeSql('SELECT * FROM Cargo_types', [], function (tx, result){	 
+				var dataset = result.rows; 
+				for (var i = 0, item = null; i < dataset.length; i++) {
+					item = dataset.item(i);
+					$scope.cargo_types.push(item['value']);	
+				}
+				console.log($scope.cargo_types)
+			});
+		},function error(err){
+			console.log(err)
+		}, function success(){});
+	}
+	
+		$scope.insertIntoAutocompleteArray = function (val){
+			$scope.db.transaction(function (tx){
+				tx.executeSql('INSERT INTO Cargo_types (value) VALUES ("'+val+'")');
+		},function error(err){
+			console.log(err)
+		});
+	}
 
 /* DEBUGGING functions */
 
@@ -448,8 +490,6 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			tx.executeSql( 'DROP TABLE Trip');
 			tx.executeSql( 'DROP TABLE Auth');
 			tx.executeSql( 'DROP TABLE Cargo_types');
-
-
 		})
 	}
 	

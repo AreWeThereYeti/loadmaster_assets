@@ -4,6 +4,7 @@ LoadmasterApp
 	    controller:'userCtrl',
 	    link:function(scope,element,attrs){
 				scope.init();
+
 				$(document).on('pagebeforeshow',function(){
 					$(document).find('.ui-btn-down-b').each(function(){
 						$(this).removeClass('ui-btn-down-b')
@@ -119,7 +120,7 @@ LoadmasterApp
 						element.find('.autocomplete').val(val);
 						element.find('.autocomplete').autocomplete('clear');
 						scope.$apply(function(){
-							scope.cargo=val
+							scope.cargo=val;
 						})
 					},
 					link: 'target.html?term=',

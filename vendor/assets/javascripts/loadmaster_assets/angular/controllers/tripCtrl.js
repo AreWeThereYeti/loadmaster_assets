@@ -2,8 +2,6 @@
 LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $compile, Helpers) {
 
 	$scope.current_map_scope="set_start_address"
-	
-	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
 
 	/* 	Submit buttons */
 	$scope.submit_start = function($event) {
@@ -74,6 +72,9 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+		$scope.insertIntoAutocompleteArray(trip.cargo);
+		$scope.pushToAutocompleteArray();
+		console.log("here")
 	 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {
