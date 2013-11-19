@@ -29,7 +29,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.buttonDisable("#submit_end")
 		$.mobile.loading( 'show');
-		if(!!$scope.end_location || $scope.end_address){
+		if(!!$scope.end_location || !!$scope.end_address){
 			//$scope.releaseWakeLock();
 			$scope.AddEndValuesToDB({
 				end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
