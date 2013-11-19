@@ -73,7 +73,6 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	$scope.AddStartValuesToDB = function(trip) {
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
 		$scope.insertIntoAutocompleteArray(trip.cargo);
-		$scope.pushToAutocompleteArray();
 		console.log("here")
 	 
 		// this is the section that actually inserts the values into the User table
@@ -96,7 +95,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
-		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY");
+		$scope.pushToAutocompleteArray();
 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {

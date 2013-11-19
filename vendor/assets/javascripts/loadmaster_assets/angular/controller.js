@@ -456,7 +456,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 					item = dataset.item(i);
 					$scope.cargo_types.push(item['value']);	
 				}
-				console.log($scope.cargo_types)
+				    $(".autocomplete").autocomplete("option", { source: $scope.cargo_types});
 			});
 		},function error(err){
 			console.log(err)
