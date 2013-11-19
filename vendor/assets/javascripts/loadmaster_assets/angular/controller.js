@@ -29,7 +29,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	$scope.init = function(){
 /* 		debugging function */
 
- 		//$scope.dropTables(); 
+ 		$scope.dropTables(); 
 
 /* 		End of debugging functions */
 		$scope.initializeDB()
@@ -373,6 +373,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.db.transaction(function(tx){
 
 			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Auth(access_token varchar, imei varchar, license_plate varchar)', []);
+			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Cargo_types(Id INTEGER PRIMARY KEY AUTOINCREMENT, cargo_type varchar)', []); 
+/* 			tx.executeSql('INSERT INTO Cargo_types (id, cargo_type) VALUES (id, "'dyr'", "'korn'")', []); */
 			 
 			// this line actually creates the table User if it does not exist and sets up the three columns and their types
 			// note the UserId column is an auto incrementing column which is useful if you want to pull back distinct rows
@@ -382,7 +384,38 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		) 
 	}
 	
-	$scope.checkLengthOfDatabase = function() {
+	// this is the function that puts values into the database from page #home
+	$scope.AddStartValuesToDB = function(trip) {
+		$scope.top_startlocation=trip.start_location
+	 	$scope.top_startaddress=trip.start_address;
+		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+	 
+		// this is the section that actually inserts the values into the User table
+		$scope.db.transaction(function(transaction) {
+			console.log("Cargo er i submit og vi kører nu addstartvalues to db" + trip.cargo);
+			transaction.executeSql('INSERT INTO Trip(_cargo, _start_timestamp, _start_location, _start_address, _start_comments) VALUES ("'+trip.cargo+'", "'+trip.start_timestamp+'", "'+trip.start_location+'", "'+trip.start_address+'", "'+trip.start_comments+'")');	
+		},function error(err){alert('error on save to local db ' + err)}, function success(){});
+		return false;
+	}	
+	
+	// this is the function that puts values into the database from page #home
+	$scope.AddEndValuesToDB = function(trip) {
+	 	$scope.top_endlocation=trip.end_location;
+	 	$scope.top_endaddress=trip.end_address;
+	 	console.log("trip end location " + trip.end_location)
+	 	console.log("trip end address " + trip.end_address)
+		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+
+
+		// this is the section that actually inserts the values into the User table
+		$scope.db.transaction(function(transaction) {
+			transaction.executeSql('UPDATE Trip SET _end_timestamp ="'+trip.end_timestamp+'", _end_location ="'+trip.end_location+'", _end_address ="'+trip.end_address+'", _end_comments ="'+trip.end_comments+'", _is_finished = 1 WHERE Id = (SELECT MAX(Id) from Trip)',[]);
+			},function error(err){console.log('error on save to local db '); console.log(err)}, function success(){}
+		);
+		return false;
+	}
+	
+		$scope.checkLengthOfDatabase = function() {
 		if(!$scope.db){
 			$scope.createNewDB()
 		}	
@@ -414,6 +447,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 			// you can uncomment these next twp lines if you want the table Trip and the table Auth to be empty each time the application runs
 			tx.executeSql( 'DROP TABLE Trip');
 			tx.executeSql( 'DROP TABLE Auth');
+			tx.executeSql( 'DROP TABLE Cargo_types');
+
 
 		})
 	}
