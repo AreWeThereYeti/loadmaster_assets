@@ -376,7 +376,7 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 		$scope.db.transaction(function(tx){
 
 			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Auth(access_token varchar, imei varchar, license_plate varchar)', []);
-			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Cargo_types(Id INTEGER PRIMARY KEY AUTOINCREMENT, value varchar)', []);
+			tx.executeSql( 'CREATE TABLE IF NOT EXISTS Cargo_types(Id INTEGER PRIMARY KEY AUTOINCREMENT, value varchar UNIQUE)', []);
 			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (1, "Dyr")'); 
 			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (2, "Korn")');
 			tx.executeSql('INSERT OR IGNORE INTO Cargo_types (id, value) VALUES (3, "Jord")');
@@ -466,7 +466,8 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 	
 		$scope.insertIntoAutocompleteArray = function (val){
 			$scope.db.transaction(function (tx){
-				tx.executeSql('INSERT INTO Cargo_types (value) VALUES ("'+val+'")');
+				tx.executeSql('INSERT OR IGNORE INTO Cargo_types (value) VALUES ("'+val+'")');
+/* 				tx.executeSql('SELECT value FROM Cargo_types GROUP BY value HAVING ( COUNT(*) > 1 )'); */
 		},function error(err){
 			console.log(err)
 		});
