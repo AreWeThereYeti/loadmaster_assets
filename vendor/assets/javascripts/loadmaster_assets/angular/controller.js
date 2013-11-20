@@ -456,11 +456,12 @@ LoadmasterApp.controller('userCtrl',function($scope,$element,$attrs,$compile,Hel
 					item = dataset.item(i);
 					$scope.cargo_types.push(item['value']);	
 				}
-				    $(".autocomplete").autocomplete("option", { source: $scope.cargo_types});
 			});
 		},function error(err){
 			console.log(err)
 		}, function success(){});
+
+		$(".autocomplete").autocomplete("option", { source: $scope.cargo_types});
 	}
 	
 		$scope.insertIntoAutocompleteArray = function (val){

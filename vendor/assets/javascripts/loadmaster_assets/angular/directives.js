@@ -37,6 +37,22 @@ LoadmasterApp
 			templateUrl: 'src/loadmaster_assets/vendor/assets/javascripts/loadmaster_assets/angular/templates/mobile_trip_start.html',
 	    link:function(scope,element,attrs,Helpers){
 				$('#home').trigger('create')
+				
+				$("#home").find('.autocomplete').autocomplete({
+					target: element.find('ul'),
+					source: scope.cargo_types,
+					callback: function(e) {
+						var val = $(e.currentTarget).text();
+						element.find('.autocomplete').val(val);
+						element.find('.autocomplete').autocomplete('clear');
+						scope.$apply(function(){
+							scope.cargo=val;
+						})
+					},
+					link: 'target.html?term=',
+					minLength: 1
+				});				
+				
 				scope.compileMap($('#home').find('.map_container'),"<div class='markeranimation' ng-map-start></div>")
 	    	$("#home").on("pageshow", function(e) {
 					if(!scope.$root.applyInProggess(scope)){
@@ -112,20 +128,22 @@ LoadmasterApp
 	.directive('ngCargoAutocomplete', function(){
 		return{
 			link:function(scope,element,attrs){
-				$("#home").find('.autocomplete').autocomplete({
-					target: element.find('ul'),
-					source: scope.cargo_types,
-					callback: function(e) {
-						var val = $(e.currentTarget).text();
-						element.find('.autocomplete').val(val);
-						element.find('.autocomplete').autocomplete('clear');
-						scope.$apply(function(){
-							scope.cargo=val;
-						})
-					},
-					link: 'target.html?term=',
-					minLength: 1
-				});
+				$( "#home" ).on( "pageshow", function() {				
+					$("#home").find('.autocomplete').autocomplete({
+						target: element.find('ul'),
+						source: scope.cargo_types,
+						callback: function(e) {
+							var val = $(e.currentTarget).text();
+							element.find('.autocomplete').val(val);
+							element.find('.autocomplete').autocomplete('clear');
+							scope.$apply(function(){
+								scope.cargo=val;
+							})
+						},
+						link: 'target.html?term=',
+						minLength: 1
+					});
+				})
 			}
 		}
 	})
