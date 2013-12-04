@@ -73,13 +73,13 @@ LoadmasterApp
 	   	link:function(scope,element,attrs){
 				scope.initializeMap()
 				if(!!scope.start_lat && !!scope.start_lon){
-					scope.start_marker=scope.addMarkerToMap(scope.start_lat,scope.start_lon, scope.startlabel)
-					scope.start_marker.setIcon('/assets/loadmaster/start_marker.png')
+					scope.start_marker=scope.addMarkerWitTextToMap(scope.start_lat,scope.start_lon, scope.startlabel)
+					scope.start_marker.setIcon('/assets/loadmaster/map_markers_start.png')
 					scope.centerOnMarkers()
 				}
 				if(!!scope.end_lat && !!scope.end_lon){
-					scope.end_marker=scope.addMarkerToMap(scope.end_lat,scope.end_lon, scope.endlabel)
-					scope.end_marker.setIcon('/assets/loadmaster/end_marker.png')
+					scope.end_marker=scope.addMarkerWitTextToMap(scope.end_lat,scope.end_lon, scope.endlabel)
+					scope.end_marker.setIcon('/assets/loadmaster/map_markers_end.png')
 					scope.centerOnMarkers()
 				}
 	   	}

@@ -2,8 +2,6 @@
 LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $compile, Helpers) {
 
 	$scope.current_map_scope="set_start_address"
-	
-	$scope.cargo_types = ['Dyr', 'Korn', 'Jord', 'Stabilgrus', 'Sand', 'Grus', 'Sten', 'Cement', 'Kalk', 'Mursten', 'foder', 'Malm', 'Halm'];
 
 	/* 	Submit buttons */
 	$scope.submit_start = function($event) {
@@ -29,7 +27,7 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 		$($event.target).parent().addClass('ui-btn-pressed')
 		$scope.buttonDisable("#submit_end")
 		$.mobile.loading( 'show');
-		if(!!$scope.end_location || $scope.end_address){
+		if(!!$scope.end_location || !!$scope.end_address){
 			//$scope.releaseWakeLock();
 			$scope.AddEndValuesToDB({
 				end_timestamp 	:	moment().format("YYYY-MM-DD HH:mm:ss Z"),
@@ -74,6 +72,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	// this is the function that puts values into the database from page #home
 	$scope.AddStartValuesToDB = function(trip) {
 		$scope.start_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+		$scope.insertIntoAutocompleteArray(trip.cargo);
+		console.log("here")
 	 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {
@@ -95,7 +95,8 @@ LoadmasterApp.controller('tripCtrl', function($scope, $element, $attrs, $http, $
 	
 	// this is the function that puts values into the database from page #home
 	$scope.AddEndValuesToDB = function(trip) {
-		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY")
+		$scope.end_timestamp = moment().format("HH:mm:ss DD-MM-YYYY");
+		$scope.pushToAutocompleteArray();
 
 		// this is the section that actually inserts the values into the User table
 		$scope.$root.db.transaction(function(transaction) {
