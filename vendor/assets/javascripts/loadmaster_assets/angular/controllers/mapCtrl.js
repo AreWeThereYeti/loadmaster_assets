@@ -5,41 +5,34 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.markersArray = [];
 	$scope.gps_not_found=null;
 	$scope.map_loading=true;
-	$scope.gps_timer_check_running=false;
 	
-	$scope.wait_for_gps_time=20; 	//secs to wait before prompting gps not found...
-	
-	if(!!window.google){
-		$scope.markerImage = new google.maps.MarkerImage(
-			'src/img/bluedot_retina.png',
-			null, // size
-			null, // origin
-			new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
-			new google.maps.Size( 17, 17 ) // scaled size (required for Retina display icon)
-		);
-			
-		$scope.directionsService = new google.maps.DirectionsService();
-	}
+	$scope.wait_for_gps_time=30; 	//secs to wait before prompting gps not found...
+
+	$scope.lastMarkerUpdate=new Date()
 	
 	/*-----------------------------------------------------------------------------
 	* Private methods
 	*------------------------------------------------------------------------------*/
 		
 	/* 			Initialize map */
-	$scope.initializeMap = function(latitude, longitude,div) {
+	$scope.initializeMap = function(latitude, longitude,div, draggable) {
 		if(!!window.google){
-			$scope.bounds=new google.maps.LatLngBounds()
+			if(!!google.maps.DirectionsService){	$scope.directionsService = new google.maps.DirectionsService(); }
+			if(!!google.maps.LatLngBounds){	$scope.bounds=new google.maps.LatLngBounds() 	}
 			$scope.gps_found=null;
 			$scope.has_position=false;
 			if(!$scope.map){
 				if(!latitude){var latitude=$scope.defaultLat}
 				if(!longitude){var longitude=$scope.defaultLon}
+				if(!draggable){var draggable=true;}
+				if($scope.map_set_position=="setend_location"){draggable=false}
+				
 				$scope.mapOptions = {
 				  center: new google.maps.LatLng(latitude, longitude), 
 				  zoom: 12,
 				  streetViewControl: false,
 				  zoomControl: true,
-				  draggable:true,
+				  draggable:draggable,
 				  zoomControlOptions: {
 				  	style: google.maps.ZoomControlStyle.LARGE
 				  },
@@ -47,33 +40,32 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 				  disableDefaultUI: true,
 				  mapTypeId: google.maps.MapTypeId.ROADMAP
 				};
-				$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);  
+				$scope.map = new google.maps.Map($element.find('.map-container')[0], $scope.mapOptions);
+				$scope.setMarkerImage()  
 			}
 		}
 	}
 	
 	$scope.initMobileMap = function(watchPosition){
 		$scope.gps_not_found=null
+		$scope.map_loading=true
 		if(!!window.google){
-			$scope.map_loading=true
-			$('.ui-btn-pressed').removeClass('ui-btn-pressed')
 			$scope.initializeMap()
 			$scope.removeAllMarkers()
 			$scope.refreshMap()
-			
-			if(watchPosition){
-				$scope.startWatchPosition()
-				$scope.checkForGPSNeverFound()
-			}
+		}	
+		
+		if(watchPosition){
+			$scope.startWatchPosition()
+			$scope.checkForGPSNeverFound()
 		}
+
 		setTimeout(function(){
 			$scope.$apply(function(){
 				$scope.map_loading=false
 			})
 		},2000)
 	}
-	
-	
 
 	$scope.initUIMap = function(start_input_id,end_input_id){
 		$scope.start_marker = new google.maps.Marker({  
@@ -89,16 +81,71 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		$scope.autoCompleteInput($('#'+end_input_id)[0],$scope.end_marker)
 	}
 	
+	
+	$scope.initMobileRouteMap = function(){
+		$scope.map_loading=true
+		$scope.showNoCoords = false;
+		$scope.showmap = false;
+		$scope.has_position=true;
+		if(!!$scope.startmarker){ 
+			$scope.removeMarker($scope.startmarker);
+			$scope.startmarker=null
+		}
+		if(!!$scope.endmarker){	
+			$scope.removeMarker($scope.endmarker);
+			$scope.endmarker=null 
+		}
+		if(!!$scope.startlocation && !!$scope.endlocation && !!window.google){
+			$scope.startlocation=$scope.startlocation.split(',')
+			$scope.endlocation=$scope.endlocation.split(',')
+  		$scope.initMobileMap(false);
+  		$scope.startmarker = $scope.addMarkerToMap($scope.startlocation[0],$scope.startlocation[1]);
+  		$scope.startmarker.setIcon('src/img/start_marker.png')
+  		$scope.endmarker = $scope.addMarkerToMap($scope.endlocation[0],$scope.endlocation[1]);
+  		$scope.endmarker.setIcon('src/img/end_marker.png')
+			$scope.showmap = true;
+			$scope.refreshMap();
+		}else{
+			$scope.map_loading=false;
+			if(!window.google){
+				var checkForGoogleMaps = setInterval(function(){
+					if(!!window.google){
+						if(!$scope.$root.applyInProggess($scope)){
+							$scope.$apply(function(){
+								$scope.initMobileRouteMap()
+							})
+						}else{	
+							$scope.initMobileRouteMap()
+						}
+						clearInterval(checkForGoogleMaps)
+					}else{
+					}
+				},1000)
+			}
+		}
+	}
+	
+	$scope.setMarkerImage=function(){			//override this method to use other markers than default google
+		return false;
+	}
+	
 	$scope.resetMap = function(){
 		if(!!$scope.locationMarker){
 			$scope.removeMarker($scope.locationMarker)
 		}
-		clearInterval($scope.watchPositionTimer)
-		$scope.watchPositionTimer=null
 		$scope.resetVals()
-	} 
+	}
+
+	$scope.stopWatchPositionTimer = function(){
+		//clearInterval($scope.watchPositionTimer)
+		//$scope.watchPositionTimer=null
+		navigator.geolocation.clearWatch($scope.watchPositionNavigator)
+		$scope.watchPositionNavigator=null
+		$scope.stopGpsNotFoundTimer()
+	}
 	
 	$scope.resetVals = function(){
+		$scope.stopWatchPositionTimer()
 		$scope.location=null
 		$scope.address=null
 		
@@ -114,21 +161,31 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 
 	$scope.addMarkerToMap = function( latitude, longitude, label ){
 		if(!!window.google){
+			if(!$scope.map){
+				$scope.initMobileMap(true)
+			}
+			
 			var markerPosition = new google.maps.LatLng(latitude, longitude)
+			
 			if(!$scope.IS_MOBILE || $scope.savebounds){
 				$scope.bounds.extend(markerPosition)
 			}
-		
-			var marker = new google.maps.Marker({
+			
+			var marker_params={
 				map: $scope.map,
 				flat: true,
 				optimized: false,
-				icon: $scope.markerImage,
 				position: markerPosition,
 				title: "marker",
 				labelContent: "second",
 				labelClass: "labels" // the CSS class for the label
-			});
+			}
+			
+			if(!!$scope.markerImage){
+				marker_params['icon']=$scope.markerImage
+			}
+		
+			var marker = new google.maps.Marker(marker_params);
 			$scope.markersArray.push(marker)
 			return marker;
 		}
@@ -136,32 +193,46 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.addMarkerWitTextToMap = function( latitude, longitude, label ){
 		if(!!window.google){
-			var markerPosition = new google.maps.LatLng(latitude, longitude)
-			if(!$scope.IS_MOBILE || $scope.savebounds){
-				$scope.bounds.extend(markerPosition)
+			if(!label){		//if label string is empty -> don't draw label
+				marker=$scope.addMarkerToMap(latitude,longitude)
+				return marker;
+			}else{
+				var markerPosition = new google.maps.LatLng(latitude, longitude)
+				if(!$scope.IS_MOBILE || $scope.savebounds){
+					$scope.bounds.extend(markerPosition)
+				}
+		
+				var marker = new MarkerWithLabel({
+		      position: markerPosition,
+		      map: $scope.map,
+					icon: $scope.markerImage,
+					title:"marker",
+		      labelContent: label,
+		      labelAnchor: new google.maps.Point(75, 90),
+		      labelClass: "labels", // the CSS class for the label
+		      labelStyle: {opacity: 0.8}
+		    });
+		
+				$scope.markersArray.push(marker)
+				return marker;
 			}
-		
-			var marker = new MarkerWithLabel({
-	      position: markerPosition,
-	      map: $scope.map,
-				icon: $scope.markerImage,
-				title:"marker",
-	      labelContent: label,
-	      labelAnchor: new google.maps.Point(75, 85),
-	      labelClass: "labels", // the CSS class for the label
-	      labelStyle: {opacity: 0.8}
-	    });
-		
-			$scope.markersArray.push(marker)
-			return marker;
+		}else{
+			return false;
 		}
 	}
 	
 	$scope.updateMarker = function(marker, latitude, longitude, label ){
 		if(!!window.google){
-			marker.setPosition(new google.maps.LatLng(latitude, longitude));
-			if (label){
-				marker.setTitle( label );
+			try{
+				if(new Date()-$scope.lastMarkerUpdate>2000){
+					$scope.lastMarkerUpdate=new Date()
+					marker.setPosition(new google.maps.LatLng(latitude, longitude));
+					if (label){
+						marker.setTitle( label );
+					}
+				}
+			}catch(err){
+				console.log('error on setting position')
 			}
 		}
 	}
@@ -190,55 +261,110 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.drawCurrentPosition =function(){
-		console.log('trying to find position again')
-		navigator.geolocation.getCurrentPosition(
+		console.log('starting watch position')
+		$scope.watchPositionNavigator = navigator.geolocation.watchPosition(
 			function(position){
 				$scope.$apply(function(){
-					//alert("position found")
-					console.log("position found")
-					console.log('lat,lon: ' + position.coords.latitude + ',' + position.coords.longitude)
-					$scope.updatePosition(position.coords.latitude, position.coords.longitude)
-					$scope.gps_not_found=false;
-					$scope.gps_found=true
+					//console.log("position found")
+					var log_str='lat,lon, acc, speed: ' + position.coords.latitude + ',' + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.coords.speed + ' timestamp: ' + new Date()
+					console.log(log_str)
+					//$('.stats').html(log_str)
+					//$('.position-available').html('position available is true')
+					if($scope.$parent.current_map_scope==$scope.set_address_event && position.coords.accuracy < 200 && position.coords.speed < 200){
+						//console.log("speed and accuracy is good. Updating position.")
+						$scope.updatePosition(position.coords.latitude, position.coords.longitude)
+						$scope.gps_not_found=false;
+						$scope.gps_found=true
+						$scope.stopGpsNotFoundTimer()
+						$scope.listenForGpsNotFound() 
+					}else if(!$scope.gps_not_found_timer){
+						$scope.positionNotFound(true)
+					}
 				})
 			},
 			function(errCode){
-				//alert('could not find position')
-				console.log('could not find position')
-				console.log('code: '    + errCode.code +
-                  '. message: ' + errCode.message)
- 				$scope.$apply(function(){ 
-					$scope.gps_found=false
-					if(!$scope.gps_timer_check_running){
-						$scope.listenForGpsNotFound() 
+				console.log('--------- got error on watch position -------------')
+				if($scope.$parent.current_map_scope==$scope.set_address_event){
+					if(errCode.PERMISSION_DENIED == errCode.code || errCode.POSITION_UNAVAILABLE == errCode.code){
+						var log_str='error on position. Position unavailable or denied: ' + errCode.code + ' timestamp: ' + new Date()
+						console.log(log_str)
+						//$('.position-available').html(log_str)
+						if(errCode.PERMISSION_DENIED == errCode.code){
+							alert("Vi kunne ikke finde din location da du ikke har aktiveret location services på din enhed. Gå venligst ind i dine instillinger og slå location services til.")
+						}
+						if(!$scope.gps_not_found_timer){
+							$scope.$apply(function(){
+								$scope.positionNotFound(true)
+							})
+						}
+					}else if(errCode.TIMEOUT == errCode.code){	
+						var log_str='error on position. Timeout error: ' + errCode.code + ' timestamp: ' + new Date()
+						console.log(log_str)
+						//$('.position-available').html(log_str)		
+						if(!$scope.location && !$scope.gps_not_found_timer){				//only try to find position again on timeout error if no $scope.location is previously found
+							$scope.$apply(function(){
+								$scope.positionNotFound(false)
+							})
+						}
 					}
- 				}) 
+				}
 			}, 
-			{ maximumAge: 5000, timeout: 4000, enableHighAccuracy: true}
+			{ maximumAge: 30000, timeout: 4000, enableHighAccuracy: true}
 		);
 	}
 	
+	$scope.positionNotFound = function(set_postion_to_null){
+		$scope.gps_found=false
+		$scope.stopGpsNotFoundTimer()
+		$scope.listenForGpsNotFound() 
+		$scope.gps_not_found=true;
+		if(set_postion_to_null){	$scope.updatePosition(null)  }
+	}
+	
+	$scope.$on('reDrawCurrentPosition',function(){
+		$scope.stopWatchPositionTimer()
+		if(!$scope.map){
+			$scope.initMobileMap(true)
+		}else{
+			$scope.restartWatchPosition()
+		}
+		if(!!$scope.location){
+			$scope.gps_not_found=false;
+			$scope.gps_found=true
+			$scope.updatePosition($scope.location[0],$scope.location[1])
+		}
+	})
+	
 	$scope.listenForGpsNotFound = function(){
-		console.log('starting gps_not_found_timer')
 		var counter=0
-		$scope.gps_timer_check_running=true
-		$scope.gps_not_found_timer=setInterval(function(){
-			if(counter==$scope.wait_for_gps_time){		//if gps not found in 30 secs
-				console.log('gps was never found')
-				$scope.gps_not_found=true;
-				$scope.updatePosition(null)
-				$scope.stopGpsNotFoundTimer()
-			}else if(!$scope.gps_found){
-				counter++
-			}else if($scope.gps_found){
-				$scope.stopGpsNotFoundTimer()
-			}
-		},1000)
+		if(!$scope.gps_not_found_timer){
+			$scope.gps_not_found_timer=setInterval(function(){
+				if(counter==$scope.wait_for_gps_time){		//if gps not found in e.g. 30 secs
+					console.log('------- restarting watch position timer ------------')
+					//alert('------- restarting watch position timer ------------')
+					if(!$scope.$root.applyInProggess($scope)){
+						$scope.$apply(function(){
+							$scope.restartWatchPosition()
+		    		})
+					}else{	
+						$scope.restartWatchPosition()	
+					}
+				}else{
+					counter++
+				}
+			},1000)
+		}
+	}
+	
+	$scope.restartWatchPosition = function(){
+		$scope.stopGpsNotFoundTimer()
+		$scope.stopWatchPositionTimer()
+		$scope.startWatchPosition()
 	}
 	
 	$scope.stopGpsNotFoundTimer = function(){
 		clearInterval($scope.gps_not_found_timer)
-		$scope.gps_timer_check_running=false
+		$scope.gps_not_found_timer=null
 	} 
 	
 	$scope.updatePosition = function(latitude, longitude){
@@ -247,22 +373,19 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		}
 		else{
 			if(!!window.google){
-				if(!$scope.locationMarker){
-					$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position")
-					setTimeout(function(){
-						$scope.$apply(function(){
-							$scope.centerOnPosition(latitude,longitude)
-						})
-					},100);		//need delay as map is not created properly before this is executed
+				if($scope.set_address_event != "set_end_address"){
+					if(!$scope.locationMarker){
+						$scope.locationMarker = $scope.addMarkerToMap(latitude, longitude,"Initial Position");
+					}else{
+						$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
+					}
 				}else{
-					$scope.updateMarker($scope.locationMarker, latitude, longitude, "Updated / Accurate Position");
-					if($scope.keep_updating_position){
-						$scope.centerOnPosition(latitude,longitude)
-		 			} 
+					
 				}
+				$scope.centerOnPosition(latitude,longitude)
 			}
 			$scope.location=[latitude, longitude]
-			$scope.refreshMap()			
+			$scope.refreshMap()	
 		}
 	}
 	
@@ -270,26 +393,19 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		if(!!window.google){
 			$scope.map.setCenter(new google.maps.LatLng(latitude, longitude));
 		}
-		// if($scope.map.getZoom()>15){
-		// 	$scope.map.setZoom(14)
-		// }
 	}
-	
 	
 	$scope.startWatchPosition = function(){
 		$scope.drawCurrentPosition()
-		$scope.watchPositionTimer=setInterval(function(){
-			$scope.$apply(function(){
-				$scope.drawCurrentPosition()
-			})
-		}, 3000);
 	}
 	
 	$scope.refreshMap = function(){
-		setTimeout(function(){ 
-			google.maps.event.trigger($scope.map, 'resize'); 
-		}, 20)
-		$scope.preventLinksToGoogle()
+		if(!!window.google){
+			setTimeout(function(){ 
+				google.maps.event.trigger($scope.map, 'resize'); 
+			}, 20)
+			$scope.preventLinksToGoogle()
+		}
 	}
 	
 	$scope.refreshMapAndCenter = function(){
@@ -361,8 +477,8 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 						$scope.getAddressFromLatLon(lat,lon,true)
 					})
 				},2000)
-      }
-    });
+			}
+		});
 	}
 	
 	$scope.calcDistance = function(LatLng_start,LatLng_end,update_obj){
@@ -434,7 +550,6 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	$scope.$on('resfreshMap',function(){
 		$scope.refreshMapAndCenter()
 	})
-	
 
 	$scope.$watch('address', function() {
 		$scope.location = null;
@@ -457,9 +572,25 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 		}
 	});
 	
-	$scope.$on('newTrip',function(){
-		$scope.resetVals()
+	$scope.$on('$destroy', function(){
+		console.log('---------------- destroy on map ctrl ran!!!! -----------------')
+	});
+	
+	$scope.deleteMapListener=$scope.$on('deleteMap',function(){
+		if(!$scope.$root.applyInProggess($scope)){
+			$scope.$apply(function(){
+				$scope.deconstructor()
+			})
+		}else{	
+			$scope.deconstructor()
+		}
 	})
+	
+	$scope.deconstructor = function(){
+		$scope.resetVals()
+		$scope.deleteMapListener()
+		$element.remove()
+	}
 	
 	/*-----------------------------------------------------------------------------
 	* UI methods
@@ -471,7 +602,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.gpsFoundNoInternet = function(){
-		return !!$scope.location && !Helpers.hasInternet() ? true : false
+		return !!$scope.location && (!Helpers.hasInternet() || !window.google) ? true : false
 	}
 	
 	$scope.gpsNotFound = function(){
@@ -479,7 +610,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.showMap = function(){
-		return !!$scope.location && Helpers.hasInternet() ? true : false
+		return !!$scope.location && Helpers.hasInternet() && !!window.google ? true : false
 	}
 	
 	$scope.gpsFound = function(){
@@ -487,7 +618,7 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.showEndRouteMap = function(){
-		return !!$scope.startlocation && !!$scope.endlocation && Helpers.hasInternet() ? true : false
+		return !!$scope.startlocation && !!$scope.endlocation && Helpers.hasInternet() && !!window.google ? true : false
 	}
 	
 	$scope.mapLoading = function(){
@@ -495,11 +626,15 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	}
 	
 	$scope.showHasRouteNoInternet = function(){
-		return !$scope.map_loading && !!$scope.startlocation && !!$scope.endlocation && !Helpers.hasInternet() ? true : false
+		return !$scope.map_loading && !!$scope.startlocation && !!$scope.endlocation && (!Helpers.hasInternet() || !window.google) ? true : false
 	}
 	
 	$scope.noStartAndEndCoordsFound = function(){
 		return !$scope.map_loading && (typeof $scope.startlocation=="undefined" || $scope.startlocation==undefined || typeof $scope.endlocation=="undefined" || $scope.endlocation==undefined)  ? true : false
+	}
+	
+	$scope.showStaticMarker = function(){
+		return $scope.showMap()==true && $scope.set_address_event== "set_end_address" ? true : false
 	}	
 
 })
