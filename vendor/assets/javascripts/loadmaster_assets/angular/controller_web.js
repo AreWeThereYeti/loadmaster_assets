@@ -3,9 +3,10 @@ LoadmasterApp.controller('loadmasterCtrl',function($scope,$element,$attrs) {
 	
 	$scope.IS_MOBILE=false
 	
-	$scope.selectTableRow = function(controller,id){
-		console.log('selectTableRow ran')
-		window.location.href="/"+controller+"/"+id
+	$scope.selectTableRow = function(controller,id,event){
+		if(!!event && !$(event.target).attr('type')=="submit"){
+			window.location.href="/"+controller+"/"+id
+		}
 	}
 	
 	$scope.preventDefault = function($event){
