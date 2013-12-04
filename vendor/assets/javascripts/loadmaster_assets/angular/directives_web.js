@@ -121,6 +121,7 @@ LoadmasterApp
 				end_lon:'=endlon'
 			},
 			link:function(scope,element,attrs){
+				if(!!google.maps.DirectionsService){	scope.directionsService = new google.maps.DirectionsService(); }
 				scope.objid=element.closest('tr').attr('tripid').replace('"','').replace('"','')
 				scope.calcDistance(new google.maps.LatLng(scope.start_lat,scope.start_lon),new google.maps.LatLng(scope.end_lat,scope.end_lon),true)
 			}
