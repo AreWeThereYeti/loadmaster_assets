@@ -193,24 +193,31 @@ LoadmasterApp.controller('mapCtrl',function($scope,$element,$attrs,ServerAjax,He
 	
 	$scope.addMarkerWitTextToMap = function( latitude, longitude, label ){
 		if(!!window.google){
-			var markerPosition = new google.maps.LatLng(latitude, longitude)
-			if(!$scope.IS_MOBILE || $scope.savebounds){
-				$scope.bounds.extend(markerPosition)
+			if(!label){		//if label string is empty -> don't draw label
+				marker=$scope.addMarkerToMap(latitude,longitude)
+				return marker;
+			}else{
+				var markerPosition = new google.maps.LatLng(latitude, longitude)
+				if(!$scope.IS_MOBILE || $scope.savebounds){
+					$scope.bounds.extend(markerPosition)
+				}
+		
+				var marker = new MarkerWithLabel({
+		      position: markerPosition,
+		      map: $scope.map,
+					icon: $scope.markerImage,
+					title:"marker",
+		      labelContent: label,
+		      labelAnchor: new google.maps.Point(75, 90),
+		      labelClass: "labels", // the CSS class for the label
+		      labelStyle: {opacity: 0.8}
+		    });
+		
+				$scope.markersArray.push(marker)
+				return marker;
 			}
-		
-			var marker = new MarkerWithLabel({
-	      position: markerPosition,
-	      map: $scope.map,
-				icon: $scope.markerImage,
-				title:"marker",
-	      labelContent: label,
-	      labelAnchor: new google.maps.Point(75, 90),
-	      labelClass: "labels", // the CSS class for the label
-	      labelStyle: {opacity: 0.8}
-	    });
-		
-			$scope.markersArray.push(marker)
-			return marker;
+		}else{
+			return false;
 		}
 	}
 	
